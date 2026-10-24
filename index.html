@@ -67,17 +67,11 @@
         </div>
       </div>
 
-      <!-- Lado Direito: Ações (Perfil & Painel de Estudo com IA & Salvar & Configurações) -->
+      <!-- Lado Direito: Ações (Perfil & Salvar Nuvem & Configurações) -->
       <div class="flex items-center space-x-1.5 sm:space-x-2">
         <button onclick="abrirModalPerfil()" title="Meu Perfil de Estudo" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
           <span>👤</span>
           <span id="txt-nome-perfil" class="max-w-[75px] sm:max-w-[110px] truncate">Lafabio</span>
-        </button>
-
-        <button onclick="toggleStudyPane()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
-          <span class="text-amber-300">✦</span>
-          <span class="hidden sm:inline">Painel de Estudo (IA)</span>
-          <span class="sm:hidden">Estudo</span>
         </button>
 
         <button onclick="salvarTudo()" title="Salvar Anotações na Nuvem" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
@@ -131,8 +125,8 @@
     
     <div id="drawer-backdrop" onclick="fecharPaineisMobile()" class="hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"></div>
 
-    <!-- ÁREA CENTRAL DO LEITOR (ESTILO JW LIBRARY) -->
-    <main id="leitor-principal" class="flex-1 overflow-y-auto px-4 sm:px-10 py-6 max-w-3xl mx-auto w-full jw-article">
+    <!-- ÁREA CENTRAL DO LEITOR (ESTILO JW LIBRARY - LARGURA CONFORTÁVEL) -->
+    <main id="leitor-principal" class="flex-1 overflow-y-auto px-4 sm:px-8 py-6 max-w-4xl mx-auto w-full jw-article">
       
       <!-- Cabeçalho da Publicação / Artigo -->
       <div id="cabecalho-materia" class="mb-6 pb-4 border-b border-[#dee2e6]">
@@ -155,65 +149,12 @@
         </div>
       </div>
 
-      <!-- Conteúdo Dinâmico (Roteiro Completo) -->
+      <!-- Conteúdo Dinâmico (Roteiro Completo com Assistente Integrado) -->
       <div id="conteudo-leitor" class="space-y-6">
       </div>
 
       <div class="h-16"></div>
     </main>
-
-    <!-- PAINEL LATERAL DIREITO (STUDY PANE COM GEMINI COPILOT) -->
-    <aside id="study-pane" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[#f8f9fa] border-l border-[#dee2e6] flex flex-col transform translate-x-full lg:static lg:translate-x-0 drawer-transition shrink-0 shadow-xl lg:shadow-none">
-      
-      <!-- Cabeçalho do Painel -->
-      <div class="p-3.5 bg-white border-b border-[#dee2e6] flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-[#4a3b69] text-amber-300 flex items-center justify-center text-xs font-bold shadow-xs">
-            ✦
-          </div>
-          <div>
-            <h2 class="text-xs font-bold text-[#212529]">Painel de Estudo</h2>
-            <p class="text-[10px] text-[#6c757d]">Gemini AI Copilot</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-1">
-          <button onclick="limparChat()" class="p-1.5 text-xs text-[#6c757d] hover:text-[#4a3b69] font-medium" title="Limpar conversa">
-            Limpar
-          </button>
-          <button onclick="fecharPaineisMobile()" class="lg:hidden p-1 text-gray-500 hover:text-black">
-            ✕
-          </button>
-        </div>
-      </div>
-
-      <!-- Chips de Sugestões Contextuais -->
-      <div id="chips-estudo" class="px-3 py-2 border-b border-[#dee2e6] flex gap-1.5 overflow-x-auto bg-white text-xs">
-      </div>
-
-      <!-- Histórico de Conversa -->
-      <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
-        <div id="card-assistente-dica" class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed relative">
-          <button onclick="dispensarDicaAssistente()" class="absolute top-2.5 right-2.5 text-[#adb5bd] hover:text-[#495057] text-xs p-1 leading-none rounded hover:bg-black/5 transition" title="Dispensar">✕</button>
-          <p class="font-bold text-[#4a3b69] mb-1">💡 Assistente de Comentários:</p>
-          <p class="pr-5">Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
-        </div>
-      </div>
-
-      <!-- Entrada de Texto para Perguntar ao Gemini -->
-      <div class="p-3 border-t border-[#dee2e6] bg-white">
-        <div class="flex items-center gap-2 bg-[#f1f3f5] rounded-xl border border-[#dee2e6] px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
-          <input id="input-estudo" type="text" onkeydown="if(event.key==='Enter') enviarPerguntaEstudo()" placeholder="Pergunte ao Gemini sobre o estudo..." class="w-full text-xs bg-transparent focus:outline-none text-[#212529]">
-          <button onclick="enviarPerguntaEstudo()" class="p-1.5 rounded-lg bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition shrink-0" title="Enviar">
-            ➤
-          </button>
-        </div>
-        <div class="text-[10px] text-[#6c757d] mt-1 px-1 flex justify-between">
-          <span>Google Gemini 3.5 Flash</span>
-          <span>Shift+Enter quebra linha</span>
-        </div>
-      </div>
-
-    </aside>
 
     <!-- Botão Flutuante: Voltar ao Topo -->
     <button id="btn-flutuante-topo" onclick="rolarParaTopo()" title="Voltar ao início" class="opacity-0 pointer-events-none fixed bottom-16 right-4 sm:bottom-6 sm:right-6 z-30 w-11 h-11 rounded-full bg-[#4a3b69] text-white shadow-xl flex items-center justify-center text-base font-bold hover:bg-[#3b2e55] active:scale-95 transition-all duration-300 border border-white/20">
@@ -228,17 +169,13 @@
       <span class="text-base">🏠</span>
       <span>Início</span>
     </button>
-    <button onclick="toggleStudyPane()" class="flex flex-col items-center text-[10px] text-[#4a3b69] font-bold">
-      <span class="text-base">✦</span>
-      <span>Estudo IA</span>
+    <button onclick="abrirModalPerfil()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">👤</span>
+      <span>Perfil</span>
     </button>
     <button onclick="salvarTudo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">💾</span>
       <span>Salvar</span>
-    </button>
-    <button onclick="abrirModalPerfil()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
-      <span class="text-base">👤</span>
-      <span>Perfil</span>
     </button>
     <button onclick="abrirModalConfig()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">⚙️</span>
@@ -1723,31 +1660,61 @@
             ` : ''}
 
             ${p.perguntas && p.perguntas.length > 0 ? `
-              <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-3 mt-3">
+              <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-4 space-y-3 mt-3">
                 <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
                 ${p.perguntas.map((q, idx) => `
-                  <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-1.5">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-2">
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                       <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
                       <button onclick="responderComIA('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
                         <span class="text-amber-300">✦</span> Comentar com IA
                       </button>
                     </div>
-                    <textarea id="nota-pergunta-${p.id}-${idx}" placeholder="Meu comentário para esta pergunta..." class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
+                    <div class="flex items-center gap-1.5 flex-wrap text-xs">
+                      <button onclick="aprofundarParagrafo('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'aplicacao', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
+                        🌱 Aplicação
+                      </button>
+                      <button onclick="aprofundarParagrafo('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'simples', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
+                        ⚡ Simples (30s)
+                      </button>
+                    </div>
+                    <textarea id="nota-pergunta-${p.id}-${idx}" placeholder="Meu comentário para esta pergunta..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
+                    <div id="feedback-nota-pergunta-${p.id}-${idx}"></div>
                   </div>
                 `).join('')}
               </div>
             ` : `
-              <div class="pt-2 flex items-center justify-between">
-                <button onclick="responderComIA('Como estruturar a ${p.titulo.replace(/'/g, "\\'")} de forma clara e objetiva para a congregação?', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-${p.id}', this)" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
-                  <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
-                </button>
+              <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-4 space-y-3 mt-3">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button onclick="responderComIA('Como estruturar a ${p.titulo.replace(/'/g, "\\'")} de forma clara e objetiva para a congregação?', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-${p.id}', this)" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-white border border-[#dee2e6] hover:bg-[#e9ecef] transition flex items-center gap-1.5 shadow-2xs">
+                    <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
+                  </button>
+                  <button onclick="aprofundarParagrafo('Ideias práticas para ${p.titulo.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'aplicacao', 'nota-parte-${p.id}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs">
+                    🌱 Dicas práticas
+                  </button>
+                  <button onclick="toggleDuvidaInline('parte-${p.id}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs">
+                    💬 Perguntar ao Gemini
+                  </button>
+                </div>
+
+                <div id="box-duvida-parte-${p.id}" class="hidden pt-1">
+                  <div class="flex items-center gap-2 bg-white rounded-lg border border-[#dee2e6] p-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
+                    <input id="input-duvida-parte-${p.id}" type="text" placeholder="Dúvida ou sugestão para esta parte..." onkeydown="if(event.key==='Enter') enviarDuvidaInline('parte-${p.id}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-${p.id}', this)" class="w-full text-xs px-2 bg-transparent focus:outline-none text-[#212529]">
+                    <button onclick="enviarDuvidaInline('parte-${p.id}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-${p.id}', this)" class="px-2.5 py-1 rounded-md bg-[#4a3b69] text-white text-xs font-bold hover:bg-[#3b2e55] shrink-0">
+                      ➤
+                    </button>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-[#dee2e6]">
+                  <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                    <span class="font-bold">📝 Minhas Anotações & Esboço:</span>
+                  </div>
+                  <textarea id="nota-parte-${p.id}" placeholder="Minhas anotações para esta parte..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="2"></textarea>
+                  <div id="feedback-nota-parte-${p.id}"></div>
+                </div>
               </div>
             `}
-
-            <div class="mt-3 pt-3 border-t border-[#f1f3f5]">
-              <textarea id="nota-parte-${p.id}" placeholder="Minhas anotações para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
-            </div>
           </div>
         `;
       });
@@ -1840,19 +1807,51 @@
               </div>
             ` : ''}
 
-            <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-2">
-              <div class="flex items-start justify-between gap-3">
+            <!-- PAINEL DE ESTUDO INTEGRADO AO PARÁGRAFO -->
+            <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-4 space-y-3 mt-2">
+              
+              <!-- Pergunta e Botão Principal de Comentário -->
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
                 <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
                   ${p.pergunta}
                 </p>
-                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-sentinela-${p.num}', this)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1.5 shrink-0 shadow-2xs self-start sm:self-auto">
                   <span class="text-amber-300">✦</span> Comentar com IA
                 </button>
               </div>
-            </div>
 
-            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
-              <textarea id="nota-sentinela-${p.num}" placeholder="Meu comentário formulado para este parágrafo..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
+              <!-- Ferramentas Rápidas do Copilot no Parágrafo -->
+              <div class="flex items-center gap-1.5 flex-wrap pt-0.5 text-xs">
+                <span class="text-[10px] font-bold text-[#6c757d] uppercase tracking-wider">Apoio:</span>
+                <button onclick="aprofundarParagrafo('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'aplicacao', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Como aplicar este ponto no dia a dia">
+                  🌱 Aplicação
+                </button>
+                <button onclick="aprofundarParagrafo('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'simples', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Resposta direta em até 30 segundos">
+                  ⚡ Simples (30s)
+                </button>
+                <button onclick="toggleDuvidaInline('sentinela-${p.num}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Fazer uma pergunta personalizada ao Gemini sobre este parágrafo">
+                  💬 Perguntar
+                </button>
+              </div>
+
+              <!-- Caixa de Pergunta Personalizada ao Gemini (Oculta até clicar em 'Perguntar') -->
+              <div id="box-duvida-sentinela-${p.num}" class="hidden pt-1">
+                <div class="flex items-center gap-2 bg-white rounded-lg border border-[#dee2e6] p-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
+                  <input id="input-duvida-sentinela-${p.num}" type="text" placeholder="Escreva sua dúvida sobre este parágrafo..." onkeydown="if(event.key==='Enter') enviarDuvidaInline('sentinela-${p.num}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-sentinela-${p.num}', this)" class="w-full text-xs px-2 bg-transparent focus:outline-none text-[#212529]">
+                  <button onclick="enviarDuvidaInline('sentinela-${p.num}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-md bg-[#4a3b69] text-white text-xs font-bold hover:bg-[#3b2e55] shrink-0">
+                    ➤
+                  </button>
+                </div>
+              </div>
+
+              <!-- Minhas Anotações & Resposta Direta -->
+              <div class="pt-2 border-t border-[#dee2e6]">
+                <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                  <span class="font-bold">📝 Minhas Anotações & Resposta:</span>
+                </div>
+                <textarea id="nota-sentinela-${p.num}" placeholder="Toque em '✦ Comentar com IA' ou anote aqui seu comentário..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y leading-relaxed" rows="2"></textarea>
+                <div id="feedback-nota-sentinela-${p.num}"></div>
+              </div>
             </div>
           </div>
         `;
@@ -1870,21 +1869,65 @@
       atualizarChips(["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica", "Ponto Principal"]);
     }
 
-    // Controle de Gavetas e Painéis
-    function toggleStudyPane() {
-      const pane = document.getElementById('study-pane');
-      const backdrop = document.getElementById('drawer-backdrop');
-      pane.classList.toggle('translate-x-full');
-      backdrop.classList.toggle('hidden');
+    // Funções do Assistente de Estudo Integrado aos Parágrafos
+    let timerDebounceSalvar = null;
+    function autoSalvarNotaLocal(id) {
+      clearTimeout(timerDebounceSalvar);
+      timerDebounceSalvar = setTimeout(() => {
+        salvarTudo(true);
+      }, 600);
     }
 
-    function toggleMenuMobile() {
-      // O programa da reunião lateral foi removido do ecrã a pedido do utilizador
+    function toggleDuvidaInline(id) {
+      const box = document.getElementById('box-duvida-' + id);
+      if (box) {
+        box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) {
+          const inp = document.getElementById('input-duvida-' + id);
+          if (inp) inp.focus();
+        }
+      }
     }
 
+    async function enviarDuvidaInline(id, textoMateria, targetTextareaId, btnOrInp) {
+      const inp = document.getElementById('input-duvida-' + id);
+      if (!inp) return;
+      const pergunta = inp.value.trim();
+      if (!pergunta) return;
+
+      const btn = inp.nextElementSibling;
+      let btnOrig = "";
+      if (btn) {
+        btnOrig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '⏳';
+      }
+
+      await responderComIA('Dúvida sobre o parágrafo: ' + pergunta, textoMateria, targetTextareaId, btn);
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = btnOrig;
+      }
+      inp.value = "";
+    }
+
+    async function aprofundarParagrafo(perguntaOriginal, textoMateria, tipoApoio, targetTextareaId, btnElement) {
+      let promptApoio = "";
+      if (tipoApoio === 'aplicacao') {
+        promptApoio = 'Com base nesta matéria, elabore um comentário prático e objetivo de 30 a 45 segundos sobre COMO APLICAR ESTE ENSINAMENTO NO DIA A DIA (família, trabalho ou congregação).';
+      } else if (tipoApoio === 'simples') {
+        promptApoio = 'Responda à pergunta: "' + perguntaOriginal + '" de forma muito simples, direta e calorosa, para um comentário de até 25 a 30 segundos.';
+      } else {
+        promptApoio = perguntaOriginal;
+      }
+
+      await responderComIA(promptApoio, textoMateria, targetTextareaId, btnElement);
+    }
+
+    function toggleStudyPane() {}
+    function toggleMenuMobile() {}
     function fecharPaineisMobile() {
-      const pane = document.getElementById('study-pane');
-      if (pane) pane.classList.add('translate-x-full');
       const backdrop = document.getElementById('drawer-backdrop');
       if (backdrop) backdrop.classList.add('hidden');
     }
@@ -2026,13 +2069,9 @@
         salvarTudo(true);
       }
 
-      // Mantém o histórico no painel lateral atualizado para quando o usuário desejar abri-lo
-      adicionarMensagemEstudo("usuario", `Comentário para: ${pergunta}`);
-      adicionarMensagemEstudo("ia", `💡 <strong>Sugestão formulada:</strong><br><br>${respostaFinal.replace(/\n/g, '<br>')}`);
     }
 
     function irParaAnotacao(id) {
-      fecharPaineisMobile();
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2040,70 +2079,7 @@
       }
     }
 
-    function removerUltimaMensagemIA() {
-      const container = document.getElementById('mensagens-estudo');
-      if (container.lastChild) {
-        container.removeChild(container.lastChild);
-      }
-    }
-
-    function atualizarChips(chips) {
-      const container = document.getElementById('chips-estudo');
-      container.innerHTML = '';
-      chips.forEach(chip => {
-        const btn = document.createElement('button');
-        btn.className = "px-2.5 py-1 rounded-full bg-[#f1f3f5] border border-[#dee2e6] text-[#495057] hover:border-[#4a3b69] hover:text-[#4a3b69] whitespace-nowrap transition text-xs shrink-0 font-medium";
-        btn.innerText = chip;
-        btn.onclick = () => {
-          document.getElementById('input-estudo').value = chip;
-          enviarPerguntaEstudo();
-        };
-        container.appendChild(btn);
-      });
-    }
-
-    function adicionarMensagemEstudo(tipo, htmlTexto) {
-      const container = document.getElementById('mensagens-estudo');
-      const div = document.createElement('div');
-
-      if (tipo === 'usuario') {
-        div.className = "bg-[#e9ecef] text-[#212529] p-3 rounded-xl ml-4 text-xs font-semibold";
-        div.innerHTML = htmlTexto;
-      } else {
-        div.className = "bg-white text-[#212529] p-3.5 rounded-xl border border-[#dee2e6] shadow-xs text-xs leading-relaxed";
-        div.innerHTML = `<div class="flex items-center gap-1.5 text-[#4a3b69] font-bold mb-1"><span>✦</span> Gemini Copilot</div>${htmlTexto}`;
-      }
-
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
-    }
-
-    async function enviarPerguntaEstudo() {
-      dispensarDicaAssistente();
-      const input = document.getElementById('input-estudo');
-      const val = input.value.trim();
-      if (!val) return;
-
-      adicionarMensagemEstudo("usuario", val);
-      input.value = "";
-      adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Pensando com base na matéria...</span>`);
-
-      const contexto = `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`;
-      const respostaIA = await chamarGeminiIA({ prompt: val, context: contexto });
-
-      removerUltimaMensagemIA();
-      if (respostaIA) {
-        adicionarMensagemEstudo("ia", respostaIA.replace(/\n/g, '<br>'));
-      } else {
-        adicionarMensagemEstudo("ia", `Analisando com base na matéria da <strong>Semana ${semanaAtiva}</strong>:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
-      }
-    }
-
-    function limparChat() {
-      dispensarDicaAssistente();
-      document.getElementById('mensagens-estudo').innerHTML = '';
-      adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
-    }
+    function atualizarChips() {}
 
     // ==========================================
     // SISTEMA DE PERFIS DE USUÁRIO (SEPARAÇÃO TOTAL)
