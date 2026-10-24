@@ -59,13 +59,11 @@ const htmlTemplate = `<!DOCTYPE html>
   <header class="bg-[#4a3b69] text-white sticky top-0 z-40 shadow-md">
     <div class="px-4 py-2.5 flex items-center justify-between">
       
-      <!-- Lado Esquerdo: Menu Hambúrguer + Título da Seção -->
+      <!-- Lado Esquerdo: Ícone da Publicação + Título da Seção -->
       <div class="flex items-center space-x-3">
-        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Programa da Reunião">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
+        <div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center text-sm shadow-xs select-none">
+          📖
+        </div>
         <div class="flex items-center gap-2">
           <h1 class="text-base font-semibold tracking-wide text-white">Reuniões</h1>
           <span id="badge-cloud-status" class="hidden sm:inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-2 py-0.5 rounded-full font-semibold">
@@ -135,15 +133,6 @@ const htmlTemplate = `<!DOCTYPE html>
   <div class="flex flex-1 overflow-hidden relative">
     
     <div id="drawer-backdrop" onclick="fecharPaineisMobile()" class="hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"></div>
-
-    <!-- Menu Lateral Esquerdo (Lista de Partes da Reunião) -->
-    <aside id="sidebar-partes" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#dee2e6] p-4 flex flex-col overflow-y-auto transform -translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0 shadow-lg lg:shadow-none">
-      <div class="flex items-center justify-between mb-3 border-b border-[#dee2e6] pb-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-[#6c757d]">Programa da Reunião</h3>
-        <button onclick="fecharPaineisMobile()" class="lg:hidden text-gray-500 hover:text-black">✕</button>
-      </div>
-      <div id="lista-partes-sidebar" class="space-y-1"></div>
-    </aside>
 
     <!-- ÁREA CENTRAL DO LEITOR (ESTILO JW LIBRARY) -->
     <main class="flex-1 overflow-y-auto px-4 sm:px-10 py-6 max-w-3xl mx-auto w-full jw-article">
@@ -236,13 +225,13 @@ const htmlTemplate = `<!DOCTYPE html>
       <span class="text-base">🏠</span>
       <span>Início</span>
     </button>
-    <button onclick="toggleMenuMobile()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
-      <span class="text-base">📖</span>
-      <span>Programa</span>
-    </button>
     <button onclick="toggleStudyPane()" class="flex flex-col items-center text-[10px] text-[#4a3b69] font-bold">
       <span class="text-base">✦</span>
       <span>Estudo IA</span>
+    </button>
+    <button onclick="salvarTudo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">💾</span>
+      <span>Salvar</span>
     </button>
     <button onclick="abrirModalPerfil()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">👤</span>
@@ -528,33 +517,6 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
-      // Sidebar da Reunião
-      const sidebar = document.getElementById('lista-partes-sidebar');
-      let sidebarHtml = '';
-      if (dados.abertura?.cantico) {
-        sidebarHtml += \`
-          <a href="#abertura-reuniao" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-            <span class="text-[#4a3b69] font-bold">🎵</span> \${dados.abertura.cantico}
-          </a>
-        \`;
-      }
-      dados.partes.forEach(p => {
-        sidebarHtml += \`
-          <a href="#parte-\${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-            <span class="font-bold text-[#4a3b69]">\${p.id}.</span> \${p.titulo.split('(')[0].replace(/^\\d+\\.\\s*/, '')}
-            <span class="text-[11px] text-[#6c757d] block font-semibold">\${p.duracao}</span>
-          </a>
-        \`;
-      });
-      if (dados.conclusao?.cantico) {
-        sidebarHtml += \`
-          <a href="#conclusao-reuniao" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-            <span class="text-[#4a3b69] font-bold">🎵</span> \${dados.conclusao.cantico}
-          </a>
-        \`;
-      }
-      sidebar.innerHTML = sidebarHtml;
-
       const leitor = document.getElementById('conteudo-leitor');
       let html = '';
 
@@ -680,14 +642,6 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
-      // Sidebar com a lista de parágrafos
-      const sidebar = document.getElementById('lista-partes-sidebar');
-      sidebar.innerHTML = dados.paragrafos.map(p => \`
-        <a href="#paragrafo-\${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-          <span class="font-bold text-[#4a3b69]">§ \${p.num}</span> - Parágrafo \${p.num}
-        </a>
-      \`).join('');
-
       const leitor = document.getElementById('conteudo-leitor');
       let html = '';
 
@@ -769,16 +723,14 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     function toggleMenuMobile() {
-      const sidebar = document.getElementById('sidebar-partes');
-      const backdrop = document.getElementById('drawer-backdrop');
-      sidebar.classList.toggle('-translate-x-full');
-      backdrop.classList.toggle('hidden');
+      // O programa da reunião lateral foi removido do ecrã a pedido do utilizador
     }
 
     function fecharPaineisMobile() {
-      document.getElementById('study-pane').classList.add('translate-x-full');
-      document.getElementById('sidebar-partes').classList.add('-translate-x-full');
-      document.getElementById('drawer-backdrop').classList.add('hidden');
+      const pane = document.getElementById('study-pane');
+      if (pane) pane.classList.add('translate-x-full');
+      const backdrop = document.getElementById('drawer-backdrop');
+      if (backdrop) backdrop.classList.add('hidden');
     }
 
     // CHAMADA HÍBRIDA AO GOOGLE GEMINI (Vercel API -> Direct Client -> Fallback)
