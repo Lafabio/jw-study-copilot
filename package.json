@@ -1,0 +1,9 @@
+{
+  "name": "jw-study-copilot",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "JW Study Copilot com Gemini AI e Supabase",
+  "scripts": {
+    "start": "node src/build_app.mjs"
+  }
+}
