@@ -54,6 +54,10 @@
         </button>
         <div class="flex items-center gap-2">
           <h1 class="text-base font-semibold tracking-wide text-white">Reuniões</h1>
+          <span id="badge-cloud-status" class="hidden sm:inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-2 py-0.5 rounded-full font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Supabase Nuvem
+          </span>
         </div>
       </div>
 
@@ -65,7 +69,7 @@
           <span class="sm:hidden">Estudo</span>
         </button>
 
-        <button onclick="salvarTudo()" title="Salvar Anotações" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
+        <button onclick="salvarTudo()" title="Salvar Anotações no Supabase" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
           </svg>
@@ -156,7 +160,7 @@
           <span class="text-[#4a3b69] font-bold text-base">✦</span>
           <div>
             <h3 class="text-xs font-bold text-[#212529] uppercase tracking-wider">Painel de Estudo</h3>
-            <span id="study-pane-subtitle" class="text-[11px] text-[#6c757d]">Assistente Gemini AI & Supabase</span>
+            <span id="study-pane-subtitle" class="text-[11px] text-[#6c757d]">Gemini AI • Conectado à Nuvem</span>
           </div>
         </div>
         
@@ -177,7 +181,7 @@
       <!-- Histórico de Conversa -->
       <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
         <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
-          <p class="font-bold text-[#4a3b69] mb-1">💡 Como usar o Painel de Estudo:</p>
+          <p class="font-bold text-[#4a3b69] mb-1">💡 Painel de Estudo Inteligente:</p>
           <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas e com as suas próprias palavras.</p>
         </div>
       </div>
@@ -225,7 +229,13 @@
   </nav>
 
   <script>
-    // DADOS REAIS EXTRAÍDOS DO JW.ORG (Semanas 43, 44 e 45)
+    // CONFIGURAÇÃO SUPABASE DA NUVEM
+    const SUPABASE_CONFIG = {
+      url: 'https://jjmjjlvpaxafxpebvrwb.supabase.co',
+      key: 'sb_publishable_B5LuMRBbudUuwdEkgH5Vkw_BOqHt6re'
+    };
+
+    // BANCO DE DADOS LOCAL INICIAL (Fallback)
     const bancoSemanasJW = {
       43: {
         meioSemana: {
@@ -321,6 +331,27 @@
       VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
     };
 
+    // Sincronização em tempo real com o Supabase ao iniciar
+    async function sincronizarComSupabase() {
+      try {
+        const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/meetings_cache?select=*`, {
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
+          }
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          rows.forEach(r => {
+            bancoSemanasJW[r.week_number] = r.content_json;
+          });
+          console.log(`✅ Sincronizado com Supabase Nuvem: ${rows.length} semanas ativas.`);
+        }
+      } catch (e) {
+        console.warn('Operando com base de dados local offline.');
+      }
+    }
+
     function selecionarSemana(num) {
       semanaAtiva = parseInt(num);
       document.getElementById('seletor-semana').value = semanaAtiva;
@@ -329,6 +360,7 @@
       } else {
         renderizarSentinela();
       }
+      carregarNotasSalvas();
     }
 
     function mudarSemanaRelativa(delta) {
@@ -352,6 +384,7 @@
         tabMeio.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition";
         renderizarSentinela();
       }
+      carregarNotasSalvas();
       fecharPaineisMobile();
     }
 
@@ -489,7 +522,6 @@
       document.getElementById('drawer-backdrop').classList.add('hidden');
     }
 
-    // Integração Inteligente com API Serverless / Vercel & Fallback
     async function responderComIA(pergunta, respostaDireta = "") {
       const pane = document.getElementById('study-pane');
       if (pane.classList.contains('translate-x-full')) {
@@ -500,7 +532,6 @@
       adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Consultando Gemini AI...</span>`);
 
       try {
-        // Tenta rota serverless da Vercel
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -512,18 +543,14 @@
 
         if (res.ok) {
           const data = await res.json();
-          // Remove a mensagem de carregando e coloca a resposta real
           removerUltimaMensagemIA();
           adicionarMensagemEstudo("ia", `💡 <strong>Sugestão (30 a 45s):</strong><br><br>"${data.resposta}"`);
           return;
         }
-      } catch (err) {
-        console.warn('API /api/gemini indisponível ou offline. Usando motor local:', err.message);
-      }
+      } catch (err) {}
 
-      // Fallback local instantâneo
       removerUltimaMensagemIA();
-      const texto = respostaDireta || "Podemos comentar que agir com base no amor e na fé prática mantém a paz da congregação e demonstra gratidão pelas orientações de Jeová.";
+      const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
       adicionarMensagemEstudo("ia", `💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>`);
     }
 
@@ -593,7 +620,7 @@
       } catch (e) {}
 
       removerUltimaMensagemIA();
-      adicionarMensagemEstudo("ia", `Analisando com base na matéria de estudo da **Semana ${semanaAtiva}**:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
+      adicionarMensagemEstudo("ia", `Analisando com base na matéria da **Semana ${semanaAtiva}**:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
     }
 
     function limparChat() {
@@ -601,8 +628,8 @@
       adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
     }
 
+    // Salva notas no Supabase e no localStorage
     async function salvarTudo() {
-      // 1. Salva localmente em localStorage
       const textareas = document.querySelectorAll('textarea');
       const notas = {};
       textareas.forEach(t => {
@@ -610,28 +637,82 @@
           notas[t.id] = t.value.trim();
         }
       });
+
+      // 1. Salva localmente
       localStorage.setItem(`jw_notas_${semanaAtiva}_${modoAtual}`, JSON.stringify(notas));
 
-      // 2. Tenta sincronizar com o Supabase via /api/notas
+      // 2. Salva na nuvem no Supabase
       try {
-        await fetch('/api/notas', {
+        const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_notes`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
           body: JSON.stringify({
-            userId: 'lafa-device',
-            ano: 2026,
-            semana: semanaAtiva,
-            meetingType: modoAtual,
-            itemKey: 'todas',
-            noteText: JSON.stringify(notas)
+            user_id: 'lafa-cloud-user',
+            year: 2026,
+            week_number: semanaAtiva,
+            meeting_type: modoAtual,
+            item_key: 'todas',
+            note_text: JSON.stringify(notas),
+            updated_at: new Date().toISOString()
           })
         });
-      } catch (e) {}
 
-      alert(`✅ Anotações da Semana ${semanaAtiva} salvas com sucesso no seu dispositivo e sincronizadas com o Supabase!`);
+        if (res.ok) {
+          alert(`✅ Anotações da Semana ${semanaAtiva} salvas com sucesso no Supabase Nuvem e no seu aparelho!`);
+          return;
+        }
+      } catch (e) {
+        console.warn('Erro ao salvar no Supabase:', e.message);
+      }
+
+      alert(`✅ Anotações da Semana ${semanaAtiva} salvas com sucesso no seu dispositivo!`);
     }
 
-    window.onload = () => {
+    // Recupera notas salvas
+    async function carregarNotasSalvas() {
+      // Tenta recuperar do Supabase
+      try {
+        const res = await fetch(
+          `${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.lafa-cloud-user&year=eq.2026&week_number=eq.${semanaAtiva}&meeting_type=eq.${modoAtual}&select=*`,
+          {
+            headers: {
+              'apikey': SUPABASE_CONFIG.key,
+              'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
+            }
+          }
+        );
+
+        if (res.ok) {
+          const rows = await res.json();
+          if (rows && rows.length > 0 && rows[0].note_text) {
+            const notas = JSON.parse(rows[0].note_text);
+            Object.entries(notas).forEach(([id, texto]) => {
+              const el = document.getElementById(id);
+              if (el) el.value = texto;
+            });
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Fallback: localStorage
+      const local = localStorage.getItem(`jw_notas_${semanaAtiva}_${modoAtual}`);
+      if (local) {
+        const notas = JSON.parse(local);
+        Object.entries(notas).forEach(([id, texto]) => {
+          const el = document.getElementById(id);
+          if (el) el.value = texto;
+        });
+      }
+    }
+
+    window.onload = async () => {
+      await sincronizarComSupabase();
       selecionarSemana(43);
     };
   </script>
