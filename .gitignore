@@ -5,3 +5,5 @@ cache/*.zip
 *.log
 .DS_Store
 Thumbs.db
+
+temp_*.html

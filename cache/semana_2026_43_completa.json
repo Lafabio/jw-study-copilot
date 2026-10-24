@@ -1,0 +1,247 @@
+{
+  "ano": 2026,
+  "semana": 43,
+  "meioSemana": {
+    "dataTexto": "19-25 DE OUTUBRO",
+    "temaLeitura": "JEREMIAS 45-46",
+    "abertura": {
+      "cantico": "Cântico 21",
+      "oracao": "Oração",
+      "comentariosIniciais": "Comentários iniciais (1 min)"
+    },
+    "tesouros": {
+      "secao": "TESOUROS DA PALAVRA DE DEUS",
+      "cor": "#596b7a",
+      "partes": [
+        {
+          "id": 1,
+          "titulo": "1. Ter esperança é o segredo para o contentamento",
+          "duracao": "10 min",
+          "tipo": "Discurso",
+          "conteudo": [
+            "Parece que Baruque não estava satisfeito com sua situação na vida. (Jer. 45:3; w25.07 22 §§ 8-9)",
+            "Sem contentamento, podemos perder nossa alegria e tomar decisões ruins. (w25.07 20 § 2)",
+            "Jeová ajudou Baruque a mudar o seu ponto de vista dando a ele uma esperança. (Jer. 45:5; w25.07 24 §§ 13-14)"
+          ],
+          "paraMeditar": "O que eu tenho que fazer para não ser como Baruque e não buscar 'grandes coisas' para mim mesmo?",
+          "temPerguntaIA": true,
+          "perguntaIA": "Como posso aplicar a correção que Jeová deu a Baruque sobre não buscar grandezas?"
+        },
+        {
+          "id": 2,
+          "titulo": "2. Joias espirituais",
+          "duracao": "10 min",
+          "tipo": "Joias Espirituais",
+          "perguntas": [
+            {
+              "texto": "Jer. 46:22 — Em que sentido o som do Egito seria “como o de uma serpente deslizando”? (it “Voz” § 16)",
+              "pontoChave": "O som indicava a fraqueza e retirada envergonhada do Egito sob o ataque babilônico, sem a pompa altiva de antes."
+            },
+            {
+              "texto": "Que joias espirituais você encontrou na leitura da Bíblia desta semana sobre Jeová, o ministério ou outro assunto?",
+              "pontoChave": "Jeová cumpre infalivelmente suas promessas e zela amorosamente por seus servos mesmo em épocas de julgamento severo."
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "titulo": "3. Leitura da Bíblia",
+          "duracao": "4 min",
+          "tipo": "Leitura da Bíblia",
+          "referencia": "Jeremias 46:1-12",
+          "licao": "th lição 5 — Ênfase correta e sentimento"
+        }
+      ]
+    },
+    "ministerio": {
+      "secao": "FAÇA SEU MELHOR NO MINISTÉRIO",
+      "cor": "#c57e00",
+      "partes": [
+        {
+          "id": 4,
+          "titulo": "4. Iniciando conversas (De casa em casa)",
+          "duracao": "3 min",
+          "descricao": "Use a primeira conversa modelo ou a lição 1 da brochura 'Lições do Ministério'.",
+          "dicaIA": "Como iniciar uma conversa amigável de casa em casa sobre esperança para o futuro?"
+        },
+        {
+          "id": 5,
+          "titulo": "5. Iniciando conversas (Testemunho informal)",
+          "duracao": "2 min",
+          "descricao": "Aproveite uma oportunidade do dia a dia para dar testemunho com tato e interesse pessoal.",
+          "dicaIA": "Ideia para puxar assunto no trabalho, escola ou transporte de maneira natural."
+        },
+        {
+          "id": 6,
+          "titulo": "6. Iniciando conversas (Testemunho público)",
+          "duracao": "2 min",
+          "descricao": "Conversando com alguém que se aproximou do carrinho de publicações.",
+          "dicaIA": "Como abordar alguém no carrinho com uma pergunta cativante sobre a Bíblia?"
+        },
+        {
+          "id": 7,
+          "titulo": "7. Discurso de Estudante",
+          "duracao": "4 min",
+          "descricao": "Discurso explicativo perante a congregação aplicando a matéria bíblica com clareza.",
+          "dicaIA": "Esboço simples em 3 pontos: introdução bíblica, desenvolvimento prático e conclusão motivadora."
+        }
+      ]
+    },
+    "vidaCrista": {
+      "secao": "NOSSA VIDA CRISTÃ",
+      "cor": "#9e2a2b",
+      "canticoMeio": "Cântico 117 — 'Partilhe com outros o que você tem'",
+      "partes": [
+        {
+          "id": 8,
+          "titulo": "8. ‘Partilhe com outros o que você tem’",
+          "duracao": "15 min",
+          "tipo": "Consideração com a Assistência",
+          "introducao": "Em suas cartas, o apóstolo Paulo muitas vezes falou sobre a importância de dividir com outros o que temos. Os conselhos dele foram muito importantes para os cristãos daquela época, e continuam sendo hoje. — Efé. 4:28; 1 Tim. 6:17, 18.",
+          "perguntas": [
+            "Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo sobre generosidade?",
+            "Pensando no que vai acontecer em breve, por que é importante aprender desde já a compartilhar com outros o que temos?",
+            "O que podemos aprender do exemplo de generosidade dos macedônios? (2 Coríntios 8:2-4)",
+            "O que mais podemos compartilhar com outros além de coisas materiais?",
+            "Que exemplo Jeová nos dá sobre dividir as coisas com outros?"
+          ]
+        },
+        {
+          "id": 9,
+          "titulo": "9. Estudo bíblico de congregação",
+          "duracao": "30 min",
+          "tipo": "Estudo Bíblico de Congregação",
+          "livro": "Livro: 'Uma História de Amor' (wcg)",
+          "capitulo": "Capítulo 13 — 'Ele obedeceu mesmo sem entender'",
+          "textoResumo": "Considere como Abraão demonstrou fé inabalável ao seguir as instruções de Jeová sem questionar, confiando plenamente na justiça e amor de Deus.",
+          "perguntas": [
+            "O que Abraão sentiu ao receber a instrução de oferecer Isaque, e como ele reagiu?",
+            "Por que podemos ter certeza de que Jeová nunca nos pedirá nada que vá além das nossas forças suportar?",
+            "Como a atitude de Abraão e Isaque ilustra o sacrifício supremo de Jeová e Jesus pela humanidade?"
+          ]
+        }
+      ],
+      "conclusao": {
+        "comentariosFinais": "Comentários finais (3 min)",
+        "canticoFinal": "Cântico 87 e oração"
+      }
+    }
+  },
+  "fimSemana": {
+    "dataTexto": "19-25 DE OUTUBRO DE 2026",
+    "titulo": "Um pedido feito com base no amor",
+    "tema": "“Prefiro lhe fazer um apelo à base do amor.” — FILÊM. 9.",
+    "objetivo": "Ver que lições aprendemos com Paulo, Onésimo e Filêmon sobre conviver em paz com os irmãos.",
+    "canticoInicial": "CÂNTICO 106 — Amor — a qualidade que é sem igual",
+    "canticoFinal": "CÂNTICO 107 — A quem pertencemos?",
+    "paragrafos": [
+      {
+        "num": "1",
+        "pergunta": "1. Que responsabilidade todos nós temos?",
+        "texto": "NÓS damos muito valor à paz que existe entre o povo de Deus. Essa paz nos dá uma ideia de como vai ser a vida no Paraíso. ( Isa. 32:17, 18 ) É verdade que é Jeová que nos dá essa paz, mas cada um de nós tem a responsabilidade de manter e proteger o ambiente pacífico que existe na congregação. ( Rom. 12:18 ) Como podemos continuar tendo paz à medida que convivemos com outros? O que podemos fazer para manter a paz quando ofendemos alguém ou quando alguém nos ofende? Podemos encontrar as respostas a essas perguntas analisando um pedido feito com base no amor. Esse pedido está em um relato envolvendo três personagens da Bíblia: o apóstolo Paulo, Onésimo e Filêmon.",
+        "notaKey": "sent_p_1"
+      },
+      {
+        "num": "2",
+        "pergunta": "2. O que aconteceu entre Filêmon e Onésimo? ( Filêmon 8, 9, 17 )",
+        "texto": "2 Leia Filêmon 8, 9, 17 . Na sua carta a Filêmon, Paulo o incentivou a receber de volta seu escravo Onésimo. Paulo deu esse incentivo com base no amor de Filêmon por Cristo e pelos irmãos na congregação. Você se lembra do que aconteceu entre eles? Filêmon era um irmão na congregação de Colossos, conhecido por ter uma forte fé e ser muito amoroso. Ele tinha um escravo que não era cristão, chamado Onésimo. Esse escravo o abandonou e fugiu para Roma. Antes de fugir, ele provavelmente roubou Filêmon. ( Filêm. 18 ; veja a nota de estudo .) Enquanto estava em Roma, Onésimo se tornou cristão e ficou muito amigo de Paulo. ( Col. 4:9 ) Mas de acordo com a lei romana, Onésimo tinha que voltar para o seu senhor. Então, Paulo o enviou de volta a Filêmon. — Filêm. 12, 13 ; veja a nota de estudo “Eu o envio de volta para você”.",
+        "notaKey": "sent_p_2"
+      },
+      {
+        "num": "3",
+        "pergunta": "3. O que pode ter deixado Paulo preocupado ao enviar Onésimo de volta? (Veja também a imagem.)",
+        "texto": "3 Paulo talvez tivesse pensado em como Filêmon reagiria quando Onésimo voltasse. Pela lei, Filêmon tinha o direito de punir Onésimo de modo severo. Será que ele faria isso? Como a congregação reagiria? E se outros escravos e donos de escravos tivessem opiniões diferentes sobre o assunto? Paulo sabia que essa situação podia acabar tirando a paz da congregação. Então ele escreveu uma carta para Filêmon e a enviou por meio de Tíquico. ( Efé. 6:21, 22; Col. 4:7-9 ; veja a nota de estudo em Colossenses 4:7 .) Paulo também enviou uma carta à congregação de Colossos. Ao analisarmos essas duas cartas, vamos ver o que podemos aprender com os exemplos de Paulo, Onésimo e Filêmon.",
+        "notaKey": "sent_p_3"
+      },
+      {
+        "num": "4-5",
+        "pergunta": "4-5. O que os anciãos podem fazer para contribuir com a paz na congregação?",
+        "texto": "4 O que aprendemos com o exemplo de Paulo? O modo como Paulo tratava os irmãos contribuía para a paz na congregação. O exemplo dele nos ensina como podemos cultivar a paz com os irmãos.",
+        "notaKey": "sent_p_4-5"
+      },
+      {
+        "num": "6",
+        "pergunta": "6. Por que é importante dar elogios?",
+        "texto": "5 Paulo tratou Filêmon como amigo. ( Filêm. 17 ) Ele não achava que podia mandar em Filêmon, como se fosse dono dele. ( 2 Cor. 1:24 ) Para Paulo, Filêmon era um colaborador e um amigo. Assim, ele deu um bom exemplo para Filêmon de como tratar Onésimo, que agora era cristão. Ele também deixou um ótimo exemplo para todos nós, em especial para os anciãos. Anciãos que tratam os irmãos como amigos criam um ambiente de paz na congregação. Por serem pastores amorosos, eles não agem como se fossem donos do rebanho de Deus. ( 1 Ped. 5:1-3 ) Em vez disso, eles passam tempo com os irmãos e dão valor a eles. Também escutam e apoiam os irmãos em tempos de necessidade. Anciãos que imitam Paulo e tratam os irmãos como amigos dão um bom exemplo para o rebanho e ajudam a cultivar a paz na congregação.",
+        "notaKey": "sent_p_6"
+      },
+      {
+        "num": "7",
+        "pergunta": "7. Por que precisamos ter cuidado com o que falamos sobre outros? ( Filêmon 10-12 )",
+        "texto": "6 Paulo elogiou Filêmon. ( Filêm. 4, 5, 7 ) Todo mundo precisa de elogios. Por quê? Um dos motivos é que muitos duvidam do seu próprio valor. Algumas pessoas ficam inseguras em relação à sua aparência ou à opinião de outros. Outras talvez tenham medo de perder um privilégio que apreciam muito. Esses sentimentos são normais. Mas por causa deles, podemos ficar ansiosos ou nos ofender facilmente. Talvez achemos que as pessoas estão sempre nos acusando. Ou podemos ficar tentando provar que somos melhores do que outros. Essas atitudes nos impedem de ter relacionamentos pacíficos. Para ajudar alguém a reconhecer seu próprio valor, é importante dar elogios. ( Pro. 12:25 ) Elogios fazem uma pessoa se sentir amada e valorizada. Você gostaria que outros se sentissem assim perto de você? Então procure oportunidades para dar elogios sinceros. Não elogie uma pessoa apenas quando ela fizer algo bem feito, mas também quando ela se esforçar. A ideia é: se você viu algo que merece elogio, dê um elogio.",
+        "notaKey": "sent_p_7"
+      },
+      {
+        "num": "8",
+        "pergunta": "8. O que pode nos ajudar a falar bem dos irmãos? (Veja também as imagens.)",
+        "texto": "7 Paulo falou bem de Onésimo. (Leia Filêmon 10-12 .) Como será que isso afetou Filêmon? Será que as palavras de Paulo mudaram os sentimentos e a atitude de Filêmon em relação a Onésimo? Com certeza! Da mesma forma, o que falamos sobre uma pessoa influencia o modo como ela é vista e tratada. Quando falamos bem dos irmãos, ajudamos outros a tratá-los com bondade. Infelizmente, o contrário também é verdade. Falar mal dos irmãos pode afetar o modo como outros vão tratá-los. Mas para falar de forma positiva sobre uma pessoa, primeiro precisamos pensar de forma positiva sobre ela. O que pode nos ajudar a fazer isso? Vamos ver algo que o apóstolo Paulo sempre fazia.",
+        "notaKey": "sent_p_8"
+      },
+      {
+        "num": "9",
+        "pergunta": "9. Por que é impressionante o modo como Paulo falou com Filêmon?",
+        "texto": "8 Paulo tinha o hábito de agradecer a Jeová pelas boas qualidades de Filêmon. ( Filêm. 4, 5 ) E ele fazia o mesmo com outros irmãos. ( 1 Cor. 1:4-7; Fil. 1:3-5; Col. 1:3, 4; 1 Tes. 1:2, 3 ) Paulo sabia das fraquezas dos seus irmãos e irmãs, mas preferia se concentrar nas qualidades deles. E ele sempre agradecia a Jeová pelos amigos que tinha. Você tem dificuldade de falar bem das pessoas? Nesse caso, se esforce para ter o hábito de ver as qualidades delas e de orar para Jeová abençoá-las. Assim, vai ser mais fácil falar coisas boas sobre elas.",
+        "notaKey": "sent_p_9"
+      },
+      {
+        "num": "10",
+        "pergunta": "10. O que podemos aprender com o exemplo de Onésimo?",
+        "texto": "9 Paulo estava numa situação difícil, mas tratou Filêmon com bondade. Você já perdeu a paciência com alguém porque estava cansado ou estressado? Quando estamos passando por um problema, é fácil descontar nossa frustração em outros. Com isso em mente, veja algumas coisas que aconteceram com Paulo na época que ele escreveu para Filêmon. Poucos anos antes, Paulo tinha sido atacado de forma violenta. Ele ficou preso injustamente em Jerusalém e em Cesareia. Depois, Paulo foi transferido para Roma, mas no meio do caminho sofreu naufrágio. Enquanto escrevia a carta para Filêmon, ele ainda estava em prisão domiciliar em Roma. ( Filêm. 1 ) Será que Paulo permitiu que essas situações estressantes afetassem o modo como ele falou com Filêmon? Não. Na sua carta a Filêmon, ele falou com bondade e respeito. Qual a lição? Mesmo quando estamos cansados, estressados ou enfrentando dificuldades, podemos contribuir para um ambiente de paz por nos esforçar para tratar outros com bondade. E quando estamos em paz com outros, fica mais fácil lidar com nossos próprios problemas.",
+        "notaKey": "sent_p_10"
+      },
+      {
+        "num": "11",
+        "pergunta": "11. O que podemos fazer para recuperar a paz quando ofendemos alguém? (Veja também as imagens.)",
+        "texto": "10 Todos nós fazemos e dizemos coisas que ofendem outros. O exemplo de Onésimo nos ensina como agir quando isso acontece. Ele fez algo que parece simples, mas que não é nada fácil. Ele admitiu seu erro e se esforçou para fazer as pazes. Com certeza Onésimo sabia que, de acordo com a lei romana, ele tinha que voltar para seu senhor. Para isso, ele aceitou fazer uma viagem cara e muito cansativa de mais de 1.400 quilômetros. Ele também estava disposto a abrir mão de sua liberdade e encarar as consequências das suas ações. Essa deve ter sido uma decisão difícil. Será que Onésimo achava que tinha bons motivos para ter fugido de Filêmon? Nesse caso, ele não deixou que esses sentimentos o impedissem de fazer o que estava ao seu alcance para recuperar a paz com Filêmon, que agora também era seu irmão.",
+        "notaKey": "sent_p_11"
+      },
+      {
+        "num": "12",
+        "pergunta": "12. Por que Paulo acreditava que Filêmon iria perdoar Onésimo?",
+        "texto": "11 Se você ofender alguém, dê o primeiro passo para recuperar a paz. ( Mat. 5:23-25 ) É verdade que isso pode ser difícil, mas seu esforço vai valer a pena. Para começar, peça desculpas de coração. Esteja disposto a ouvir a outra pessoa e tente entender como ela se sente. Admita seu erro. Não fique se justificando nem colocando a culpa em outros. Se você fizer isso, vai parecer que seu pedido de desculpas não é sincero, e pode ser que o problema continue ou até piore. Pedir desculpas exige humildade, mas geralmente é o caminho mais rápido para recuperar a paz. — Rom. 14:19 .",
+        "notaKey": "sent_p_12"
+      },
+      {
+        "num": "13",
+        "pergunta": "13. Por que o amor é essencial para manter a paz? ( Colossenses 3:14 )",
+        "texto": "12 O exemplo de Filêmon nos ensina como manter a paz quando alguém nos ofende. Será que Filêmon perdoou Onésimo e o recebeu de volta de forma bondosa? O relato não diz. Mas Paulo acreditava que Filêmon faria isso. ( Filêm. 17, 21 ) Paulo sabia que Filêmon tinha qualidades que o ajudariam a perdoar Onésimo. Que qualidades são essas?",
+        "notaKey": "sent_p_13"
+      },
+      {
+        "num": "14",
+        "pergunta": "14. Como sabemos que Filêmon era hospitaleiro?",
+        "texto": "13 Filêmon amava os irmãos. ( Filêm. 5 ) O nome Filêmon significa “amoroso”, e Filêmon fazia jus a esse nome. Ele era conhecido por ser muito amoroso, e isso o ajudou a perdoar Onésimo. Na carta que Paulo escreveu para a congregação de Filêmon em Colossos, ele disse que o amor é “o perfeito vínculo de união”. (Leia Colossenses 3:14 .) Ou seja, a qualidade que mais contribui para a paz e a união é o amor. Quanto maior nosso amor por um irmão, mais fácil é perdoá-lo e tratá-lo com bondade. ( 1 Cor. 13:4-7 ) O que ajudou Filêmon a fortalecer seu amor pelos irmãos?",
+        "notaKey": "sent_p_14"
+      },
+      {
+        "num": "15",
+        "pergunta": "15. Por que mostrar hospitalidade fortalece nosso amor por outros? (Veja também as imagens.)",
+        "texto": "14 Filêmon tinha uma qualidade que fortalece o amor: a hospitalidade. Ele cedeu sua casa como local de reuniões para a congregação. ( Filêm. 2 ) Além disso, Paulo pediu que Filêmon preparasse um lugar para ele ficar. Isso indica que Paulo via Filêmon como uma pessoa hospitaleira. ( Filêm. 22 ) Sem dúvida, a hospitalidade de Filêmon fazia com que outros se sentissem à vontade e ficassem reanimados. — Filêm. 7 .",
+        "notaKey": "sent_p_15"
+      },
+      {
+        "num": "16",
+        "pergunta": "16. Qual talvez tenha sido a reação de Filêmon quando ouviu o conselho de Paulo em Colossenses 3:13 ?",
+        "texto": "15 Quando imitamos Filêmon e mostramos hospitalidade, nosso amor por outros fica mais forte. Ser hospitaleiros nos dá a oportunidade de conhecer melhor nossos irmãos. É bom passar tempo com irmãos que estão fora do nosso círculo de amigos, até com aqueles que a princípio parecem ter pouco em comum com a gente. Isso nos ajuda a dar valor à diversidade de personalidades que existem na organização de Jeová e que a tornam ainda mais especial. Saber mais sobre a vida deles, como conheceram a verdade e os desafios que já enfrentaram aumenta nosso amor e respeito por eles. Conseguimos ver por que Jeová os atraiu à sua organização. ( João 6:44 ) Então, se formos hospitaleiros, nosso amor pelos irmãos vai aumentar, nós não vamos atribuir a eles más motivações e vai ser mais fácil perdoá-los quando cometerem erros.",
+        "notaKey": "sent_p_16"
+      },
+      {
+        "num": "17",
+        "pergunta": "17. O que significa ‘continuar a suportar uns aos outros’?",
+        "texto": "16 Será que você quer perdoar alguém, mas está achando difícil fazer isso? Mesmo amando nossos irmãos, nem sempre é fácil perdoá-los. O que pode nos ajudar? Veja o que Paulo escreveu aos irmãos em Colossos, incluindo Filêmon. (Leia Colossenses 3:13 .) Imagine Filêmon ouvindo a leitura dessa carta na congregação que ficava na sua casa. Em quem ele talvez tenha pensado? Será que ele ainda estava remoendo o que Onésimo tinha feito? Se esse era o caso, ele sabia o que precisava fazer: continuar suportando Onésimo e perdoando liberalmente. Como as palavras de Paulo podem nos ajudar quando achamos difícil perdoar alguém?",
+        "notaKey": "sent_p_17"
+      },
+      {
+        "num": "18",
+        "pergunta": "18. O que você está decidido a fazer?",
+        "texto": "17 O que Paulo quis dizer com ‘continuar a suportar uns aos outros’? Ele estava nos incentivando a ser pacientes e bondosos com nossos irmãos mesmo quando eles nos irritam ou ofendem. Nesse mesmo texto, Paulo destacou o exemplo de amor e perdão de Jeová. Jeová é razoável e não espera que seus servos sejam perfeitos. Ele sabe das nossas limitações, mas se concentra nas nossas qualidades. ( Sal. 103:13, 14; 130:3 ) Por causa disso, ele continua nos tratando com bondade imerecida e misericórdia. ( Lam. 3:22, 23 ) Se fizermos nosso melhor para ver os irmãos como Jeová os vê, vai ser mais fácil suportar com paciência os erros deles, assim como eles suportam com paciência os nossos. Pense no seguinte: quando uma planta está sem flor, nós nos sentimos motivados a cuidar dela porque nos lembramos de como ela é bonita quando está florida. Do mesmo modo, quando nossos irmãos nos decepcionarem, nós vamos nos sentir motivados a perdoá-los e tratá-los com bondade se nos lembrarmos das qualidades deles.",
+        "notaKey": "sent_p_18"
+      }
+    ],
+    "recapitulacao": [
+      "Que responsabilidade todos nós temos para manter a paz na congregação?",
+      "O que aprendemos da forma como Paulo tratou Filêmon e Onésimo?",
+      "Como os anciãos e todos nós podemos apelar com amor em vez de impor regras?"
+    ]
+  }
+}

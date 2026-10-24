@@ -1,32 +1,29 @@
-/**
- * populate_supabase.mjs
- * Envia as semanas extraídas para a tabela meetings_cache no Supabase.
- */
-
 import fs from 'node:fs';
 
-const url = 'https://jjmjjlvpaxafxpebvrwb.supabase.co';
-const key = 'sb_publishable_B5LuMRBbudUuwdEkgH5Vkw_BOqHt6re';
+const SUPABASE_URL = 'https://jjmjjlvpaxafxpebvrwb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_B5LuMRBbudUuwdEkgH5Vkw_BOqHt6re';
 
-async function uploadWeeks() {
-  const todasSemanas = JSON.parse(fs.readFileSync('cache/todas_semanas.json', 'utf8'));
+async function uploadFullToSupabase() {
+  const filePath = 'cache/todas_semanas_full.json';
+  const todas = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-  for (const [semanaNum, dados] of Object.entries(todasSemanas)) {
-    console.log(`[Upload] Enviando Semana ${semanaNum} para o Supabase...`);
+  for (const [semanaStr, conteudo] of Object.entries(todas)) {
+    const semana = parseInt(semanaStr);
+    console.log(`[Upload] Enviando Semana ${semana} Completa para o Supabase...`);
 
     const payload = {
       year: 2026,
-      week_number: parseInt(semanaNum),
-      content_json: dados,
+      week_number: semana,
+      content_json: conteudo,
       updated_at: new Date().toISOString()
     };
 
     try {
-      const res = await fetch(`${url}/rest/v1/meetings_cache`, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/meetings_cache?on_conflict=year,week_number`, {
         method: 'POST',
         headers: {
-          'apikey': key,
-          'Authorization': `Bearer ${key}`,
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'resolution=merge-duplicates'
         },
@@ -34,15 +31,15 @@ async function uploadWeeks() {
       });
 
       if (res.ok) {
-        console.log(`✅ Semana ${semanaNum} salva com sucesso no Supabase!`);
+        console.log(`✅ Semana ${semana} gravada com sucesso no Supabase!`);
       } else {
         const err = await res.text();
-        console.error(`❌ Falha ao salvar semana ${semanaNum}:`, err);
+        console.error(`❌ Falha ao salvar semana ${semana}:`, err);
       }
     } catch (e) {
-      console.error(`❌ Erro de rede:`, e.message);
+      console.error(`❌ Erro de conexão na semana ${semana}:`, e.message);
     }
   }
 }
 
-uploadWeeks();
+uploadFullToSupabase();

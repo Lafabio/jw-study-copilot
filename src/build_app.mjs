@@ -1,76 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const todasPath = './cache/todas_semanas.json';
+const todasPath = './cache/todas_semanas_full.json';
 const todasSemanas = JSON.parse(fs.readFileSync(todasPath, 'utf8'));
-
-// Normaliza as partes de cada semana para o formato de renderização
-const bancoFinal = {};
-
-for (const [semStr, semData] of Object.entries(todasSemanas)) {
-  const numSem = parseInt(semStr);
-  
-  // Normaliza Meio de Semana
-  const meio = semData.meioSemana || {};
-  const partesNorm = (meio.partes || []).map((p, idx) => {
-    let secao = "TESOUROS";
-    const tit = (p.titulo || "").toLowerCase();
-    const resumo = (p.conteudoResumo || p.texto || "").toLowerCase();
-    
-    if (tit.includes("ministério") || tit.includes("iniciando") || tit.includes("cultivando") || tit.includes("fazendo discípulos") || tit.includes("discurso de estudante") || tit.includes("vídeo") && idx > 2 && idx < 7) {
-      secao = "MINISTERIO";
-    } else if (tit.includes("vida cristã") || tit.includes("estudo bíblico de congregação") || tit.includes("necessidades locais") || tit.includes("partilhe") || tit.includes("nunca se esqueça") || idx >= 6) {
-      secao = "VIDACRISTA";
-    }
-
-    // Se a parte 1 ou 2 ou 3
-    if (idx === 0 || idx === 1 || idx === 2) secao = "TESOUROS";
-
-    return {
-      id: p.id || (idx + 1),
-      secao: p.secao || secao,
-      titulo: p.titulo || `Parte ${idx + 1}`,
-      duracao: p.duracao || "10 min",
-      texto: p.conteudoResumo || p.texto || "Consideração da matéria bíblica designada.",
-      temPerguntas: (p.perguntas && p.perguntas.length > 0) || tit.includes("joias") || tit.includes("estudo"),
-      perguntas: p.perguntas && p.perguntas.length > 0 ? p.perguntas : (tit.includes("joias") ? ["Que joias espirituais você encontrou na leitura da Bíblia desta semana?"] : [])
-    };
-  });
-
-  // Normaliza Fim de Semana (A Sentinela)
-  const sentinela = semData.fimSemana || {};
-  let paragrafos = sentinela.paragrafos || [];
-  if (!paragrafos || paragrafos.length === 0) {
-    paragrafos = [
-      {
-        num: "1",
-        texto: "O estudo desta semana nos encoraja a aprofundar nossa fé e confiança nas orientações e no cuidado constante de Jeová.",
-        pergunta: "1. Qual o ponto central destacado no parágrafo para a nossa vida cristã?",
-        respostaSugerida: "Podemos comentar que confiar em Jeová nos traz segurança e serenidade para enfrentar qualquer desafio diário."
-      },
-      {
-        num: "2",
-        texto: "Ao meditar nos princípios bíblicos apresentados, encontramos força renovada para servir ao nosso Criador com lealdade.",
-        pergunta: "2. Como os conselhos bíblicos apresentados fortalecem nossa união?",
-        respostaSugerida: "Quando colocamos em prática os conselhos bíblicos, promovemos a paz e demonstramos verdadeiro amor fraternal."
-      }
-    ];
-  }
-
-  bancoFinal[numSem] = {
-    meioSemana: {
-      titulo: meio.titulo || `SEMANA ${numSem}`,
-      tema: meio.tema || "LEITURA DA SEMANA",
-      partes: partesNorm
-    },
-    fimSemana: {
-      titulo: sentinela.titulo || "Artigo de Estudo de A Sentinela",
-      tema: sentinela.tema || "A Sentinela • Estudo Semanal",
-      chips: sentinela.chips || ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Prática", "Lição para a congregação"],
-      paragrafos: paragrafos
-    }
-  };
-}
 
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -106,8 +38,13 @@ const htmlTemplate = `<!DOCTYPE html>
 
     .jw-article p {
       line-height: 1.68;
-      font-size: 1.02rem;
-      margin-bottom: 0.95rem;
+      font-size: 1.01rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .cantico-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-left: 4px solid #4a3b69;
     }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -124,7 +61,7 @@ const htmlTemplate = `<!DOCTYPE html>
       
       <!-- Lado Esquerdo: Menu Hambúrguer + Título da Seção -->
       <div class="flex items-center space-x-3">
-        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Menu de Partes">
+        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Programa da Reunião">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -227,7 +164,7 @@ const htmlTemplate = `<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Conteúdo Dinâmico (Partes ou Parágrafos) -->
+      <!-- Conteúdo Dinâmico (Roteiro Completo) -->
       <div id="conteudo-leitor" class="space-y-6">
       </div>
 
@@ -265,7 +202,7 @@ const htmlTemplate = `<!DOCTYPE html>
       <!-- Histórico de Conversa -->
       <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
         <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
-          <p class="font-bold text-[#4a3b69] mb-1">💡 Painel de Estudo Inteligente:</p>
+          <p class="font-bold text-[#4a3b69] mb-1">💡 Assistente de Comentários:</p>
           <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
         </div>
       </div>
@@ -401,16 +338,16 @@ const htmlTemplate = `<!DOCTYPE html>
     // CHAVE GEMINI (Pode ser configurada pelo usuário no botão de configurações ou via Vercel)
     const GEMINI_DEFAULT_KEY = '';
 
-    // BANCO DE DADOS LOCAL COMPLETO (EXTRAÍDO DO JW.ORG)
-    const bancoSemanasJW = ${JSON.stringify(bancoFinal, null, 2)};
+    // BANCO DE DADOS COMPLETO E OFICIAL (EXTRAÍDO DO JW.ORG)
+    const bancoSemanasJW = ${JSON.stringify(todasSemanas, null, 2)};
 
     let semanaAtiva = 43;
     let modoAtual = "meio_semana";
 
     const coresSecao = {
-      TESOUROS: { border: "border-[#596b7a]", text: "text-[#596b7a]", label: "TESOUROS DA PALAVRA DE DEUS" },
-      MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
-      VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
+      TESOUROS: { border: "border-[#596b7a]", text: "text-[#596b7a]", bgBadge: "bg-[#596b7a]", label: "TESOUROS DA PALAVRA DE DEUS" },
+      MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", bgBadge: "bg-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
+      VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", bgBadge: "bg-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
     };
 
     // Inicialização da Página
@@ -500,6 +437,9 @@ const htmlTemplate = `<!DOCTYPE html>
       fecharPaineisMobile();
     }
 
+    // ==========================================
+    // RENDERIZADOR 1: VIDA E MINISTÉRIO CRISTÃOS
+    // ==========================================
     function renderizarMeioSemana() {
       const dados = bancoSemanasJW[semanaAtiva]?.meioSemana;
       if (!dados) return;
@@ -508,22 +448,73 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
+      // Sidebar da Reunião
       const sidebar = document.getElementById('lista-partes-sidebar');
-      sidebar.innerHTML = dados.partes.map(p => \`
-        <a href="#parte-\${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-          <span class="font-bold text-[#4a3b69]">\${p.id}.</span> \${p.titulo.split('(')[0].replace(/^\\d+\\.\\s*/, '')}
-          <span class="text-[11px] text-[#6c757d] block font-semibold">\${p.duracao}</span>
-        </a>
-      \`).join('');
+      let sidebarHtml = '';
+      if (dados.abertura?.cantico) {
+        sidebarHtml += \`
+          <a href="#abertura-reuniao" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+            <span class="text-[#4a3b69] font-bold">🎵</span> \${dados.abertura.cantico}
+          </a>
+        \`;
+      }
+      dados.partes.forEach(p => {
+        sidebarHtml += \`
+          <a href="#parte-\${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+            <span class="font-bold text-[#4a3b69]">\${p.id}.</span> \${p.titulo.split('(')[0].replace(/^\\d+\\.\\s*/, '')}
+            <span class="text-[11px] text-[#6c757d] block font-semibold">\${p.duracao}</span>
+          </a>
+        \`;
+      });
+      if (dados.conclusao?.cantico) {
+        sidebarHtml += \`
+          <a href="#conclusao-reuniao" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+            <span class="text-[#4a3b69] font-bold">🎵</span> \${dados.conclusao.cantico}
+          </a>
+        \`;
+      }
+      sidebar.innerHTML = sidebarHtml;
 
       const leitor = document.getElementById('conteudo-leitor');
       let html = '';
+
+      // Abertura com Cântico
+      html += \`
+        <div id="abertura-reuniao" class="cantico-card rounded-xl p-4 shadow-2xs mb-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">🎵</span>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Abertura da Reunião</h4>
+              <p class="text-xs font-semibold text-[#212529] mt-0.5">\${dados.abertura?.cantico || "Cântico e oração | Comentários iniciais (1 min)"}</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-[#6c757d] bg-white px-2.5 py-1 rounded-md border border-[#dee2e6]">1 min</span>
+        </div>
+      \`;
+
       let ultimaSecao = '';
 
       dados.partes.forEach(p => {
+        // Separador de Seção
         if (p.secao !== ultimaSecao) {
           ultimaSecao = p.secao;
           const conf = coresSecao[p.secao] || coresSecao.TESOUROS;
+
+          // Se for Vida Cristã, mostra o Cântico do meio antes
+          if (p.secao === 'VIDACRISTA' && dados.canticoMeio) {
+            html += \`
+              <div class="cantico-card rounded-xl p-4 shadow-2xs my-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="text-xl">🎵</span>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Cântico Intermediário</h4>
+                    <p class="text-xs font-semibold text-[#212529] mt-0.5">\${dados.canticoMeio}</p>
+                  </div>
+                </div>
+              </div>
+            \`;
+          }
+
           html += \`
             <div class="mt-8 mb-4 border-b-2 \${conf.border} pb-1 flex items-center justify-between">
               <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider \${conf.text}">
@@ -533,6 +524,7 @@ const htmlTemplate = `<!DOCTYPE html>
           \`;
         }
 
+        // Card da Parte da Reunião
         html += \`
           <div id="parte-\${p.id}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
             <div class="flex items-center justify-between mb-2">
@@ -540,39 +532,59 @@ const htmlTemplate = `<!DOCTYPE html>
               <span class="text-xs font-bold text-[#6c757d] bg-[#f1f3f5] px-2 py-0.5 rounded">\${p.duracao}</span>
             </div>
             
-            <p class="text-sm leading-relaxed text-[#495057] mb-3">\${p.texto}</p>
+            <div class="text-sm leading-relaxed text-[#495057] mb-3 whitespace-pre-line">\${p.texto}</div>
 
             \${p.perguntas && p.perguntas.length > 0 ? \`
               <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-3 mt-3">
                 <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
                 \${p.perguntas.map((q, idx) => \`
-                  <div class="border-l-3 border-[#4a3b69] pl-3 py-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <p class="text-xs sm:text-sm font-semibold text-[#212529]">\${q}</p>
-                    <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
-                      <span class="text-amber-300">✦</span> Comentar com IA
-                    </button>
+                  <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-1.5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <p class="text-xs sm:text-sm font-semibold text-[#212529]">\${q}</p>
+                      <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                        <span class="text-amber-300">✦</span> Comentar com IA
+                      </button>
+                    </div>
+                    <textarea id="nota-pergunta-\${p.id}-\${idx}" placeholder="Meu comentário para esta pergunta..." class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
                   </div>
                 \`).join('')}
               </div>
             \` : \`
-              <div class="pt-2">
+              <div class="pt-2 flex items-center justify-between">
                 <button onclick="responderComIA('Como estruturar a \${p.titulo.replace(/'/g, "\\\\'")} de forma clara e objetiva para a congregação?')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
                   <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
                 </button>
               </div>
             \`}
 
-            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
+            <div class="mt-3 pt-3 border-t border-[#f1f3f5]">
               <textarea id="nota-parte-\${p.id}" placeholder="Minhas anotações para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
             </div>
           </div>
         \`;
       });
 
+      // Conclusão com Cântico Final
+      html += \`
+        <div id="conclusao-reuniao" class="cantico-card rounded-xl p-4 shadow-2xs mt-6 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">🎵</span>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Conclusão da Reunião</h4>
+              <p class="text-xs font-semibold text-[#212529] mt-0.5">\${dados.conclusao?.cantico || "Comentários finais (3 min) | Cântico e oração"}</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-[#6c757d] bg-white px-2.5 py-1 rounded-md border border-[#dee2e6]">3 min</span>
+        </div>
+      \`;
+
       leitor.innerHTML = html;
       atualizarChips(["Resumo da Reunião", "Joias Espirituais", "Dica de Preparação", "Aplicação Ministerial"]);
     }
 
+    // ==========================================
+    // RENDERIZADOR 2: ESTUDO DE A SENTINELA
+    // ==========================================
     function renderizarSentinela() {
       const dados = bancoSemanasJW[semanaAtiva]?.fimSemana;
       if (!dados) return;
@@ -581,6 +593,7 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
+      // Sidebar com a lista de parágrafos
       const sidebar = document.getElementById('lista-partes-sidebar');
       sidebar.innerHTML = dados.paragrafos.map(p => \`
         <a href="#paragrafo-\${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
@@ -589,13 +602,34 @@ const htmlTemplate = `<!DOCTYPE html>
       \`).join('');
 
       const leitor = document.getElementById('conteudo-leitor');
-      let html = \`
-        <div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800">Cânticos & Oração</h4>
-          <p class="text-xs text-amber-900 mt-1">Prepare seus comentários com antecedência. O tempo ideal para cada participação é de 30 a 45 segundos.</p>
-        </div>
-      \`;
+      let html = '';
 
+      // Banner Cântico Inicial
+      if (dados.canticoInicial) {
+        html += \`
+          <div class="cantico-card rounded-xl p-4 shadow-2xs mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🎵</span>
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Abertura do Estudo</h4>
+                <p class="text-xs font-semibold text-[#212529] mt-0.5">\${dados.canticoInicial}</p>
+              </div>
+            </div>
+          </div>
+        \`;
+      }
+
+      // Banner Objetivo
+      if (dados.objetivo) {
+        html += \`
+          <div class="bg-amber-50/80 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6 shadow-2xs">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900">OBJETIVO DO ESTUDO</h4>
+            <p class="text-xs text-amber-950 mt-1 leading-relaxed">\${dados.objetivo}</p>
+          </div>
+        \`;
+      }
+
+      // Parágrafos Oficiais
       dados.paragrafos.forEach(p => {
         html += \`
           <div id="paragrafo-\${p.num}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
@@ -615,16 +649,10 @@ const htmlTemplate = `<!DOCTYPE html>
                 <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
                   \${p.pergunta}
                 </p>
-                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.respostaSugerida || '').replace(/'/g, "\\\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").substring(0, 150)}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
                   <span class="text-amber-300">✦</span> Comentar com IA
                 </button>
               </div>
-
-              \${p.respostaSugerida ? \`
-                <div class="pt-2 border-t border-[#dee2e6] text-xs text-[#6c757d]">
-                  <span class="font-bold text-[#4a3b69]">Ponto-chave:</span> \${p.respostaSugerida}
-                </div>
-              \` : ''}
             </div>
 
             <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
@@ -635,7 +663,7 @@ const htmlTemplate = `<!DOCTYPE html>
       });
 
       leitor.innerHTML = html;
-      atualizarChips(dados.chips || ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica"]);
+      atualizarChips(["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica", "Ponto Principal"]);
     }
 
     // Controle de Gavetas e Painéis
@@ -959,9 +987,8 @@ const htmlTemplate = `<!DOCTYPE html>
 </html>`;
 
 fs.writeFileSync('./index.html', htmlTemplate, 'utf8');
-console.log('✅ index.html gerado com sucesso!');
+console.log('✅ index.html gerado com roteiro padrão JW Library!');
 
-// Também atualiza o artefato
 const artifactPath = path.resolve('C:/Users/lafai/.gemini/antigravity/brain/d4fc619c-9d66-4a9c-b20b-705733b77051/reuniao_prototipo.html');
 fs.writeFileSync(artifactPath, htmlTemplate, 'utf8');
 console.log('✅ Artefato reuniao_prototipo.html atualizado!');

@@ -32,8 +32,13 @@
 
     .jw-article p {
       line-height: 1.68;
-      font-size: 1.02rem;
-      margin-bottom: 0.95rem;
+      font-size: 1.01rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .cantico-card {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-left: 4px solid #4a3b69;
     }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -50,7 +55,7 @@
       
       <!-- Lado Esquerdo: Menu Hambúrguer + Título da Seção -->
       <div class="flex items-center space-x-3">
-        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Menu de Partes">
+        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Programa da Reunião">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -153,7 +158,7 @@
         </div>
       </div>
 
-      <!-- Conteúdo Dinâmico (Partes ou Parágrafos) -->
+      <!-- Conteúdo Dinâmico (Roteiro Completo) -->
       <div id="conteudo-leitor" class="space-y-6">
       </div>
 
@@ -191,7 +196,7 @@
       <!-- Histórico de Conversa -->
       <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
         <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
-          <p class="font-bold text-[#4a3b69] mb-1">💡 Painel de Estudo Inteligente:</p>
+          <p class="font-bold text-[#4a3b69] mb-1">💡 Assistente de Comentários:</p>
           <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
         </div>
       </div>
@@ -327,19 +332,24 @@
     // CHAVE GEMINI (Pode ser configurada pelo usuário no botão de configurações ou via Vercel)
     const GEMINI_DEFAULT_KEY = '';
 
-    // BANCO DE DADOS LOCAL COMPLETO (EXTRAÍDO DO JW.ORG)
+    // BANCO DE DADOS COMPLETO E OFICIAL (EXTRAÍDO DO JW.ORG)
     const bancoSemanasJW = {
   "43": {
+    "ano": 2026,
+    "semana": 43,
     "meioSemana": {
       "titulo": "19-25 DE OUTUBRO",
       "tema": "JEREMIAS 45-46",
+      "abertura": {
+        "cantico": "Cântico 21 e oração | Comentários iniciais (1 min)"
+      },
       "partes": [
         {
           "id": 1,
           "secao": "TESOUROS",
           "titulo": "1. Ter esperança é o segredo para o contentamento",
           "duracao": "10 min",
-          "texto": "(10 min) Parece que Baruque não estava satisfeito com sua situação na vida. ( Jer. 45:3 ; w25.07 22 §§ 8-9 ) Sem contentamento, podemos perder nossa alegria e tomar decisões ruins. ( w25.07 20 § 2 ) Jeová ajudou Baruque a mudar o seu ponto de vista dando a ele uma esperança. ( Jer. 45:5 ; w25.07 24 ",
+          "texto": "(10 min) Parece que Baruque não estava satisfeito com sua situação na vida. ( Jer. 45:3 ; w25.07 22 §§ 8-9 ) Sem contentamento, podemos perder nossa alegria e tomar decisões ruins. ( w25.07 20 § 2 ) Jeová ajudou Baruque a mudar o seu ponto de vista dando a ele uma esperança. ( Jer. 45:5 ; w25.07 24 §§ 13-14 )",
           "temPerguntas": false,
           "perguntas": []
         },
@@ -348,9 +358,10 @@
           "secao": "TESOUROS",
           "titulo": "2. Joias espirituais",
           "duracao": "10 min",
-          "texto": "(10 min) Jer. 46:22 — Em que sentido o som do Egito seria “como o de uma serpente deslizando”? ( it “Voz” § 16 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "texto": "(10 min) Jer. 46:22 — Em que sentido o som do Egito seria “como o de uma serpente deslizando”? ( it “Voz” § 16 )  Que joias espirituais você encontrou na leitura da Bíblia desta semana?",
           "temPerguntas": true,
           "perguntas": [
+            "Jer. 46:22 — Em que sentido o som do Egito seria “como o de uma serpente deslizando”? ( it “Voz” § 16 )",
             "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
@@ -358,7 +369,7 @@
           "id": 3,
           "secao": "TESOUROS",
           "titulo": "3. Leitura da Bíblia",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) Jer. 46:13-24 ( th lição 10 ) FAÇA SEU MELHOR NO MINISTÉRIO",
           "temPerguntas": false,
           "perguntas": []
@@ -367,7 +378,7 @@
           "id": 4,
           "secao": "MINISTERIO",
           "titulo": "4. Iniciando conversas",
-          "duracao": "3 min",
+          "duracao": "10 min",
           "texto": "(3 min) TESTEMUNHO INFORMAL. Comece a conversar com alguém que parece estar feliz. ( lmd lição 2 ponto 3 )",
           "temPerguntas": false,
           "perguntas": []
@@ -376,7 +387,7 @@
           "id": 5,
           "secao": "MINISTERIO",
           "titulo": "5. Iniciando conversas",
-          "duracao": "2 min",
+          "duracao": "10 min",
           "texto": "(2 min) DE CASA EM CASA. A pessoa está irritada. ( lmd lição 4 ponto 5 )",
           "temPerguntas": false,
           "perguntas": []
@@ -385,17 +396,17 @@
           "id": 6,
           "secao": "MINISTERIO",
           "titulo": "6. Iniciando conversas",
-          "duracao": "2 min",
+          "duracao": "10 min",
           "texto": "(2 min) DE CASA EM CASA. Uma pessoa que parece estar triste vem atender. ( lmd lição 2 ponto 4 )",
           "temPerguntas": false,
           "perguntas": []
         },
         {
           "id": 7,
-          "secao": "VIDACRISTA",
+          "secao": "MINISTERIO",
           "titulo": "7. Discurso",
-          "duracao": "4 min",
-          "texto": "(4 min) lmd apêndice A ponto 20 — Tema: Jesus não é o Deus Todo-Poderoso. ( th lição 7 ) NOSSA VIDA CRISTÃ",
+          "duracao": "10 min",
+          "texto": "(4 min) lmd apêndice A ponto 20 — Tema: Jesus não é o Deus Todo-Poderoso. ( th lição 7 )",
           "temPerguntas": false,
           "perguntas": []
         },
@@ -403,8 +414,8 @@
           "id": 8,
           "secao": "VIDACRISTA",
           "titulo": "8. ‘Partilhe com outros o que você tem’",
-          "duracao": "15 min",
-          "texto": "(15 min) Consideração. Em suas cartas, o apóstolo Paulo muitas vezes falou sobre a importância de dividir com outros o que temos. Os conselhos dele foram muito importantes para os cristãos daquela época, e continuam sendo hoje. — Efé. 4:28; 1 Tim. 6:17, 18 . Leia Hebreus 13:16 . Pouco depois de rece",
+          "duracao": "10 min",
+          "texto": "(15 min) Consideração. Em suas cartas, o apóstolo Paulo muitas vezes falou sobre a importância de dividir com outros o que temos. Os conselhos dele foram muito importantes para os cristãos daquela época, e continuam sendo hoje. — Efé. 4:28; 1 Tim. 6:17, 18 . Leia Hebreus 13:16 . Pouco depois de receberem o conselho de Paulo, os cristãos na Judeia tiveram que fugir para os montes, deixando para trás casa, trabalho e muitas coisas que tinham. Nessa época, provavelmente surgiu uma grande necessidade de todos os cristãos dividirem suas coisas uns com os outros. Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo?  Pensando no que vai acontecer em breve, por que é importante aprender desde já a compartilhar com outros o que temos?  Leia 2 Coríntios 8:2-4 . ( nota de estudo em 2 Cor. 8:2 , nwtsty ) O que podemos aprender do exemplo dos macedônios?  O que mais podemos compartilhar com outros, além de coisas materiais?  Mostre o VÍDEO Torne-se Amigo de Jeová — Divida Suas Coisas com Outros. Depois, pergunte: Que exemplo Jeová nos dá sobre dividir as coisas com outros?",
           "temPerguntas": true,
           "perguntas": [
             "Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo?",
@@ -418,122 +429,129 @@
           "id": 9,
           "secao": "VIDACRISTA",
           "titulo": "9. Estudo bíblico de congregação",
-          "duracao": "30 min",
+          "duracao": "10 min",
           "texto": "(30 min) wcg cap. 13",
           "temPerguntas": true,
-          "perguntas": []
+          "perguntas": [
+            "Como podemos colocar em prática este princípio bíblico na nossa vida diária e na congregação?"
+          ]
         }
-      ]
+      ],
+      "canticoMeio": "Cântico da Reunião",
+      "conclusao": {
+        "cantico": "Comentários finais (3 min) | Cântico 87 e oração"
+      }
     },
     "fimSemana": {
       "titulo": "Um pedido feito com base no amor",
-      "tema": "A Sentinela • Estudo Semanal",
-      "chips": [
-        "Comentário Parágrafo 1",
-        "Comentário Parágrafo 2",
-        "Aplicação Prática",
-        "Lição para a congregação"
-      ],
+      "tema": "“Prefiro lhe fazer um apelo à base do amor.” — FILÊM. 9.",
+      "objetivo": "Ver que lições aprendemos com Paulo, Onésimo e Filêmon sobre conviver em paz com os irmãos.",
+      "canticoInicial": "CÂNTICO 106 Amor — a qualidade que é sem igual",
       "paragrafos": [
         {
-          "numero": "1",
+          "num": "1",
           "pergunta": "1. Que responsabilidade todos nós temos?",
-          "textosLidos": []
+          "texto": "NÓS damos muito valor à paz que existe entre o povo de Deus. Essa paz nos dá uma ideia de como vai ser a vida no Paraíso. ( Isa. 32:17, 18 ) É verdade que é Jeová que nos dá essa paz, mas cada um de nós tem a responsabilidade de manter e proteger o ambiente pacífico que existe na congregação. ( Rom. 12:18 ) Como podemos continuar tendo paz à medida que convivemos com outros? O que podemos fazer para manter a paz quando ofendemos alguém ou quando alguém nos ofende? Podemos encontrar as respostas a essas perguntas analisando um pedido feito com base no amor. Esse pedido está em um relato envolvendo três personagens da Bíblia: o apóstolo Paulo, Onésimo e Filêmon."
         },
         {
-          "numero": "2",
-          "pergunta": "2. O que aconteceu entre Filêmon e Onésimo? (Filêmon 8, 9, 17)",
-          "textosLidos": []
+          "num": "2",
+          "pergunta": "2. O que aconteceu entre Filêmon e Onésimo? ( Filêmon 8, 9, 17 )",
+          "texto": "2 Leia Filêmon 8, 9, 17 . Na sua carta a Filêmon, Paulo o incentivou a receber de volta seu escravo Onésimo. Paulo deu esse incentivo com base no amor de Filêmon por Cristo e pelos irmãos na congregação. Você se lembra do que aconteceu entre eles? Filêmon era um irmão na congregação de Colossos, conhecido por ter uma forte fé e ser muito amoroso. Ele tinha um escravo que não era cristão, chamado Onésimo. Esse escravo o abandonou e fugiu para Roma. Antes de fugir, ele provavelmente roubou Filêmon. ( Filêm. 18 ; veja a nota de estudo .) Enquanto estava em Roma, Onésimo se tornou cristão e ficou muito amigo de Paulo. ( Col. 4:9 ) Mas de acordo com a lei romana, Onésimo tinha que voltar para o seu senhor. Então, Paulo o enviou de volta a Filêmon. — Filêm. 12, 13 ; veja a nota de estudo “Eu o envio de volta para você”."
         },
         {
-          "numero": "3",
+          "num": "3",
           "pergunta": "3. O que pode ter deixado Paulo preocupado ao enviar Onésimo de volta? (Veja também a imagem.)",
-          "textosLidos": []
+          "texto": "3 Paulo talvez tivesse pensado em como Filêmon reagiria quando Onésimo voltasse. Pela lei, Filêmon tinha o direito de punir Onésimo de modo severo. Será que ele faria isso? Como a congregação reagiria? E se outros escravos e donos de escravos tivessem opiniões diferentes sobre o assunto? Paulo sabia que essa situação podia acabar tirando a paz da congregação. Então ele escreveu uma carta para Filêmon e a enviou por meio de Tíquico. ( Efé. 6:21, 22; Col. 4:7-9 ; veja a nota de estudo em Colossenses 4:7 .) Paulo também enviou uma carta à congregação de Colossos. Ao analisarmos essas duas cartas, vamos ver o que podemos aprender com os exemplos de Paulo, Onésimo e Filêmon."
         },
         {
-          "numero": "4",
+          "num": "4-5",
           "pergunta": "4-5. O que os anciãos podem fazer para contribuir com a paz na congregação?",
-          "textosLidos": []
+          "texto": "4 O que aprendemos com o exemplo de Paulo? O modo como Paulo tratava os irmãos contribuía para a paz na congregação. O exemplo dele nos ensina como podemos cultivar a paz com os irmãos."
         },
         {
-          "numero": "6",
+          "num": "6",
           "pergunta": "6. Por que é importante dar elogios?",
-          "textosLidos": []
+          "texto": "5 Paulo tratou Filêmon como amigo. ( Filêm. 17 ) Ele não achava que podia mandar em Filêmon, como se fosse dono dele. ( 2 Cor. 1:24 ) Para Paulo, Filêmon era um colaborador e um amigo. Assim, ele deu um bom exemplo para Filêmon de como tratar Onésimo, que agora era cristão. Ele também deixou um ótimo exemplo para todos nós, em especial para os anciãos. Anciãos que tratam os irmãos como amigos criam um ambiente de paz na congregação. Por serem pastores amorosos, eles não agem como se fossem donos do rebanho de Deus. ( 1 Ped. 5:1-3 ) Em vez disso, eles passam tempo com os irmãos e dão valor a eles. Também escutam e apoiam os irmãos em tempos de necessidade. Anciãos que imitam Paulo e tratam os irmãos como amigos dão um bom exemplo para o rebanho e ajudam a cultivar a paz na congregação."
         },
         {
-          "numero": "7",
-          "pergunta": "7. Por que precisamos ter cuidado com o que falamos sobre outros? (Filêmon 10-12)",
-          "textosLidos": []
+          "num": "7",
+          "pergunta": "7. Por que precisamos ter cuidado com o que falamos sobre outros? ( Filêmon 10-12 )",
+          "texto": "6 Paulo elogiou Filêmon. ( Filêm. 4, 5, 7 ) Todo mundo precisa de elogios. Por quê? Um dos motivos é que muitos duvidam do seu próprio valor. Algumas pessoas ficam inseguras em relação à sua aparência ou à opinião de outros. Outras talvez tenham medo de perder um privilégio que apreciam muito. Esses sentimentos são normais. Mas por causa deles, podemos ficar ansiosos ou nos ofender facilmente. Talvez achemos que as pessoas estão sempre nos acusando. Ou podemos ficar tentando provar que somos melhores do que outros. Essas atitudes nos impedem de ter relacionamentos pacíficos. Para ajudar alguém a reconhecer seu próprio valor, é importante dar elogios. ( Pro. 12:25 ) Elogios fazem uma pessoa se sentir amada e valorizada. Você gostaria que outros se sentissem assim perto de você? Então procure oportunidades para dar elogios sinceros. Não elogie uma pessoa apenas quando ela fizer algo bem feito, mas também quando ela se esforçar. A ideia é: se você viu algo que merece elogio, dê um elogio."
         },
         {
-          "numero": "8",
+          "num": "8",
           "pergunta": "8. O que pode nos ajudar a falar bem dos irmãos? (Veja também as imagens.)",
-          "textosLidos": []
+          "texto": "7 Paulo falou bem de Onésimo. (Leia Filêmon 10-12 .) Como será que isso afetou Filêmon? Será que as palavras de Paulo mudaram os sentimentos e a atitude de Filêmon em relação a Onésimo? Com certeza! Da mesma forma, o que falamos sobre uma pessoa influencia o modo como ela é vista e tratada. Quando falamos bem dos irmãos, ajudamos outros a tratá-los com bondade. Infelizmente, o contrário também é verdade. Falar mal dos irmãos pode afetar o modo como outros vão tratá-los. Mas para falar de forma positiva sobre uma pessoa, primeiro precisamos pensar de forma positiva sobre ela. O que pode nos ajudar a fazer isso? Vamos ver algo que o apóstolo Paulo sempre fazia."
         },
         {
-          "numero": "9",
+          "num": "9",
           "pergunta": "9. Por que é impressionante o modo como Paulo falou com Filêmon?",
-          "textosLidos": []
+          "texto": "8 Paulo tinha o hábito de agradecer a Jeová pelas boas qualidades de Filêmon. ( Filêm. 4, 5 ) E ele fazia o mesmo com outros irmãos. ( 1 Cor. 1:4-7; Fil. 1:3-5; Col. 1:3, 4; 1 Tes. 1:2, 3 ) Paulo sabia das fraquezas dos seus irmãos e irmãs, mas preferia se concentrar nas qualidades deles. E ele sempre agradecia a Jeová pelos amigos que tinha. Você tem dificuldade de falar bem das pessoas? Nesse caso, se esforce para ter o hábito de ver as qualidades delas e de orar para Jeová abençoá-las. Assim, vai ser mais fácil falar coisas boas sobre elas."
         },
         {
-          "numero": "10",
+          "num": "10",
           "pergunta": "10. O que podemos aprender com o exemplo de Onésimo?",
-          "textosLidos": []
+          "texto": "9 Paulo estava numa situação difícil, mas tratou Filêmon com bondade. Você já perdeu a paciência com alguém porque estava cansado ou estressado? Quando estamos passando por um problema, é fácil descontar nossa frustração em outros. Com isso em mente, veja algumas coisas que aconteceram com Paulo na época que ele escreveu para Filêmon. Poucos anos antes, Paulo tinha sido atacado de forma violenta. Ele ficou preso injustamente em Jerusalém e em Cesareia. Depois, Paulo foi transferido para Roma, mas no meio do caminho sofreu naufrágio. Enquanto escrevia a carta para Filêmon, ele ainda estava em prisão domiciliar em Roma. ( Filêm. 1 ) Será que Paulo permitiu que essas situações estressantes afetassem o modo como ele falou com Filêmon? Não. Na sua carta a Filêmon, ele falou com bondade e respeito. Qual a lição? Mesmo quando estamos cansados, estressados ou enfrentando dificuldades, podemos contribuir para um ambiente de paz por nos esforçar para tratar outros com bondade. E quando estamos em paz com outros, fica mais fácil lidar com nossos próprios problemas."
         },
         {
-          "numero": "11",
+          "num": "11",
           "pergunta": "11. O que podemos fazer para recuperar a paz quando ofendemos alguém? (Veja também as imagens.)",
-          "textosLidos": []
+          "texto": "10 Todos nós fazemos e dizemos coisas que ofendem outros. O exemplo de Onésimo nos ensina como agir quando isso acontece. Ele fez algo que parece simples, mas que não é nada fácil. Ele admitiu seu erro e se esforçou para fazer as pazes. Com certeza Onésimo sabia que, de acordo com a lei romana, ele tinha que voltar para seu senhor. Para isso, ele aceitou fazer uma viagem cara e muito cansativa de mais de 1.400 quilômetros. Ele também estava disposto a abrir mão de sua liberdade e encarar as consequências das suas ações. Essa deve ter sido uma decisão difícil. Será que Onésimo achava que tinha bons motivos para ter fugido de Filêmon? Nesse caso, ele não deixou que esses sentimentos o impedissem de fazer o que estava ao seu alcance para recuperar a paz com Filêmon, que agora também era seu irmão."
         },
         {
-          "numero": "12",
+          "num": "12",
           "pergunta": "12. Por que Paulo acreditava que Filêmon iria perdoar Onésimo?",
-          "textosLidos": []
+          "texto": "11 Se você ofender alguém, dê o primeiro passo para recuperar a paz. ( Mat. 5:23-25 ) É verdade que isso pode ser difícil, mas seu esforço vai valer a pena. Para começar, peça desculpas de coração. Esteja disposto a ouvir a outra pessoa e tente entender como ela se sente. Admita seu erro. Não fique se justificando nem colocando a culpa em outros. Se você fizer isso, vai parecer que seu pedido de desculpas não é sincero, e pode ser que o problema continue ou até piore. Pedir desculpas exige humildade, mas geralmente é o caminho mais rápido para recuperar a paz. — Rom. 14:19 ."
         },
         {
-          "numero": "13",
-          "pergunta": "13. Por que o amor é essencial para manter a paz? (Colossenses 3:14)",
-          "textosLidos": []
+          "num": "13",
+          "pergunta": "13. Por que o amor é essencial para manter a paz? ( Colossenses 3:14 )",
+          "texto": "12 O exemplo de Filêmon nos ensina como manter a paz quando alguém nos ofende. Será que Filêmon perdoou Onésimo e o recebeu de volta de forma bondosa? O relato não diz. Mas Paulo acreditava que Filêmon faria isso. ( Filêm. 17, 21 ) Paulo sabia que Filêmon tinha qualidades que o ajudariam a perdoar Onésimo. Que qualidades são essas?"
         },
         {
-          "numero": "14",
+          "num": "14",
           "pergunta": "14. Como sabemos que Filêmon era hospitaleiro?",
-          "textosLidos": []
+          "texto": "13 Filêmon amava os irmãos. ( Filêm. 5 ) O nome Filêmon significa “amoroso”, e Filêmon fazia jus a esse nome. Ele era conhecido por ser muito amoroso, e isso o ajudou a perdoar Onésimo. Na carta que Paulo escreveu para a congregação de Filêmon em Colossos, ele disse que o amor é “o perfeito vínculo de união”. (Leia Colossenses 3:14 .) Ou seja, a qualidade que mais contribui para a paz e a união é o amor. Quanto maior nosso amor por um irmão, mais fácil é perdoá-lo e tratá-lo com bondade. ( 1 Cor. 13:4-7 ) O que ajudou Filêmon a fortalecer seu amor pelos irmãos?"
         },
         {
-          "numero": "15",
+          "num": "15",
           "pergunta": "15. Por que mostrar hospitalidade fortalece nosso amor por outros? (Veja também as imagens.)",
-          "textosLidos": []
+          "texto": "14 Filêmon tinha uma qualidade que fortalece o amor: a hospitalidade. Ele cedeu sua casa como local de reuniões para a congregação. ( Filêm. 2 ) Além disso, Paulo pediu que Filêmon preparasse um lugar para ele ficar. Isso indica que Paulo via Filêmon como uma pessoa hospitaleira. ( Filêm. 22 ) Sem dúvida, a hospitalidade de Filêmon fazia com que outros se sentissem à vontade e ficassem reanimados. — Filêm. 7 ."
         },
         {
-          "numero": "16",
-          "pergunta": "16. Qual talvez tenha sido a reação de Filêmon quando ouviu o conselho de Paulo em Colossenses 3:13?",
-          "textosLidos": []
+          "num": "16",
+          "pergunta": "16. Qual talvez tenha sido a reação de Filêmon quando ouviu o conselho de Paulo em Colossenses 3:13 ?",
+          "texto": "15 Quando imitamos Filêmon e mostramos hospitalidade, nosso amor por outros fica mais forte. Ser hospitaleiros nos dá a oportunidade de conhecer melhor nossos irmãos. É bom passar tempo com irmãos que estão fora do nosso círculo de amigos, até com aqueles que a princípio parecem ter pouco em comum com a gente. Isso nos ajuda a dar valor à diversidade de personalidades que existem na organização de Jeová e que a tornam ainda mais especial. Saber mais sobre a vida deles, como conheceram a verdade e os desafios que já enfrentaram aumenta nosso amor e respeito por eles. Conseguimos ver por que Jeová os atraiu à sua organização. ( João 6:44 ) Então, se formos hospitaleiros, nosso amor pelos irmãos vai aumentar, nós não vamos atribuir a eles más motivações e vai ser mais fácil perdoá-los quando cometerem erros."
         },
         {
-          "numero": "17",
+          "num": "17",
           "pergunta": "17. O que significa ‘continuar a suportar uns aos outros’?",
-          "textosLidos": []
+          "texto": "16 Será que você quer perdoar alguém, mas está achando difícil fazer isso? Mesmo amando nossos irmãos, nem sempre é fácil perdoá-los. O que pode nos ajudar? Veja o que Paulo escreveu aos irmãos em Colossos, incluindo Filêmon. (Leia Colossenses 3:13 .) Imagine Filêmon ouvindo a leitura dessa carta na congregação que ficava na sua casa. Em quem ele talvez tenha pensado? Será que ele ainda estava remoendo o que Onésimo tinha feito? Se esse era o caso, ele sabia o que precisava fazer: continuar suportando Onésimo e perdoando liberalmente. Como as palavras de Paulo podem nos ajudar quando achamos difícil perdoar alguém?"
         },
         {
-          "numero": "18",
+          "num": "18",
           "pergunta": "18. O que você está decidido a fazer?",
-          "textosLidos": []
+          "texto": "17 O que Paulo quis dizer com ‘continuar a suportar uns aos outros’? Ele estava nos incentivando a ser pacientes e bondosos com nossos irmãos mesmo quando eles nos irritam ou ofendem. Nesse mesmo texto, Paulo destacou o exemplo de amor e perdão de Jeová. Jeová é razoável e não espera que seus servos sejam perfeitos. Ele sabe das nossas limitações, mas se concentra nas nossas qualidades. ( Sal. 103:13, 14; 130:3 ) Por causa disso, ele continua nos tratando com bondade imerecida e misericórdia. ( Lam. 3:22, 23 ) Se fizermos nosso melhor para ver os irmãos como Jeová os vê, vai ser mais fácil suportar com paciência os erros deles, assim como eles suportam com paciência os nossos. Pense no seguinte: quando uma planta está sem flor, nós nos sentimos motivados a cuidar dela porque nos lembramos de como ela é bonita quando está florida. Do mesmo modo, quando nossos irmãos nos decepcionarem, nós vamos nos sentir motivados a perdoá-los e tratá-los com bondade se nos lembrarmos das qualidades deles."
         }
       ]
     }
   },
   "44": {
+    "ano": 2026,
+    "semana": 44,
     "meioSemana": {
       "titulo": "26 DE OUTUBRO–1.º DE NOVEMBRO",
       "tema": "JEREMIAS 47-48",
+      "abertura": {
+        "cantico": "Cântico 125 e oração | Comentários iniciais (1 min)"
+      },
       "partes": [
         {
           "id": 1,
           "secao": "TESOUROS",
           "titulo": "1. Jeová é um Juiz justo e misericordioso",
           "duracao": "10 min",
-          "texto": "(10 min) Jeremias predisse que Jeová puniria Moabe por ter maltratado Judá. ( Jer. 48:27, 29, 42 ; it “Moabe, Moabitas” n.º 2 § 22 ) Jeová não ficaria feliz em destruir Moabe. ( Jer. 48:31, 36 ) Ele mostraria misericórdia a alguns moabitas. ( Jer. 48:47 ; it “Moabe, Moabitas” n.º 2 § 24 ) PARA MEDIT",
+          "texto": "(10 min) Jeremias predisse que Jeová puniria Moabe por ter maltratado Judá. ( Jer. 48:27, 29, 42 ; it “Moabe, Moabitas” n.º 2 § 22 ) Jeová não ficaria feliz em destruir Moabe. ( Jer. 48:31, 36 ) Ele mostraria misericórdia a alguns moabitas. ( Jer. 48:47 ; it “Moabe, Moabitas” n.º 2 § 24 ) PARA MEDITAR: O que a misericórdia de Jeová nos incentiva a fazer agora? — w24.05 17 § 10 . Mesmo depois que a grande tribulação começar, alguns talvez decidam escutar a nossa mensagem",
           "temPerguntas": false,
           "perguntas": []
         },
@@ -542,9 +560,10 @@
           "secao": "TESOUROS",
           "titulo": "2. Joias espirituais",
           "duracao": "10 min",
-          "texto": "(10 min) Jer. 48:6 — Em que sentido os moabitas se tornariam “como um junípero no deserto”? ( it “Junípero” n.º 2 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "texto": "(10 min) Jer. 48:6 — Em que sentido os moabitas se tornariam “como um junípero no deserto”? ( it “Junípero” n.º 2 )  Que joias espirituais você encontrou na leitura da Bíblia desta semana?",
           "temPerguntas": true,
           "perguntas": [
+            "Jer. 48:6 — Em que sentido os moabitas se tornariam “como um junípero no deserto”? ( it “Junípero” n.º 2 )",
             "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
@@ -552,7 +571,7 @@
           "id": 3,
           "secao": "TESOUROS",
           "titulo": "3. Leitura da Bíblia",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) Jer. 48:1-13 ( th lição 11 ) FAÇA SEU MELHOR NO MINISTÉRIO",
           "temPerguntas": false,
           "perguntas": []
@@ -561,7 +580,7 @@
           "id": 4,
           "secao": "MINISTERIO",
           "titulo": "4. Iniciando conversas",
-          "duracao": "3 min",
+          "duracao": "10 min",
           "texto": "(3 min) DE CASA EM CASA. ( lmd lição 5 ponto 4 )",
           "temPerguntas": false,
           "perguntas": []
@@ -570,7 +589,7 @@
           "id": 5,
           "secao": "MINISTERIO",
           "titulo": "5. Cultivando o interesse",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) TESTEMUNHO INFORMAL. Fale sobre uma das verdades do apêndice A da brochura Ame as Pessoas. ( lmd lição 9 ponto 5 )",
           "temPerguntas": false,
           "perguntas": []
@@ -579,16 +598,16 @@
           "id": 6,
           "secao": "MINISTERIO",
           "titulo": "6. Fazendo discípulos",
-          "duracao": "5 min",
-          "texto": "(5 min) Incentive seu estudante a orar mais vezes. ( th lição 8 ) NOSSA VIDA CRISTÃ",
+          "duracao": "10 min",
+          "texto": "(5 min) Incentive seu estudante a orar mais vezes. ( th lição 8 )",
           "temPerguntas": false,
           "perguntas": []
         },
         {
           "id": 7,
-          "secao": "VIDACRISTA",
+          "secao": "MINISTERIO",
           "titulo": "7. Necessidades locais",
-          "duracao": "15 min",
+          "duracao": "10 min",
           "texto": "(15 min)",
           "temPerguntas": false,
           "perguntas": []
@@ -597,112 +616,119 @@
           "id": 8,
           "secao": "VIDACRISTA",
           "titulo": "8. Estudo bíblico de congregação",
-          "duracao": "30 min",
+          "duracao": "10 min",
           "texto": "(30 min) wcg cap. 14",
           "temPerguntas": true,
-          "perguntas": []
+          "perguntas": [
+            "Como podemos colocar em prática este princípio bíblico na nossa vida diária e na congregação?"
+          ]
         }
-      ]
+      ],
+      "canticoMeio": "Cântico da Reunião",
+      "conclusao": {
+        "cantico": "Comentários finais (3 min) | Cântico 54 e oração"
+      }
     },
     "fimSemana": {
       "titulo": "Dê valor ao ‘privilégio de prestar destemidamente serviço sagrado’",
-      "tema": "A Sentinela • Estudo Semanal",
-      "chips": [
-        "Comentário Parágrafo 1",
-        "Comentário Parágrafo 2",
-        "Aplicação Prática",
-        "Lição para a congregação"
-      ],
+      "tema": "“Ele fez surgir para nós um poderoso salvador . . . [para] nos conceder . . . o privilégio de lhe prestar destemidamente serviço sagrado.” — LUCAS 1:69, 74.",
+      "objetivo": "",
+      "canticoInicial": "CÂNTICO 62 O novo cântico",
       "paragrafos": [
         {
-          "numero": "1",
+          "num": "1",
           "pergunta": "1. O que Zacarias disse em sua profecia?",
-          "textosLidos": []
+          "texto": "“O QUE será que esse menino vai ser?” ( Luc. 1:57-66 ) Essa pergunta foi feita pelos parentes e vizinhos do sacerdote Zacarias e de sua esposa, Elisabete, que antes era estéril. Eles estavam curiosos sobre João, o filho que Jeová milagrosamente tinha dado a esse casal bem idoso. Jeová usou Zacarias para responder a essa pergunta. Zacarias disse que João ajudaria as pessoas a se arrepender e a estar preparadas para seguir o tão aguardado Messias, que logo viria. ( Amós 3:7; Luc. 1:67-79 ) Mas Zacarias fez mais do que simplesmente contar o que seu filho faria. a Como vamos ver neste estudo, o que Zacarias disse foi profético e tem a ver com cada um de nós hoje. Em suas palavras, vamos aprender sobre três coisas que devemos dar valor: (1) o presente da salvação; (2) o privilégio de servir a Jeová; e (3) a responsabilidade de pregar."
         },
         {
-          "numero": "2",
-          "pergunta": "2. (a) De acordo com Lucas 1:67-73, o que Deus prometeu ao seu povo? (b) Quem é o “poderoso salvador” mencionado em Lucas 1:69?",
-          "textosLidos": []
+          "num": "2",
+          "pergunta": "2. (a) De acordo com Lucas 1:67-73 , o que Deus prometeu ao seu povo? (b) Quem é o “poderoso salvador” mencionado em Lucas 1:69 ?",
+          "texto": "2 Leia Lucas 1:67-73 . Deus tinha prometido dar ao seu povo um presente maravilhoso: a salvação. Como ele faria isso? Zacarias disse: “[Jeová] fez surgir para nós um poderoso salvador na casa de Davi.” ( Luc. 1:69 ; veja a nota de estudo .) Esse “poderoso salvador” seria o Messias. Os judeus dos dias de Zacarias já esperavam o prometido Messias e sabiam que ele seria descendente de Abraão por meio da linhagem do rei Davi. ( Gên. 22:17, 18; Mat. 22:42 ) Mas por que Jeová usou Zacarias para anunciar a chegada desse “poderoso salvador”? Porque a chegada do Messias estava mais perto do que nunca! Dentro de seis meses, uma jovem chamada Maria daria à luz a Jesus que, como o anjo Gabriel tinha dito, seria chamado “Filho de Deus” e reinaria no “trono de Davi, seu pai”. ( Luc. 1:30-35 ) O “poderoso salvador” surgiu quando Jesus foi batizado, aos 30 anos. Nessa ocasião, Jesus foi ungido com espírito santo e se tornou o Messias. ( Mat. 3:16, 17 ) Que acontecimento emocionante!"
         },
         {
-          "numero": "3",
+          "num": "3",
           "pergunta": "3. De que inimigos os judeus precisavam ser salvos?",
-          "textosLidos": []
+          "texto": "3 Os judeus daquela época precisavam ser salvos. Mas de quem ou de quê? Zacarias responde: “Dos nossos inimigos e das mãos de todos os que nos odeiam.” ( Luc. 1:71 ) Será que isso queria dizer que Jesus salvaria os judeus das autoridades romanas que os maltratavam? Não. Na verdade, aqueles judeus precisavam ser salvos de um inimigo muito mais poderoso e o verdadeiro culpado pelo sofrimento deles: Satanás. ( Heb. 2:14, 15 ) Satanás é o responsável por levar todos os humanos, inclusive aqueles judeus, a se tornarem escravos do pecado e da morte. Além disso, os judeus não conseguiam seguir perfeitamente a Lei mosaica. Por esse motivo, eles estavam sob maldição e precisavam ser salvos. ( Rom. 3:20; Gál. 3:10, 13 ) Por isso, o que Jeová tinha prometido por meio de Zacarias era tão importante para os judeus: “Salvação por meio do perdão dos pecados deles.” — Luc. 1:77 ."
         },
         {
-          "numero": "4",
+          "num": "4",
           "pergunta": "4. De que inimigos precisamos ser salvos hoje?",
-          "textosLidos": []
+          "texto": "4 E nós hoje? Assim como os judeus nos dias de Jesus, também somos escravos do pecado e da morte. ( Rom. 5:12 ) Além disso, Satanás e os demônios causam muito sofrimento. Eles tentam nos enganar, na tentativa de nos afastar de Jeová. Eles até fazem com que pessoas e organizações “que nos odeiam” fiquem contra a nossa adoração. Nós precisamos ser salvos desses inimigos."
         },
         {
-          "numero": "5",
+          "num": "5",
           "pergunta": "5. De que maneiras Jesus nos salva do pecado?",
-          "textosLidos": []
+          "texto": "5 Como nosso Salvador nos livra desses inimigos? Veja como Jesus nos salva do pecado. Quando esteve na Terra, Jesus ensinou seus seguidores a adorar a Jeová da maneira certa. Jesus também deu sua vida como resgate, “para que todo aquele que nele exercer fé não seja destruído, mas tenha vida eterna”. ( João 3:16; Mat. 20:28 ) Nós nos esforçamos para seguir o que Jesus ensinou sobre adorar a Jeová da maneira certa, mas ainda somos imperfeitos. Por isso, pedimos que Jeová nos perdoe quando pecamos. Com base no resgate, Jeová pode perdoar nossos pecados e bondosamente aceitar nossa adoração. ( 1 João 2:1, 2 ) Fazendo isso, nosso Salvador Jesus nos liberta do pecado, por tornar possível sermos perdoados."
         },
         {
-          "numero": "6",
+          "num": "6",
           "pergunta": "6. O que Jesus vai fazer como Rei no “trono de Davi”? (Veja também a imagem.)",
-          "textosLidos": []
+          "texto": "6 Como Jesus vai nos salvar completamente do pecado e da morte, de Satanás e seus demônios e dos “que nos odeiam”? Desde 1914, Jesus está reinando no céu no “trono de Davi, seu pai”. ( Luc. 1:32, 33 ) Como Rei do Reino de Deus, Jesus, os 144 mil que vão governar com ele e os anjos vão destruir todos os inimigos humanos de Deus no Armagedom. Daí, durante o Reinado de Mil Anos, Jesus vai ressuscitar os mortos e pouco a pouco, junto com os 144 mil, vai ajudar os humanos a se tornar perfeitos. ( João 5:28; Apo. 22:1, 2 ) No final dos mil anos, eles terão acabado com o pecado herdado e a morte. ( 1 Cor. 15:26, 55-57 ) Depois eles vão eliminar por completo Satanás, seus demônios e todos os humanos que estiverem do lado deles no teste final. ( Apo. 20:7-10 ) Finalmente os adoradores leais de Jeová vão poder ter uma amizade com ele sem obstáculos: sem pecado, sem morte e sem qualquer inimigo! Nós vamos para sempre ser gratos a Jeová e valorizar “Sua indescritível dádiva”, o que inclui nossa salvação por meio de Jesus Cristo. — 2 Cor. 9:15 ."
         },
         {
-          "numero": "7",
-          "pergunta": "7. De acordo com Lucas 1:74, 75, que privilégio Jeová dá ao seu povo?",
-          "textosLidos": []
+          "num": "7",
+          "pergunta": "7. De acordo com Lucas 1:74, 75 , que privilégio Jeová dá ao seu povo?",
+          "texto": "7 Leia Lucas 1:74, 75 . Por causa do resgate que Jeová nos deu, temos “o privilégio de lhe prestar destemidamente serviço sagrado”, como Zacarias disse. Isso é algo muito especial! Nosso “serviço sagrado” a Jeová inclui todos os aspectos da adoração verdadeira, e prestamos esse serviço sagrado quando pregamos, oramos, estudamos a Bíblia e assistimos às reuniões, assembleias e congressos. Também inclui outras atividades que estão diretamente ligadas à nossa adoração, como o serviço em Betel e a construção e manutenção de Salões do Reino e de Salões de Assembleias."
         },
         {
-          "numero": "8",
+          "num": "8",
           "pergunta": "8. Do que não precisamos ter medo?",
-          "textosLidos": []
+          "texto": "8 Em que sentido prestamos serviço sagrado a Jeová “destemidamente”? Primeiro, não precisamos mais ter medo da morte. Por termos a firme esperança de viver para sempre, podemos nos concentrar em agradar a Jeová em vez de querer aproveitar ao máximo a vida tão curta que temos nesse sistema. Mesmo quando nossos inimigos ameaçam nos matar, não cedemos ao medo. Nós continuamos leais a Jeová porque não temos nenhuma dúvida de que, se morrermos, Jesus pode nos trazer de volta à vida. ( João 6:39, 40 ) Segundo, não precisamos ter medo de ser rejeitados por Jeová por sermos pecadores. Temos total confiança de que Jeová nos ama, nos aprova e vai nos perdoar com base no sacrifício de Jesus. — 1 João 4:9, 10 ."
         },
         {
-          "numero": "9",
+          "num": "9",
           "pergunta": "9. Que dificuldade alguns cristãos têm?",
-          "textosLidos": []
+          "texto": "9 Mas para alguns cristãos pode ser difícil acreditar que Jeová está feliz com o serviço sagrado que prestam a ele. Pode ser que eles sintam que não merecem o amor e a aprovação de Jeová, talvez por causa de algo muito ruim que aconteceu em sua vida. Ou pode ser que eles se sintam muito culpados por causa de pecados que cometeram, mesmo já tendo buscado o perdão de Jeová e a ajuda dos anciãos. Se você se sente assim, o que você pode fazer?"
         },
         {
-          "numero": "10",
+          "num": "10-11",
           "pergunta": "10-11. O que podemos fazer se estamos sofrendo em sentido emocional e achamos que Jeová não nos ama mais? Ilustre.",
-          "textosLidos": []
+          "texto": "10 Pense na seguinte ilustração: um homem quebra a perna e vai ao médico. O médico coloca o osso do paciente no lugar e depois recomenda alguns exercícios para que, com o tempo, ele recupere a força e consiga andar de novo. Mas e se a pessoa ferida acha que nunca mais vai recuperar totalmente sua mobilidade? O que ela precisa fazer? Ela precisa confiar no médico e, com paciência, continuar seguindo a recomendação dele. Com o tempo, sua perna pode se recuperar, permitindo que a pessoa ande ou até mesmo corra."
         },
         {
-          "numero": "12",
-          "pergunta": "12. Como João Batista preparou os caminhos de Jeová? (Lucas 1:76-79)",
-          "textosLidos": []
+          "num": "12",
+          "pergunta": "12. Como João Batista preparou os caminhos de Jeová? ( Lucas 1:76-79 )",
+          "texto": "11 De forma parecida, mesmo que você esteja sofrendo muito em sentido emocional por causa de um pecado e ache que perdeu o amor de Jeová, confie nele. Não se esqueça que, por sua bondade imerecida e misericórdia, Jeová deu a vida do seu Filho para curar você em sentido espiritual. ( João 1:16, 17; Rom. 3:23, 24; 1 João 3:19, 20 ) Siga de perto a “recomendação médica”: oração, estudo e atividades espirituais. ( Sal. 1:2; 1 Tes. 5:17; Heb. 10:25 ) Assim como pode levar tempo para curar uma perna que foi quebrada, também pode levar tempo para curar um coração que tem dúvidas do amor de Jeová. De início, pode ser difícil ver a melhora, mas pode ter certeza de que vai dar certo! Então, nunca desista de Jeová, nem de você mesmo. Continue seguindo sua rotina espiritual. ( Fil. 3:16 ) E agradeça a Jeová todo dia por dar a você a força necessária para continuar servindo a ele fielmente. Todos nós podemos ser gratos a Deus e a Cristo pelo privilégio maravilhoso de prestar serviço sagrado a Jeová sem medo!"
         },
         {
-          "numero": "13",
+          "num": "13",
           "pergunta": "13. Em que sentido a vinda do Messias seria “um amanhecer” para o povo de Deus?",
-          "textosLidos": []
+          "texto": "12 Leia Lucas 1:76-79 . Em seguida, Zacarias disse ao seu filhinho: “ [ Você ] irá na frente de Jeová para preparar os caminhos dele.” Como João Batista cumpriu essas palavras? Quando cresceu, ele se tornou um pregador zeloso. Ele incentivou os judeus a se arrependerem de seus pecados, se batizarem e estarem prontos para a vinda do Messias. Depois de batizar Jesus, João o identificou como representante de Jeová, dizendo às pessoas: “Vejam o Cordeiro de Deus, que tira o pecado do mundo!” Daí João incentivou seus próprios discípulos a seguir a Jesus, o Messias. — João 1:29, 34-36, 40, 41 ."
         },
         {
-          "numero": "14",
-          "pergunta": "14. Que trabalho importante Jesus e seus discípulos fizeram? (Isaías 61:1, 2)",
-          "textosLidos": []
+          "num": "14",
+          "pergunta": "14. Que trabalho importante Jesus e seus discípulos fizeram? ( Isaías 61:1, 2 )",
+          "texto": "13 João fez seu melhor para identificar Jesus como o Messias, e isso foi muito importante. Por quê? De acordo com Zacarias, a vinda do Messias seria “um amanhecer”, o início de uma nova era, um acontecimento marcante que mudaria a vida de todas as pessoas! Com certeza, a notícia sobre esse maravilhoso presente da salvação precisava ser espalhada para o maior número possível de pessoas. Só que João não teria condições de fazer isso sozinho. Então quem, além de João, divulgaria essa importante mensagem de salvação?"
         },
         {
-          "numero": "15",
+          "num": "15",
           "pergunta": "15. Por que hoje a pregação é mais importante do que nunca?",
-          "textosLidos": []
+          "texto": "14 Jesus se esforçou bastante para divulgar essa mensagem. Ele cumpriu as palavras de Zacarias por trazer “luz aos sentados na escuridão e na sombra da morte”. Jesus sentia uma enorme compaixão pelas pessoas que sofriam e eram maltratadas. Como predito, Jesus trouxe luz a essas pessoas por compartilhar a mensagem consoladora do “ano de boa vontade de Jeová”. (Leia Isaías 61:1, 2; Luc. 4:16-21 ) Com zelo, ele proclamou: “O Reino dos céus está próximo.” Mas ele sabia que seria necessário muito mais pessoas para pregar. Então ele treinou seus discípulos para transmitir essa mesma mensagem. — Mat. 4:16, 17; 10:7; 28:19, 20 ."
         },
         {
-          "numero": "16",
+          "num": "16",
           "pergunta": "16. O que você está decidido a fazer? (Veja também as imagens.)",
-          "textosLidos": []
+          "texto": "15 Como seguidores de Cristo hoje, nós damos muito valor à responsabilidade que temos de continuar espalhando a mensagem de Jeová de salvação. Na verdade, pregar sobre o resgate de Jesus e o Reino de Deus é agora mais importante do que nunca. Por quê? Por causa do que logo vai acontecer. Em breve, a humanidade vai enfrentar uma “grande tribulação, como nunca ocorreu desde o princípio do mundo”. ( Mat. 24:21 ) Nesse período, talvez mais pessoas aceitem as boas novas e comecem a servir a Jeová porque vão se lembrar da mensagem que pregamos. Daí, Jesus vai liderar os 144 mil e os anjos para lutar contra todos os inimigos humanos de Deus e salvar os que adoram a Jeová para que eles vivam no novo mundo. ( Mat. 25:34; Apo. 16:16; 19:19 ) Por isso é tão importante pregarmos as boas novas agora! — Mat. 24:14; Mar. 13:10 ."
         }
       ]
     }
   },
   "45": {
+    "ano": 2026,
+    "semana": 45,
     "meioSemana": {
       "titulo": "2-8 DE NOVEMBRO",
       "tema": "JEREMIAS 49-50",
+      "abertura": {
+        "cantico": "Cântico 1 e oração | Comentários iniciais (1 min)"
+      },
       "partes": [
         {
           "id": 1,
           "secao": "TESOUROS",
           "titulo": "1. Ajude outros a se beneficiar da misericórdia de Jeová",
           "duracao": "10 min",
-          "texto": "(10 min) Jeová condenou Babilônia por causa dos seus pecados graves e da sua atitude arrogante. ( Jer. 50:14, 29, 31 ; it “Presunção” § 10 ) Jeová perdoou completamente os israelitas que se arrependeram. ( Jer. 50:20 ) Os cristãos se esforçam para imitar a misericórdia de Jeová declarando as boas no",
+          "texto": "(10 min) Jeová condenou Babilônia por causa dos seus pecados graves e da sua atitude arrogante. ( Jer. 50:14, 29, 31 ; it “Presunção” § 10 ) Jeová perdoou completamente os israelitas que se arrependeram. ( Jer. 50:20 ) Os cristãos se esforçam para imitar a misericórdia de Jeová declarando as boas novas e ajudando as pessoas a sair da religião falsa. ( Jer. 50:2, 8 ; w08 15/6 8-9 §§ 8-11 )",
           "temPerguntas": false,
           "perguntas": []
         },
@@ -711,9 +737,10 @@
           "secao": "TESOUROS",
           "titulo": "2. Joias espirituais",
           "duracao": "10 min",
-          "texto": "(10 min) Jer. 50:24 — Em que sentido Jeová capturou Babilônia em um “laço”? ( it “Armadilha” § 3 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "texto": "(10 min) Jer. 50:24 — Em que sentido Jeová capturou Babilônia em um “laço”? ( it “Armadilha” § 3 )  Que joias espirituais você encontrou na leitura da Bíblia desta semana?",
           "temPerguntas": true,
           "perguntas": [
+            "Jer. 50:24 — Em que sentido Jeová capturou Babilônia em um “laço”? ( it “Armadilha” § 3 )",
             "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
@@ -721,7 +748,7 @@
           "id": 3,
           "secao": "TESOUROS",
           "titulo": "3. Leitura da Bíblia",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) Jer. 50:24-40 ( th lição 11 ) FAÇA SEU MELHOR NO MINISTÉRIO",
           "temPerguntas": false,
           "perguntas": []
@@ -730,7 +757,7 @@
           "id": 4,
           "secao": "MINISTERIO",
           "titulo": "4. Iniciando conversas",
-          "duracao": "3 min",
+          "duracao": "10 min",
           "texto": "(3 min) DE CASA EM CASA. Fale sobre uma verdade da Bíblia. Talvez você possa usar uma das que estão no apêndice A da brochura Ame as Pessoas. ( lmd lição 1 ponto 5 )",
           "temPerguntas": false,
           "perguntas": []
@@ -739,7 +766,7 @@
           "id": 5,
           "secao": "MINISTERIO",
           "titulo": "5. Cultivando o interesse",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) DE CASA EM CASA. Você se preparou para falar de um assunto, mas a pessoa quer falar sobre um assunto diferente. ( lmd lição 9 ponto 3 )",
           "temPerguntas": false,
           "perguntas": []
@@ -748,17 +775,17 @@
           "id": 6,
           "secao": "MINISTERIO",
           "titulo": "6. Fazendo discípulos",
-          "duracao": "5 min",
-          "texto": "(5 min) lff lição 20 ponto 4 ( lmd lição 11 ponto 4 ) NOSSA VIDA CRISTÃ",
+          "duracao": "10 min",
+          "texto": "(5 min) lff lição 20 ponto 4 ( lmd lição 11 ponto 4 )",
           "temPerguntas": false,
           "perguntas": []
         },
         {
           "id": 7,
-          "secao": "VIDACRISTA",
+          "secao": "MINISTERIO",
           "titulo": "7. Nunca se Esqueça do Que Jeová se Lembra",
-          "duracao": "15 min",
-          "texto": "(15 min) Consideração. Mostre o VÍDEO. Depois, pergunte: Que lições você aprendeu? Sua resposta",
+          "duracao": "10 min",
+          "texto": "(15 min) Consideração. Mostre o VÍDEO. Depois, pergunte: Que lições você aprendeu?",
           "temPerguntas": true,
           "perguntas": [
             "Que lições você aprendeu?"
@@ -768,112 +795,119 @@
           "id": 8,
           "secao": "VIDACRISTA",
           "titulo": "8. Estudo bíblico de congregação",
-          "duracao": "30 min",
+          "duracao": "10 min",
           "texto": "(30 min) wcg cap. 15",
           "temPerguntas": true,
-          "perguntas": []
+          "perguntas": [
+            "Como podemos colocar em prática este princípio bíblico na nossa vida diária e na congregação?"
+          ]
         }
-      ]
+      ],
+      "canticoMeio": "Cântico da Reunião",
+      "conclusao": {
+        "cantico": "Comentários finais (3 min) | Cântico 33 e oração"
+      }
     },
     "fimSemana": {
       "titulo": "Confie em Jeová e seja protegido",
-      "tema": "A Sentinela • Estudo Semanal",
-      "chips": [
-        "Comentário Parágrafo 1",
-        "Comentário Parágrafo 2",
-        "Aplicação Prática",
-        "Lição para a congregação"
-      ],
+      "tema": "“Você disse: ‘Jeová é o meu refúgio.’” — SAL. 91:9.",
+      "objetivo": "",
+      "canticoInicial": "CÂNTICO 3 Jeová, minha força e esperança",
       "paragrafos": [
         {
-          "numero": "1",
+          "num": "1-2",
           "pergunta": "1-2. Em breve, que acontecimentos vão abalar a Terra?",
-          "textosLidos": []
+          "texto": "VIVEMOS nos últimos dos últimos dias. Em breve, acontecerão coisas que vão abalar o mundo. Jeová irá colocar no coração dos governantes o “pensamento dele”, ou seja, de dar “à fera [a ONU] o reino que possuem”. a ( Apo. 17:17 ) Daí a fera, cheia de poder e com total apoio de todos os governos, acabará com as organizações religiosas falsas de uma vez por todas. ( Apo. 17:16 ) Esse evento irá marcar o início da grande tribulação. Mas e depois?"
         },
         {
-          "numero": "3",
+          "num": "3",
           "pergunta": "3. O que vamos ver neste estudo?",
-          "textosLidos": []
+          "texto": "2 Teremos mais acontecimentos marcantes. Nações do mundo todo vão trabalhar juntas num ataque total ao povo de Jeová. ( Eze. 38:14-16 ) Por quê? O livro A Adoração Pura de Jeová É Restaurada! explica: “Influenciadas por Satanás, as nações vão tentar eliminar da Terra os adoradores verdadeiros e, junto com eles, a adoração pura.” Então, o momento mais importante de todos irá acontecer: a guerra do Armagedom. Jesus vai liderar seu exército celestial, o que inclui os 144 mil, para destruir os maus e abrir para nós as portas do novo mundo justo de Jeová. — Apo. 16:14-16; 19:11-21 ."
         },
         {
-          "numero": "4",
-          "pergunta": "4. Como os versículos iniciais do Salmo 91 nos dão uma garantia da proteção de Jeová? (Salmo 91:1, 2)",
-          "textosLidos": []
+          "num": "4",
+          "pergunta": "4. Como os versículos iniciais do Salmo 91 nos dão uma garantia da proteção de Jeová? ( Salmo 91:1, 2 )",
+          "texto": "3 Será que precisamos ficar com medo do julgamento divino que em breve virá sobre este mundo mau? Não! Por quê? Porque Jeová promete que vai nos proteger. Ele deixou essa promessa registrada em sua Palavra: “Mil cairão ao seu lado, e dez mil à sua direita; mas nada o atingirá.” ( Sal. 91:7 ) Neste estudo, vamos analisar o Salmo 91 e responder às seguintes perguntas: Que tipo de proteção Jeová nos promete? Como Jeová nos protege hoje? E como ele vai nos proteger no futuro? Mas antes, vamos ter uma visão geral do Salmo 91 ."
         },
         {
-          "numero": "4",
-          "pergunta": "5-6. No Salmo 91:14-16, o que Jeová promete fazer, e por que podemos confiar nele?",
-          "textosLidos": []
+          "num": "5-6",
+          "pergunta": "5-6. No Salmo 91:14-16 , o que Jeová promete fazer, e por que podemos confiar nele?",
+          "texto": "4 A ideia principal do Salmo 91 pode ser resumida em poucas palavras: confiança na proteção de Deus. Logo nos dois primeiros versículos, já temos a garantia de que Jeová irá proteger aqueles que confiam nele. (Leia Salmo 91:1, 2 .) Imagine estar debaixo da sombra e das asas protetoras do Altíssimo, o Todo-Poderoso! Com certeza, não existe proteção melhor que essa, não concorda? ( Rute 2:12; Sal. 17:8 ) As palavras “refúgio” e “fortaleza” nos lembram das cidades nos tempos bíblicos que eram cercadas e protegidas por uma muralha. Os habitantes da cidade ficavam seguros quando estavam dentro das muralhas, e aqueles que estavam do lado de fora podiam correr para a cidade para se proteger dos inimigos. Nos versículos seguintes, o salmista usa belas ilustrações para nos garantir que Jeová pode proteger seu povo, não importa que perigos enfrentem. — Sal. 91:3-13 ."
         },
         {
-          "numero": "7",
-          "pergunta": "7. De acordo com o Salmo 91, Jeová promete que tipo de proteção?",
-          "textosLidos": []
+          "num": "7",
+          "pergunta": "7. De acordo com o Salmo 91 , Jeová promete que tipo de proteção?",
+          "texto": "5 Nos versículos finais do Salmo 91 , encontramos uma mudança surpreendente que nos enche de confiança: antes, o salmista descrevia o cuidado protetor de Jeová, mas agora são palavras do próprio Jeová . Jeová faz uma promessa, ou garantia, a seus adoradores. (Leia Salmo 91:14-16 .) Nesses versículos, Jeová repete várias vezes que vai proteger seus servos de diferentes formas porque eles o amam, confiam nele, conhecem seu nome e oram a ele. Podemos confiar totalmente no Cumpridor de promessas. ( Jos. 23:14 ) Sua proteção não é uma simples possibilidade, é uma certeza absoluta! — Núm. 23:19 ."
         },
         {
-          "numero": "6",
-          "pergunta": "8-9. De acordo com Mateus 4:5-7, como Jesus respondeu a uma das tentações de Satanás, e o que aprendemos com isso?",
-          "textosLidos": []
+          "num": "8-9",
+          "pergunta": "8-9. De acordo com Mateus 4:5-7 , como Jesus respondeu a uma das tentações de Satanás, e o que aprendemos com isso?",
+          "texto": "6 Jeová inspirou o salmista a escrever as palavras no Salmo 91 porque ele quer que a gente se sinta seguro e confie nele. ( Rom. 15:4 ) Fazemos nossas as palavras do salmista e dizemos para Jeová: “Tu és meu refúgio e minha fortaleza.” ( Sal. 91:2 ) Mas que tipo de proteção podemos esperar de Jeová?"
         },
         {
-          "numero": "10",
+          "num": "10",
           "pergunta": "10. Que confiança podemos ter?",
-          "textosLidos": []
+          "texto": "7 Como nossas publicações já explicaram, o Salmo 91 é uma promessa de segurança ou proteção espiritual. Nós podemos ter certeza de que Jeová sempre vai nos dar tudo que precisamos para nos proteger contra perigos espirituais e preservar nossa amizade tão preciosa com ele. Mas será que esse salmo é apenas uma promessa de proteção espiritual? Não. Esse salmo também é uma promessa de que Jeová vai dar ao seu povo, como grupo, proteção física contra qualquer dano causado por seus inimigos. Jeová também dá paz mental aos seus servos mesmo quando estão sofrendo. Mas como sabemos disso?"
         },
         {
-          "numero": "11",
+          "num": "11",
           "pergunta": "11. Como Jeová está nos protegendo em sentido espiritual?",
-          "textosLidos": []
+          "texto": "8 Veja a resposta que Jesus deu quando Satanás o tentou e citou as palavras do Salmo 91 . (Leia Mateus 4:5-7 .) Fazendo referência ao Salmo 91:11, 12 como uma promessa de proteção física, Satanás desafiou Jesus a se jogar do parapeito do templo para ver se os anjos o protegeriam de qualquer dano. Como Jesus respondeu? Ele não disse: ‘Você está errado, Satanás! Esse salmo não promete proteção física.’ Em vez disso, Jesus disse: “Não ponha Jeová, seu Deus, à prova.” O que podemos aprender com a resposta de Jesus?"
         },
         {
-          "numero": "9",
-          "pergunta": "12-13. De acordo com Mateus 5:28, 29, como podemos vencer a luta contra desejos errados?",
-          "textosLidos": []
+          "num": "12-13",
+          "pergunta": "12-13. De acordo com Mateus 5:28, 29 , como podemos vencer a luta contra desejos errados?",
+          "texto": "9 Jesus sabia muito bem que, em algumas ocasiões, Jeová tinha usado anjos para proteger fisicamente seus servos. ( 2 Reis 6:15-17; 19:34, 35; Dan. 3:19, 20, 26-28; 6:16-22 ) Mas Jesus se recusou a colocar Jeová à prova. Jesus sabia que, se fizesse algo imprudente, não seria correto esperar que Jeová mandasse anjos para protegê-lo. Satanás aplicou de forma errada o Salmo 91 , não por citar esse salmo como uma promessa de proteção física, mas por usá-lo como justificativa para colocar Jeová à prova. b É por isso que, de acordo com a resposta de Jesus a Satanás, podemos concluir que o Salmo 91 é uma promessa de proteção completa: não só espiritual, mas também física e emocional."
         },
         {
-          "numero": "14",
+          "num": "14",
           "pergunta": "14. Como o espírito santo pode ajudar a nos proteger?",
-          "textosLidos": []
+          "texto": "10 As palavras inspiradas do Salmo 91 nos enchem de confiança. Estamos convencidos de que Jeová é o Protetor de todos os que confiam nele como seu refúgio e sua fortaleza. Então, não precisamos viver com medo dos eventos impactantes que estão à nossa frente. Agora vamos estudar mais a fundo sobre como Jeová nos protege hoje e como ele vai nos proteger no futuro."
         },
         {
-          "numero": "15",
+          "num": "15",
           "pergunta": "15. Como a organização de Jeová nos protege em sentido espiritual? (Veja também as imagens.)",
-          "textosLidos": []
+          "texto": "11 Jeová nos dá proteção espiritual. Isso significa que ele nos dá a ajuda que precisamos para combater perigos espirituais, ou seja, influências que poderiam ameaçar nossa amizade com ele. Pense, por exemplo, na batalha constante que temos para não ser dominados pelas garras do pecado. Jeová entende totalmente nossa condição imperfeita. ( Rom. 6:16; 7:21-23 ) Por isso, vamos ver algumas maneiras de Jeová nos ajudar a vencer essa batalha."
         },
         {
-          "numero": "16",
-          "pergunta": "16. (a) O que acontece com alguns servos de Jeová e por quê? (b) Que certeza podemos ter?",
-          "textosLidos": []
+          "num": "16",
+          "pergunta": "16. (a) O que acontece com alguns servos de Jeová e por quê? (b) Que certeza podemos ter?",
+          "texto": "12 Sua Palavra. A Palavra de Jeová, além de nos alertar sobre desejos errados, também nos diz como podemos vencer nossa luta contra eles. Por exemplo, veja o que Jesus disse em Mateus 5:28, 29 . (Leia.) Aqui Jesus está falando de um homem “que persiste em olhar para uma mulher, a ponto de sentir paixão por ela”. Jesus explica que esse homem “já cometeu no coração adultério com ela”. Qual a lição para nós?"
         },
         {
-          "numero": "17",
+          "num": "17",
           "pergunta": "17. Por que não esperamos que Jeová nos proteja de todos os danos físicos hoje?",
-          "textosLidos": []
+          "texto": "13 Se continuarmos olhando para imagens imorais, vamos estimular desejos errados no nosso coração. E quando esses desejos encontrarem uma oportunidade, provavelmente vamos acabar nos envolvendo em imoralidade sexual. ( Tia. 1:14, 15 ) Para vencer esses desejos errados, precisamos tomar uma atitude drástica. Certo comentarista bíblico diz que esse conselho de Jesus é como uma “intervenção cirúrgica”. Devemos atacar a raiz do problema, eliminando essas imagens de uma vez por todas de nossa vida, como se fossem um tumor maligno. ( Col. 3:5 ) Se aplicarmos esse conselho, vamos preservar nossa amizade com Jeová."
         },
         {
-          "numero": "18",
+          "num": "18",
           "pergunta": "18. Como Jeová vai nos proteger no futuro?",
-          "textosLidos": []
+          "texto": "14 Seu espírito santo. Jeová também usa seu espírito santo para nos ajudar a lutar contra nossos desejos errados. Se continuarmos pedindo espírito santo em nossas orações, ele vai nos dar. ( Luc. 11:9-13 ) Como o espírito santo pode nos proteger? O apóstolo Paulo diz: “Continuem andando por espírito, e não executarão nenhum desejo carnal.” ( Gál. 5:16 ) A nota de estudo explica: “A expressão ‘andar por espírito’ passa a ideia de que a pessoa busca a orientação do espírito de Deus e permite que ele influencie seus pensamentos e ações. Essa pessoa talvez ainda tenha desejos errados; mas, quando eles surgem, ela os rejeita imediatamente, recusando-se a pensar neles.” O espírito de Jeová não elimina desejos errados, mas nos ajuda a fortalecer nossa determinação de fazer o que é certo e de não ceder aos nossos desejos. Essa determinação vai ajudar a proteger nossa espiritualidade."
         },
         {
-          "numero": "15",
+          "num": "19-20",
           "pergunta": "19-20. Por que não precisamos ter medo do futuro julgamento divino no Armagedom? (Veja também a da capa.)",
-          "textosLidos": []
+          "texto": "15 Sua organização. Jeová usa sua organização para nos dar publicações no tempo certo que protegem nossa espiritualidade. Pare e pense: Por causa da nossa imperfeição e tendência para o pecado, às vezes temos uma luta intensa contra nossos pensamentos e sentimentos negativos. Por exemplo, talvez tenhamos que lutar contra ansiedade excessiva, culpa sem fim por causa de erros do passado ou o pensamento de que ninguém se importa com a gente. Satanás, “o Tentador”, se aproveita desses sentimentos para nos fazer desistir. ( Mat. 4:3; 6:13 ) O alimento espiritual que recebemos de Jeová por meio da sua organização nos dá as seguintes certezas: Jeová cuida das nossas necessidades, perdoa nossos pecados e dá muito valor a cada um de nós. ( Sal. 86:5; Mat. 10:29-31; Luc. 12:28; Heb. 13:5 ) Você já leu algo nas publicações que tocou seu coração? Talvez você até pensou: ‘Isso foi escrito pra mim!’ Essa é uma prova de que Jeová usa sua organização para nos dar o alimento espiritual que precisamos no tempo certo e, assim, proteger nossa amizade com ele."
         }
       ]
     }
   },
   "46": {
+    "ano": 2026,
+    "semana": 46,
     "meioSemana": {
       "titulo": "9-15 DE NOVEMBRO",
       "tema": "JEREMIAS 51-52",
+      "abertura": {
+        "cantico": "Cântico 98 e oração | Comentários iniciais (1 min)"
+      },
       "partes": [
         {
           "id": 1,
           "secao": "TESOUROS",
           "titulo": "1. Não siga o exemplo de Zedequias",
           "duracao": "10 min",
-          "texto": "(10 min) Zedequias não fez o que era certo. ( Jer. 52:1, 2 ; jr 29 ) Zedequias não cumpriu o juramento que fez em nome de Jeová. ( Jer. 52:3 ; w17.10 23 §§ 9-10 ) Zedequias não escapou das consequências das suas ações. ( Jer. 52:8-11 ) PARA MEDITAR: O que eu tenho que fazer para não ser como Zedequi",
+          "texto": "(10 min) Zedequias não fez o que era certo. ( Jer. 52:1, 2 ; jr 29 ) Zedequias não cumpriu o juramento que fez em nome de Jeová. ( Jer. 52:3 ; w17.10 23 §§ 9-10 ) Zedequias não escapou das consequências das suas ações. ( Jer. 52:8-11 ) PARA MEDITAR: O que eu tenho que fazer para não ser como Zedequias? ( w17.10 23-24 §§ 11-12 )",
           "temPerguntas": false,
           "perguntas": []
         },
@@ -882,9 +916,10 @@
           "secao": "TESOUROS",
           "titulo": "2. Joias espirituais",
           "duracao": "10 min",
-          "texto": "(10 min) Jer. 51:6, 7, 36 — Como a mensagem que Jeremias pregou é semelhante à mensagem que pregamos hoje? ( jr 165 § 21; 167 § 25 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "texto": "(10 min) Jer. 51:6, 7, 36 — Como a mensagem que Jeremias pregou é semelhante à mensagem que pregamos hoje? ( jr 165 § 21; 167 § 25 )  Que joias espirituais você encontrou na leitura da Bíblia desta semana?",
           "temPerguntas": true,
           "perguntas": [
+            "Jer. 51:6, 7, 36 — Como a mensagem que Jeremias pregou é semelhante à mensagem que pregamos hoje? ( jr 165 § 21; 167 § 25 )",
             "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
@@ -892,7 +927,7 @@
           "id": 3,
           "secao": "TESOUROS",
           "titulo": "3. Leitura da Bíblia",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) Jer. 52:6-20 ( th lição 5 ) FAÇA SEU MELHOR NO MINISTÉRIO",
           "temPerguntas": false,
           "perguntas": []
@@ -901,7 +936,7 @@
           "id": 4,
           "secao": "MINISTERIO",
           "titulo": "4. Iniciando conversas",
-          "duracao": "3 min",
+          "duracao": "10 min",
           "texto": "(3 min) DE CASA EM CASA. Ofereça um estudo bíblico de maneira direta. ( lmd lição 3 ponto 3 )",
           "temPerguntas": false,
           "perguntas": []
@@ -910,153 +945,145 @@
           "id": 5,
           "secao": "MINISTERIO",
           "titulo": "5. Iniciando conversas",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) DE CASA EM CASA. O morador não concorda com a nossa crença de que Jesus é o Filho de Deus. ( lmd lição 3 ponto 4 )",
           "temPerguntas": false,
           "perguntas": []
         },
         {
           "id": 6,
-          "secao": "TESOUROS",
+          "secao": "MINISTERIO",
           "titulo": "6. Discurso",
-          "duracao": "5 min",
-          "texto": "(5 min) lmd apêndice A ponto 21 — Tema: O Reino de Deus é um governo de verdade lá no céu. ( th lição 7 ) NOSSA VIDA CRISTÃ",
+          "duracao": "10 min",
+          "texto": "(5 min) lmd apêndice A ponto 21 — Tema: O Reino de Deus é um governo de verdade lá no céu. ( th lição 7 )",
           "temPerguntas": false,
           "perguntas": []
         },
         {
           "id": 7,
-          "secao": "VIDACRISTA",
-          "titulo": "7. Nossos donativos dão glória ao belo nome de Jeová",
-          "duracao": "15 min",
-          "texto": "(15 min) Consideração a ser feita por um ancião. Os israelitas que não iam trabalhar diretamente na construção do templo tiveram a oportunidade de dar glória ao nome de Jeová por meio das suas generosas contribuições. ( 1 Crô. 29:8-10 ) Hoje, não conseguimos participar diretamente em todos os projet",
-          "temPerguntas": true,
-          "perguntas": [
-            "Como nossos donativos dão louvor a Jeová?",
-            "Como as atualizações da organização no jw.org e as cartas de agradecimento que você recebe têm te ajudado?",
-            "Por quais projetos da organização você se sente especialmente grato?"
-          ]
-        },
-        {
-          "id": 8,
-          "secao": "VIDACRISTA",
+          "secao": "MINISTERIO",
           "titulo": "8. Estudo bíblico de congregação",
-          "duracao": "30 min",
+          "duracao": "10 min",
           "texto": "(30 min) wcg cap. 16",
-          "temPerguntas": true,
+          "temPerguntas": false,
           "perguntas": []
         }
-      ]
+      ],
+      "canticoMeio": "Cântico da Reunião",
+      "conclusao": {
+        "cantico": "Comentários finais (3 min) | Cântico 150 e oração"
+      }
     },
     "fimSemana": {
       "titulo": "Como desenvolver “um coração obediente”",
-      "tema": "A Sentinela • Estudo Semanal",
-      "chips": [
-        "Comentário Parágrafo 1",
-        "Comentário Parágrafo 2",
-        "Aplicação Prática",
-        "Lição para a congregação"
-      ],
+      "tema": "“Concede ao teu servo um coração obediente.” — 1 REIS 3:9.",
+      "objetivo": "",
+      "canticoInicial": "CÂNTICO 36 Proteja o coração",
       "paragrafos": [
         {
-          "numero": "1",
+          "num": "1",
           "pergunta": "1. O que leva muitas pessoas a obedecer aqueles que têm autoridade?",
-          "textosLidos": []
+          "texto": "MUITAS pessoas obedecem aqueles que têm autoridade apenas quando estão sendo observadas ou por medo de serem punidas. E quando se trata de obedecer a Deus, alguns fingem ser obedientes só para impressionar outros, assim como fizeram os líderes religiosos da época de Jesus. ( Mat. 23:5 ) Mas por que nós obedecemos a Jeová? Um motivo é que tudo o que ele pede de nós é para o nosso bem. ( Isa. 48:17, 18 ) Essa é uma boa razão para obedecê-lo. Mas existe uma razão ainda maior."
         },
         {
-          "numero": "2",
+          "num": "2",
           "pergunta": "2. Qual é o principal motivo de obedecermos a Jeová?",
-          "textosLidos": []
+          "texto": "2 O principal motivo de obedecermos a Jeová é que nós o amamos muito. ( Mat. 22:37, 38 ) Esse amor nos motiva a ser “obedientes de coração” e a nos esforçar para seguir suas orientações. ( Rom. 6:17 ) E nós fazemos isso em todos os momentos, não apenas quando outros estão olhando ou quando vemos as vantagens de ser obedientes. Mas às vezes, pode ser difícil obedecer com a motivação certa, afinal nosso coração é traiçoeiro. Neste estudo, vamos ver dois relatos da Bíblia que podem nos ajudar a desenvolver um coração obediente. Primeiro, vamos falar da ocasião em que Jeová libertou os israelitas do Egito. Depois, vamos considerar o bom exemplo do rei Jeosafá."
         },
         {
-          "numero": "3",
+          "num": "3",
           "pergunta": "3. Por que os israelitas podem ter ficado com medo de obedecer a ordem de Jeová? (Veja também a imagem.)",
-          "textosLidos": []
+          "texto": "3 Antes de libertar os israelitas do Egito, Jeová deu uma ordem que testou a obediência deles. Para não serem afetados pela décima e última praga, eles tinham que sacrificar um carneirinho ou um cabrito e passar o sangue desse animal nas laterais das portas de suas casas. ( Êxo. 12:5, 7 ) Quando o anjo de Jeová passasse pelas casas marcadas com sangue, ele pouparia a vida dos primogênitos. Mas alguns israelitas podem ter ficado com medo de obedecer a Jeová. Por quê? Para os egípcios, o carneiro era um animal sagrado. Os israelitas talvez tenham pensado que, se sacrificassem esses animais, os egípcios podiam se vingar deles. ( Êxo. 8:25-27 ) Mesmo assim, eles entenderam que era muito importante obedecer e “fizeram assim como Jeová havia ordenado”. ( Êxo. 12:28 ) Jeová os abençoou salvando seus primogênitos."
         },
         {
-          "numero": "4",
+          "num": "4",
           "pergunta": "4. Que instruções incomuns Jeová deu para os israelitas assim que eles saíram do Egito?",
-          "textosLidos": []
+          "texto": "4 Naquela mesma noite, os israelitas saíram do Egito. De início, Jeová os conduziu para o norte do Mar Vermelho. Mas depois, ele deu instruções que pareciam não fazer sentido. Ele disse para os israelitas irem para o sul e acamparem entre o mar e as montanhas. Se eles fossem para lá, ia parecer que estavam encurralados entre o exército de faraó e o Mar Vermelho. Ainda assim, os israelitas obedeceram a Jeová e fizeram como Moisés tinha falado. ( Êxo. 14:1-4 ) Só que quando viram os egípcios se aproximando, os israelitas “ficaram apavorados” e acusaram Moisés de levá-los para lá só para morrer. ( Êxo. 14:5-11 ) Por que os israelitas começaram a pensar que tinha sido um erro obedecer a Jeová? E como Jeová encarou a atitude deles?"
         },
         {
-          "numero": "5",
-          "pergunta": "5. Que atitude dos israelitas desagradou a Jeová? (Salmo 106:7, nota)",
-          "textosLidos": []
+          "num": "5",
+          "pergunta": "5. Que atitude dos israelitas desagradou a Jeová? ( Salmo 106:7 , nota)",
+          "texto": "5 A Bíblia diz que, quando estavam no Mar Vermelho, os israelitas ‘não deram valor aos atos maravilhosos de Jeová nem se lembraram do seu amor leal’. (Leia Salmo 106:7 e a nota.) Aqueles israelitas tinham visto Jeová proteger seus primogênitos durante a décima praga. Mas eles não compreenderam plenamente o amor de Jeová por eles nem confiaram que Jeová os salvaria novamente. Que atitude Jeová viu no coração deles? A Bíblia diz que os israelitas “se rebelaram junto ao . . . mar Vermelho”. É verdade que depois eles seguiram Moisés e atravessaram o Mar Vermelho, mas eles continuaram desobedecendo a Jeová enquanto estavam no deserto. Por fim, Jeová rejeitou toda aquela geração de israelitas e não permitiu que eles entrassem na Terra Prometida. ( Sal. 106:21, 24-26 ) O que podemos aprender do exemplo deles?"
         },
         {
-          "numero": "6",
-          "pergunta": "6. O que vamos fazer se tivermos um coração obediente? (Jeremias 23:4)",
-          "textosLidos": []
+          "num": "6",
+          "pergunta": "6. O que vamos fazer se tivermos um coração obediente? ( Jeremias 23:4 )",
+          "texto": "6 A saída dos israelitas do Egito nos ensina que precisamos analisar a nossa motivação em obedecer a Jeová e aqueles que ele usa para nos orientar. Primeiro, será que nós obedecemos apenas quando vemos as vantagens de fazer isso? É possível que alguns israelitas tenham passado sangue de carneiro nas laterais das portas simplesmente para salvar seus primogênitos. Segundo, será que nossa obediência depende do que outros fazem? Na noite em que os israelitas saíram do Egito, Jeová fez com que eles tivessem “favor aos olhos dos egípcios”. ( Êxo. 12:36 ) Mas depois, quando os egípcios se voltaram contra eles, os israelitas deixaram de confiar em Jeová e se rebelaram. ( Êxo. 14:10-12 ) Para não sermos como aqueles israelitas, precisamos ter um coração obediente. Assim, vamos confiar em Jeová e naqueles que ele usa para cuidar de nós. (Leia Jeremias 23:4 .) Vamos fazer o que Jeová pede mesmo se não entendermos plenamente uma orientação ou se nossa obediência irritar aqueles que odeiam a Jeová. Como podemos desenvolver um coração obediente para não cairmos no mesmo erro dos israelitas?"
         },
         {
-          "numero": "7",
+          "num": "7",
           "pergunta": "7. Como um forte amor por Jeová nos ajuda a ser obedientes?",
-          "textosLidos": []
+          "texto": "7 Fortaleça seu amor por Jeová. Às vezes a organização de Jeová nos dá uma orientação, mas não conseguimos entender como aquilo vai ser bom para nós. Ou pode ser que obedecer uma orientação deixe nossa vida mais difícil. Essas situações podem testar a nossa obediência. Se isso acontecer, precisamos nos lembrar que o principal motivo de obedecermos a Jeová é porque o amamos e confiamos nele. ( 1 João 5:3 ) Esse amor nos ajuda a esperar com paciência por Jeová, reconhecendo que talvez demore um pouco até vermos os bons resultados da nossa obediência. — Ecl. 7:8; Miq. 7:7 ."
         },
         {
-          "numero": "8",
+          "num": "8",
           "pergunta": "8. Como um irmão e uma irmã mostraram que estavam decididos a ser obedientes?",
-          "textosLidos": []
+          "texto": "8 O povo de Jeová hoje em dia tem dado um bom exemplo de obediência, mesmo quando as vantagens de ser obediente não são tão óbvias. Por exemplo, durante a pandemia da covid-19, as congregações foram orientadas a realizar reuniões por videoconferência. Um ancião no Peru diz: “Eu achei que na nossa região essa orientação não ia dar certo.” Apesar disso, esse ancião continuou determinado a obedecer a Jeová e a confiar nele. ( Pro. 3:5, 6 ) Qual foi o resultado? Ele conta: “Eu vi que Jeová realmente recompensa quem é obediente. A nossa congregação acabou ficando mais forte e mais unida.” Veja outro exemplo. Em 2020, a organização decidiu fazer algumas mudanças em congregações e grupos de língua estrangeira. Quando uma irmã no Japão ficou sabendo que o grupo em que servia seria descontinuado, ela disse: “Eu quero ser obediente e não reclamar desse ajuste. Eu tenho certeza que essa mudança vai trazer bons resultados.”"
         },
         {
-          "numero": "9",
+          "num": "9",
           "pergunta": "9. Como podemos nos preparar para ser obedientes mesmo enfrentando oposição? (Veja também a imagem.)",
-          "textosLidos": []
+          "texto": "9 Prepare-se para enfrentar oposição. Nós precisamos estar preparados para continuar pregando sobre o Reino, mesmo quando outros tentarem nos impedir. Em muitas partes do mundo, nós ainda podemos pregar com liberdade. Mesmo assim, a mensagem que pregamos inclui falar a outros que muito em breve Jeová vai destruir esse mundo mau. E nós vamos continuar pregando essa mensagem até pouco antes do Armagedom. ( Mat. 24:14 ) Além disso, durante a grande tribulação, pode ser que nossa mensagem chame mais atenção e fique mais direta, levando as pessoas a decidir se vão ou não tomar o lado do Reino de Deus. Para aqueles que odeiam a Jeová, essa mensagem talvez seja vista como uma praga “extraordinariamente grande”. a ( Apo. 16:21 ) Sem dúvida, eles vão ficar com muita raiva, assim como faraó no Mar Vermelho. Obedecer agora o mandamento de pregar, mesmo que outros nos tratem mal, vai nos preparar para enfrentar oposição no futuro."
         },
         {
-          "numero": "10",
+          "num": "10",
           "pergunta": "10. Como o rei Jeosafá se sentiu quando foi ameaçado por exércitos inimigos?",
-          "textosLidos": []
+          "texto": "10 A Bíblia também fala de pessoas que obedeceram a Jeová de coração. Por exemplo, na época do rei Jeosafá, três nações se juntaram para guerrear contra Judá. Como era de se esperar, Jeosafá e o povo ficaram com medo. ( 2 Crô. 20:1-3 ) Mas Jeosafá não ficou paralisado de medo; ele tomou decisões sábias. Vamos ver o que Jeosafá fez e como o exemplo dele pode nos ajudar a desenvolver um coração obediente."
         },
         {
-          "numero": "11",
-          "pergunta": "11. O que Jeosafá fez quando sentiu medo? (2 Crônicas 20:5, 6, 10-12)",
-          "textosLidos": []
+          "num": "11",
+          "pergunta": "11. O que Jeosafá fez quando sentiu medo? ( 2 Crônicas 20:5, 6, 10-12 )",
+          "texto": "11 Esteja determinado a buscar a Jeová e obedecê-lo. Quando Jeosafá ficou com medo, ele tomou a firme decisão de “recorrer a Jeová”. ( 2 Crô. 20:3 ) Jeosafá já tinha o hábito de buscar a orientação de Jeová. ( 2 Crô. 19:3 ) Mas ao enfrentar aquela situação difícil, ele ficou ainda mais determinado a buscar a Jeová e obedecer qualquer orientação que recebesse dele. Outra coisa que Jeosafá fez foi orar de todo o coração. (Leia 2 Crônicas 20:5, 6, 10-12 .) Quando enfrentamos situações estressantes, podemos imitar o rei Jeosafá. Podemos tomar a firme decisão de obedecer a Jeová e de buscar sua orientação por meio de estudo e oração. Também devemos confiar que ele vai nos ajudar. — Sal. 119:112 ."
         },
         {
-          "numero": "12",
+          "num": "12",
           "pergunta": "12. Como podemos fortalecer nossa determinação de obedecer a Jeová?",
-          "textosLidos": []
+          "texto": "12 Continue aprendendo sobre Jeová. A oração de Jeosafá revelou que ele tinha um profundo conhecimento sobre o que Jeová já tinha feito. Ele sabia que Jeová cumpriu a promessa feita a Abraão de dar aquela terra a Israel. ( Gên. 12:7 ) As palavras de Jeosafá foram parecidas com as que Salomão usou quando orou na inauguração do templo. ( 2 Crô. 6:28-30; 20:5-9 ) O conhecimento de Jeosafá fortaleceu sua confiança em Jeová e sua determinação de obedecê-lo. Para fortalecer nossa determinação de ser obedientes mesmo em situações difíceis, precisamos continuar aprendendo sobre Jeová e aumentando nossa coleção de joias espirituais. — Mat. 13:52 ."
         },
         {
-          "numero": "13",
+          "num": "13",
           "pergunta": "13. Como a humildade pode nos ajudar?",
-          "textosLidos": []
+          "texto": "13 Continue humilde. A oração de Jeosafá também mostrou a sua humildade. Ele era rei e tinha um grande exército, mas não tentou lutar contra os inimigos sem a ajuda de Jeová. Pelo contrário, em uma oração pública, ele humildemente reconheceu que Judá precisava da ajuda de Deus. ( 2 Crô. 20:12 ) Essa atitude humilde tornou mais fácil para ele aceitar as orientações de Jeová. Da mesma maneira, a humildade vai nos ajudar a obedecer as instruções de Jeová em qualquer situação. — Fil. 2:5, 8 ."
         },
         {
-          "numero": "14",
+          "num": "14",
           "pergunta": "14. Como Jeosafá reagiu às instruções de Jeová?",
-          "textosLidos": []
+          "texto": "14 Pense em como sua atitude influencia outros. Jeová respondeu as orações de Jeosafá dando instruções claras por meio do profeta Jaaziel, que disse ao povo que eles não precisariam lutar. Jaaziel deu a seguinte instrução: “Tomem a sua posição, fiquem parados e vejam a salvação de Jeová a seu favor.” Depois disso, a Bíblia diz que Jeosafá “se curvou com o rosto por terra”. Com isso, todos os que estavam lá também “se prostraram . . . para adorar a Jeová”. No dia seguinte, quando eles foram enfrentar seus inimigos, o rei encorajou o povo a ‘ter fé em Jeová e nos seus profetas’. — 2 Crô. 20:14-20 ."
         },
         {
-          "numero": "15",
+          "num": "15",
           "pergunta": "15. O que mostra que Jeosafá tinha uma forte fé em Jeová?",
-          "textosLidos": []
+          "texto": "15 Jeosafá tinha uma forte fé em Jeová. Isso ficou evidente quando ele designou cantores para ir “à frente dos homens armados” louvando a Jeová. ( 2 Crô. 20:21 ) E Jeosafá fez isso só “depois de consultar o povo”. A atitude de Jeosafá incentivou o povo a confiar em Jeová e a ser obediente. Jeová os recompensou, fazendo com que os inimigos destruíssem uns aos outros. — 2 Crô. 20:22-24 ."
         },
         {
-          "numero": "16",
-          "pergunta": "16. O que aqueles que têm autoridade podem aprender com Jeosafá? (1 Reis 3:9) (Veja também a imagem.)",
-          "textosLidos": []
+          "num": "16",
+          "pergunta": "16. O que aqueles que têm autoridade podem aprender com Jeosafá? ( 1 Reis 3:9 ) (Veja também a imagem.)",
+          "texto": "16 O exemplo de Jeosafá pode ajudar anciãos, pais e outros que têm autoridade. Por ser obediente de coração, ele foi uma boa influência para outros. Jeosafá foi humilde e escutou o profeta de Jeová; ele consultou o povo antes de tomar uma decisão importante e também incentivou o povo a obedecer as orientações de Jeová. Outro rei que queria obedecer a Jeová e cuidar do povo foi Salomão. Quando era fiel, Salomão orou a Jeová pedindo um coração obediente. Ele fez esse pedido pensando não em si mesmo, mas em julgar o povo de acordo com os padrões de Jeová. (Leia 1 Reis 3:9 .) Anciãos sábios seguem o exemplo de Salomão e de Jeosafá. Antes de tomar decisões que afetam a congregação, eles agem com humildade consultando a Bíblia, as publicações e outros anciãos. ( Pro. 15:22 ) Além disso, por palavras e ações, eles incentivam o povo de Deus a ser obediente de coração. Da mesma forma, os que são pais entendem que, para ensinar seus filhos a ser obedientes, eles mesmos precisam dar o exemplo e obedecer com alegria. — Pro. 1:8; 14:1 ."
         },
         {
-          "numero": "17",
+          "num": "17",
           "pergunta": "17. Por que devemos continuar desenvolvendo um coração obediente?",
-          "textosLidos": []
+          "texto": "17 Não importa o desafio que enfrentarmos, se tivermos um coração obediente, Jeová sempre vai cuidar de nós e nos guiar. Assim como nos tempos bíblicos, Jeová sem dúvida vai usar seus representantes aqui na Terra para guiar seu povo. E se alguma instrução que Jeová nos der parecer não fazer sentido, não devemos nos surpreender. Jeová sabe muito mais do que nós, e nada é impossível para ele. ( Isa. 55:9 ) Por isso, estamos determinados a continuar desenvolvendo um coração obediente."
         }
       ]
     }
   },
   "47": {
+    "ano": 2026,
+    "semana": 47,
     "meioSemana": {
       "titulo": "16-22 DE NOVEMBRO",
       "tema": "LAMENTAÇÕES 1-2",
+      "abertura": {
+        "cantico": "Cântico 28 e oração | Comentários iniciais (1 min)"
+      },
       "partes": [
         {
           "id": 1,
           "secao": "TESOUROS",
           "titulo": "1. Uma reação compreensível diante de uma terrível perda",
           "duracao": "10 min",
-          "texto": "(10 min) [Mostre o VÍDEO Introdução a Lamentações. ] Jeremias ficou arrasado quando as pessoas que ele amava sofreram as consequências por terem deixado de servir a Jeová. ( Lam. 2:11 ) Jeremias esperava que elas fossem cair em si, orar humildemente a Jeová e se arrepender. ( Lam. 2:19 ; w24.08 28 §",
+          "texto": "(10 min) [Mostre o VÍDEO Introdução a Lamentações. ] Jeremias ficou arrasado quando as pessoas que ele amava sofreram as consequências por terem deixado de servir a Jeová. ( Lam. 2:11 ) Jeremias esperava que elas fossem cair em si, orar humildemente a Jeová e se arrepender. ( Lam. 2:19 ; w24.08 28 §§ 7-9 ) PARA MEDITAR: O que pode nos ajudar se nos culpamos pelas decisões ruins de outros? — w23.08 29-30 §§ 12-13 .",
           "temPerguntas": false,
           "perguntas": []
         },
@@ -1065,9 +1092,10 @@
           "secao": "TESOUROS",
           "titulo": "2. Joias espirituais",
           "duracao": "10 min",
-          "texto": "(10 min) Lam. 2:1 — Como a beleza de Israel foi lançada do céu para a Terra? ( w07 1/6 9 § 1 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "texto": "(10 min) Lam. 2:1 — Como a beleza de Israel foi lançada do céu para a Terra? ( w07 1/6 9 § 1 )  Que joias espirituais você encontrou na leitura da Bíblia desta semana?",
           "temPerguntas": true,
           "perguntas": [
+            "Lam. 2:1 — Como a beleza de Israel foi lançada do céu para a Terra? ( w07 1/6 9 § 1 )",
             "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
@@ -1075,7 +1103,7 @@
           "id": 3,
           "secao": "TESOUROS",
           "titulo": "3. Leitura da Bíblia",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) Lam. 1:8-18 ( th lição 10 ) FAÇA SEU MELHOR NO MINISTÉRIO",
           "temPerguntas": false,
           "perguntas": []
@@ -1084,7 +1112,7 @@
           "id": 4,
           "secao": "MINISTERIO",
           "titulo": "4. Iniciando conversas",
-          "duracao": "3 min",
+          "duracao": "10 min",
           "texto": "(3 min) TESTEMUNHO INFORMAL. Comece uma conversa amigável com uma pessoa. A conversa termina antes de você conseguir dar testemunho. ( lmd lição 2 ponto 4 )",
           "temPerguntas": false,
           "perguntas": []
@@ -1093,130 +1121,117 @@
           "id": 5,
           "secao": "MINISTERIO",
           "titulo": "5. Cultivando o interesse",
-          "duracao": "4 min",
+          "duracao": "10 min",
           "texto": "(4 min) TESTEMUNHO PÚBLICO. Use um vídeo do Kit de Ensino e ofereça um estudo bíblico. ( lmd lição 9 ponto 4 )",
           "temPerguntas": false,
           "perguntas": []
         },
         {
           "id": 6,
-          "secao": "TESOUROS",
-          "titulo": "6. O que você diria?",
-          "duracao": "5 min",
-          "texto": "(5 min) Consideração. DE CASA EM CASA. Faça um resumo da lmd lição 1 ponto 4b . Mostre a imagem. Depois, pergunte: De acordo com o que você está vendo, que pergunta você faria para começar uma conversa? Sua resposta Que verdade da Bíblia você poderia mostrar? Sua resposta NOSSA VIDA CRISTÃ",
-          "temPerguntas": true,
-          "perguntas": [
-            "De acordo com o que você está vendo, que pergunta você faria para começar uma conversa?",
-            "Que verdade da Bíblia você poderia mostrar?"
-          ]
-        },
-        {
-          "id": 7,
-          "secao": "VIDACRISTA",
+          "secao": "MINISTERIO",
           "titulo": "7. Não se esqueça de nossos irmãos e irmãs inativos",
-          "duracao": "15 min",
-          "texto": "(15 min) Consideração. Nós fazemos o nosso máximo procurando as pessoas que querem aprender sobre Jeová e servir a ele. Mas não podemos esquecer daqueles que “fazem parte da nossa família na fé” e estão inativos. — Gál. 6:10 . Nossos irmãos e irmãs podem ficar inativos por vários motivos. Alguns se ",
+          "duracao": "10 min",
+          "texto": "(15 min) Consideração. Nós fazemos o nosso máximo procurando as pessoas que querem aprender sobre Jeová e servir a ele. Mas não podemos esquecer daqueles que “fazem parte da nossa família na fé” e estão inativos. — Gál. 6:10 . Nossos irmãos e irmãs podem ficar inativos por vários motivos. Alguns se envolvem demais com o trabalho, ficam sobrecarregados com os problemas da vida, sofrem de depressão ou outros problemas de saúde. Também, alguns sofrem com uma consciência pesada, e ainda outros tropeçaram por causa do que uma pessoa fez, ou foram magoados por alguém. Muitos que estão inativos ainda amam a Jeová, mas talvez achem que não merecem voltar a servi-lo. Os anciãos querem muito ajudar esses irmãos e irmãs a voltar para Jeová e tomam a iniciativa em fazer isso. ( 1 Ped. 5:2 ) Mas e você? Como poderia ajudar alguém que está inativo? Mostre o VÍDEO Ajudar os Inativos. Depois, pergunte: Que lições você aprendeu com esse vídeo?",
           "temPerguntas": true,
           "perguntas": [
-            "Nossos irmãos e irmãs podem ficar inativos por vários motivos. Alguns se envolvem demais com o trabalho, ficam sobrecarregados com os problemas da vida, sofrem de depressão ou outros problemas de saúde. Também, alguns sofrem com uma consciência pesada, e ainda outros tropeçaram por causa do que uma pessoa fez, ou foram magoados por alguém. Muitos que estão inativos ainda amam a Jeová, mas talvez achem que não merecem voltar a servi-lo. Os anciãos querem muito ajudar esses irmãos e irmãs a voltar para Jeová e tomam a iniciativa em fazer isso. (1 Ped. 5:2) Mas e você? Como poderia ajudar alguém que está inativo?",
             "Que lições você aprendeu com esse vídeo?"
           ]
         },
         {
-          "id": 8,
-          "secao": "VIDACRISTA",
+          "id": 7,
+          "secao": "MINISTERIO",
           "titulo": "8. Estudo bíblico de congregação",
-          "duracao": "30 min",
+          "duracao": "10 min",
           "texto": "(30 min) wcg cap. 17",
-          "temPerguntas": true,
+          "temPerguntas": false,
           "perguntas": []
         }
-      ]
+      ],
+      "canticoMeio": "Cântico da Reunião",
+      "conclusao": {
+        "cantico": "Comentários finais (3 min) | Cântico 75 e oração"
+      }
     },
     "fimSemana": {
       "titulo": "Pregando as boas novas em “todas as línguas das nações”",
-      "tema": "A Sentinela • Estudo Semanal",
-      "chips": [
-        "Comentário Parágrafo 1",
-        "Comentário Parágrafo 2",
-        "Aplicação Prática",
-        "Lição para a congregação"
-      ],
+      "tema": "“Dez homens de todas as línguas das nações . . . agarrarão a túnica de um judeu.” — ZAC. 8:23.",
+      "objetivo": "",
+      "canticoInicial": "CÂNTICO 84 Vamos fazer nosso melhor",
       "paragrafos": [
         {
-          "numero": "1",
-          "pergunta": "1. Por que é importante que as boas novas sejam pregadas em muitas línguas? (Romanos 10:13, 14)",
-          "textosLidos": []
+          "num": "1",
+          "pergunta": "1. Por que é importante que as boas novas sejam pregadas em muitas línguas? ( Romanos 10:13, 14 )",
+          "texto": "LEMBRA o que Jeová fez para impedir que rebeldes construíssem a Torre de Babel? Ele confundiu a língua deles. Por causa disso, a família humana ficou dividida. Pessoas que falavam o mesmo idioma se juntaram e se mudaram para diferentes partes da Terra. ( Gên. 11:6-9 ) Mas o livro de Apocalipse mostra que o propósito de Jeová é unir “uma grande multidão . . . de todas as nações, tribos, povos e línguas”, ajudando essas pessoas a sair da grande tribulação e entrar no novo mundo. ( Apo. 7:9, 10, 14 ) O fato de a mensagem do Reino estar sendo pregada numa língua que as pessoas entendem vai permitir que a grande multidão invoque o nome de Jeová durante a grande tribulação. (Leia Romanos 10:13, 14 .) É um privilégio para nós participar nesse trabalho que salva vidas!"
         },
         {
-          "numero": "2",
+          "num": "2",
           "pergunta": "2. O que Zacarias foi inspirado a profetizar?",
-          "textosLidos": []
+          "texto": "2 Séculos antes de o apóstolo João escrever o livro de Apocalipse, Jeová inspirou Zacarias a profetizar que ‘muitas nações se uniriam a Jeová e se tornariam seu povo’. ( Zac. 2:11 ) Mais tarde, o profeta Zacarias também escreveu: “Assim diz Jeová dos exércitos: ‘Naqueles dias, dez homens de todas as línguas das nações . . . agarrarão firmemente a túnica de um judeu, dizendo: “Queremos ir com vocês, pois ouvimos que Deus está com vocês.”’” ( Zac. 8:23 ) Essa profecia empolgante está se cumprindo nos nossos dias. Vamos ver como cada um de nós pode participar no cumprimento dela."
         },
         {
-          "numero": "3",
+          "num": "3",
           "pergunta": "3. Quem o “judeu” e os “dez homens” representam hoje?",
-          "textosLidos": []
+          "texto": "3 O “judeu” na profecia de Zacarias representa aqueles que Deus ungiu com espírito santo. Eles também são chamados de “Israel de Deus”. ( Gál. 6:16 ) Esse grupo vai governar com Jesus no céu. ( Heb. 3:1 ) Os “dez homens” representam pessoas humildes que têm a esperança de viver para sempre no Paraíso na Terra. Essas pessoas vêm de muitos países e falam diferentes idiomas."
         },
         {
-          "numero": "4",
+          "num": "4",
           "pergunta": "4. O que aconteceu depois que Jesus designou “o escravo fiel e prudente” em 1919?",
-          "textosLidos": []
+          "texto": "4 Em 1919, Jesus designou um grupo de homens ungidos como “o escravo fiel e prudente”. ( Mat. 24:45 ) Esses irmãos perceberam que teriam que traduzir a mensagem da Bíblia para muitas línguas. Antes de 1919, os Estudantes da Bíblia já tinham apresentado o “Fotodrama da Criação” em vários idiomas. Mas o escravo viu a necessidade de fazer mais. Por exemplo, o livro A Harpa de Deus, lançado em 1921, ajudava as pessoas a entender a Bíblia, e esse livro foi traduzido para 36 línguas. E em 1935, quando o escravo identificou quem era a “grande multidão”, ficou claro que ainda havia muito trabalho pela frente. Então, os cristãos ungidos daquela época se esforçaram muito para organizar o trabalho de pregação para que as boas novas fossem pregadas em toda a Terra e a profecia de Zacarias se cumprisse."
         },
         {
-          "numero": "5",
+          "num": "5-6",
           "pergunta": "5-6. Como Isaías 2:2-4 está se cumprindo hoje? (Veja também a imagem.)",
-          "textosLidos": []
+          "texto": "5 O povo de Deus continuou pregando as boas novas ao redor do mundo. E assim como Isaías profetizou, pessoas de toda a Terra mostraram interesse em aprender sobre Jeová e adorá-lo. (Leia Isaías 2:2-4 .) Para alcançar essas pessoas e ajudá-las, o povo de Deus tem ‘se apresentado voluntariamente’ não só para pregar, mas também para traduzir, imprimir e distribuir publicações em um número cada vez maior de idiomas. ( Sal. 68:11; 110:3 ) Além disso, muitos irmãos têm trabalhado no desenvolvimento e no suporte do aplicativo JW Library ® e do site jw.org. Isso tem ajudado muitas pessoas que falam diferentes idiomas a aprender mais sobre a Bíblia."
         },
         {
-          "numero": "7",
-          "pergunta": "7. Como nos sentimos ao ver o cumprimento das profecias registradas em Zacarias e Apocalipse? (Apocalipse 14:6)",
-          "textosLidos": []
+          "num": "7",
+          "pergunta": "7. Como nos sentimos ao ver o cumprimento das profecias registradas em Zacarias e Apocalipse? ( Apocalipse 14:6 )",
+          "texto": "6 O povo de Jeová também apoia o trabalho de pregação por fazer donativos. Com esses donativos, conseguimos produzir publicações em mais de 1.100 idiomas. E o resultado é que todo ano milhares de pessoas começam a estudar a Bíblia e passam a adorar a Jeová."
         },
         {
-          "numero": "8",
-          "pergunta": "8. Que milagre Jeová fez no Pentecostes do ano 33?",
-          "textosLidos": []
+          "num": "8",
+          "pergunta": "8. Que milagre Jeová fez no Pentecostes do ano 33?",
+          "texto": "7 Hoje em dia, o idioma não é uma barreira para o povo de Jeová. Apesar de falarmos idiomas diferentes, trabalhamos em união e, com a ajuda dos anjos, declaramos “boas novas eternas para . . . toda nação, tribo, língua e povo”. (Leia Apocalipse 14:6 .) Quando vemos o cumprimento das profecias registradas em Zacarias e Apocalipse, passamos a ter ainda mais certeza de que todas as outras profecias da Bíblia vão se cumprir. Além disso, ficamos determinados a continuar leais à organização que Deus está usando para pregar as boas novas em toda a Terra."
         },
         {
-          "numero": "9",
+          "num": "9",
           "pergunta": "9. Que ajudas temos para pregar às pessoas que não falam nosso idioma?",
-          "textosLidos": []
+          "texto": "8 No Pentecostes do ano 33, Jeová mostrou que aquilo que ele tinha feito na Torre de Babel não seria um impedimento para a pregação. Ele fez com que os discípulos de Jesus começassem a falar milagrosamente em idiomas que eles não sabiam. ( Atos 2:4-10 ) Jeová fez isso para que pessoas de várias partes do mundo pudessem conhecer “as coisas magníficas de Deus”. ( Atos 2:11 ) Hoje podemos usar nossas publicações para ajudar pessoas que não falam nossa língua a conhecer a Jeová."
         },
         {
-          "numero": "9",
-          "pergunta": "10-11. O que você aprendeu com a experiência de Robert e com a história do quadro “Uma refugiada encontra esperança”?",
-          "textosLidos": []
+          "num": "10-11",
+          "pergunta": "10-11. O que você aprendeu com a experiência de Robert e com a história do quadro “ Uma refugiada encontra esperança ”?",
+          "texto": "9 As pessoas precisam ouvir as boas novas num idioma que elas entendem. Imagine o seguinte: Um homem viaja para outro país, mas fica muito doente e precisa ir ao médico. Se ele não falar o idioma do país, ele vai precisar de um intérprete para ajudá-lo a entender o que o médico diz. Da mesma forma, bilhões de pessoas hoje estão sofrendo em sentido espiritual e emocional. A esperança e o consolo que elas precisam está na Bíblia. E nós podemos ajudá-las a entender a mensagem da Bíblia, mesmo que elas falem outra língua. Para isso, temos as ferramentas que precisamos: publicações impressas e digitais e vídeos em centenas de idiomas."
         },
         {
-          "numero": "12",
+          "num": "12",
           "pergunta": "12. Como a Tradução do Novo Mundo tem ajudado o povo de Jeová?",
-          "textosLidos": []
+          "texto": "10 Como podemos usar bem as ferramentas que a organização de Jeová nos dá? Veja o que aconteceu com Robert, que fala inglês. Enquanto participava do testemunho em portos, ele conheceu um homem da Turquia que estava trabalhando em um navio. O homem não entendia muito bem inglês, mas aceitou a brochura Boas Notícias de Deus para Você! em turco. Robert conhecia tão bem essa brochura que conseguia pedir para o homem ler parágrafos específicos em turco. O homem fez várias perguntas sobre a situação do mundo, e Robert conseguiu mostrar as respostas para ele na Bíblia em turco, usando o aplicativo JW Library. O homem ficou tão impressionado que disse: “Parece até que você fala a minha língua!” Robert conta: “Nós conversamos por mais ou menos uma hora. E eu percebi que o homem passou a entender melhor a mensagem da Bíblia e a dar mais valor a ela.” É um privilégio muito grande poder ajudar pessoas interessadas a ouvir a mensagem de Deus no idioma do coração delas!"
         },
         {
-          "numero": "13",
+          "num": "13",
           "pergunta": "13. Por que poucas traduções da Bíblia usam o nome de Deus atualmente?",
-          "textosLidos": []
+          "texto": "11 Mesmo sendo algo simples, compartilhar um folheto ou um artigo do site jw.org no idioma do coração de uma pessoa pode ter um efeito profundo na vida dela. Então, o que acha de ter o alvo de se preparar para falar sobre a Bíblia com pessoas que não falam sua língua?"
         },
         {
-          "numero": "14",
+          "num": "14",
           "pergunta": "14. Como a Bíblia mostra que é importante saber e usar o nome de Deus?",
-          "textosLidos": []
+          "texto": "12 Todos nós dependemos do trabalho dos tradutores. A tradução da Bíblia não é algo novo. a Por séculos, tradutores têm se esforçado muito para que a mensagem da Bíblia alcance cada vez mais pessoas. Nos últimos anos, a Tradução do Novo Mundo da Bíblia Sagrada ficou disponível, inteira ou em parte, em mais de 300 idiomas. Veja o que um ancião que serve no Nepal disse: “Ler essa tradução da Bíblia no meu idioma fez com que Jeová se tornasse mais real para mim. Ela me ajuda a fortalecer a minha fé e minha amizade com Jeová.” Em todas as línguas, a Tradução do Novo Mundo é exata e fácil de ler, e ela também ensina a verdade sobre Jeová. Isso ajuda o povo de Jeová a ser mais unido, afinal acreditamos nas mesmas coisas e pregamos a mesma mensagem no mundo todo. ( 1 Cor. 1:10 ) Vamos ver o que mais torna essa tradução tão valiosa."
         },
         {
-          "numero": "15",
+          "num": "15",
           "pergunta": "15. O que o povo de Deus sente pelo nome de Jeová?",
-          "textosLidos": []
+          "texto": "13 Atualmente, a Tradução do Novo Mundo é uma das poucas Bíblias que continuam usando o nome Jeová milhares de vezes. Uns cem anos atrás, era comum encontrar o nome Jeová em muitas traduções da Bíblia, principalmente nas Escrituras Hebraicas. Mas hoje em dia, muitos líderes religiosos que se dizem cristãos não usam o nome Jeová e não querem que as pessoas conheçam esse nome. Os líderes da Igreja Católica removeram o nome Jeová de suas Bíblias e de outros livros. b A maioria das religiões protestantes não usa o nome de Deus em suas traduções da Bíblia. Já a Tradução do Novo Mundo usa o nome Jeová milhares de vezes, de acordo com os escritos originais, e ela faz isso em todos os idiomas. Por que isso é tão importante?"
         },
         {
-          "numero": "16",
-          "pergunta": "16. Por que é importante conhecer a Jeová agora? (João 17:3)",
-          "textosLidos": []
+          "num": "16",
+          "pergunta": "16. Por que é importante conhecer a Jeová agora? ( João 17:3 )",
+          "texto": "14 A Bíblia diz várias vezes que é importante saber e usar o nome de Deus. Por exemplo, no livro de Salmos, lemos que precisamos ‘louvar o nome de Jeová’. ( Sal. 135:1 ) Jesus ensinou seus discípulos a orar a Jeová dizendo: “Santificado seja o teu nome.” ( Mat. 6:9 ) Depois, ao orar a seu Pai, ele disse: “Eu tornei o teu nome conhecido.” ( João 17:26 ) Citando as palavras do profeta Joel, o apóstolo Paulo escreveu: “Todo aquele que invocar o nome de Jeová será salvo.” ( Rom. 10:13 ) Quem usa traduções da Bíblia que omitem o nome divino não consegue obedecer essas orientações inspiradas por Deus."
         },
         {
-          "numero": "17",
+          "num": "17",
           "pergunta": "17. Que privilégio nós temos?",
-          "textosLidos": []
+          "texto": "15 A grande maioria das Testemunhas de Jeová tem acesso a uma tradução da Bíblia que transmite a verdade de modo exato em uma língua que elas entendem. A Tradução do Novo Mundo nos ajuda a entender a importância de amar e louvar o glorioso nome de Deus. Ela também nos ajuda a confiar em Jeová. — Pro. 18:10; Isa. 56:6 ."
         }
       ]
     }
@@ -1227,9 +1242,9 @@
     let modoAtual = "meio_semana";
 
     const coresSecao = {
-      TESOUROS: { border: "border-[#596b7a]", text: "text-[#596b7a]", label: "TESOUROS DA PALAVRA DE DEUS" },
-      MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
-      VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
+      TESOUROS: { border: "border-[#596b7a]", text: "text-[#596b7a]", bgBadge: "bg-[#596b7a]", label: "TESOUROS DA PALAVRA DE DEUS" },
+      MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", bgBadge: "bg-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
+      VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", bgBadge: "bg-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
     };
 
     // Inicialização da Página
@@ -1319,6 +1334,9 @@
       fecharPaineisMobile();
     }
 
+    // ==========================================
+    // RENDERIZADOR 1: VIDA E MINISTÉRIO CRISTÃOS
+    // ==========================================
     function renderizarMeioSemana() {
       const dados = bancoSemanasJW[semanaAtiva]?.meioSemana;
       if (!dados) return;
@@ -1327,22 +1345,73 @@
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
+      // Sidebar da Reunião
       const sidebar = document.getElementById('lista-partes-sidebar');
-      sidebar.innerHTML = dados.partes.map(p => `
-        <a href="#parte-${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-          <span class="font-bold text-[#4a3b69]">${p.id}.</span> ${p.titulo.split('(')[0].replace(/^\d+\.\s*/, '')}
-          <span class="text-[11px] text-[#6c757d] block font-semibold">${p.duracao}</span>
-        </a>
-      `).join('');
+      let sidebarHtml = '';
+      if (dados.abertura?.cantico) {
+        sidebarHtml += `
+          <a href="#abertura-reuniao" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+            <span class="text-[#4a3b69] font-bold">🎵</span> ${dados.abertura.cantico}
+          </a>
+        `;
+      }
+      dados.partes.forEach(p => {
+        sidebarHtml += `
+          <a href="#parte-${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+            <span class="font-bold text-[#4a3b69]">${p.id}.</span> ${p.titulo.split('(')[0].replace(/^\d+\.\s*/, '')}
+            <span class="text-[11px] text-[#6c757d] block font-semibold">${p.duracao}</span>
+          </a>
+        `;
+      });
+      if (dados.conclusao?.cantico) {
+        sidebarHtml += `
+          <a href="#conclusao-reuniao" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+            <span class="text-[#4a3b69] font-bold">🎵</span> ${dados.conclusao.cantico}
+          </a>
+        `;
+      }
+      sidebar.innerHTML = sidebarHtml;
 
       const leitor = document.getElementById('conteudo-leitor');
       let html = '';
+
+      // Abertura com Cântico
+      html += `
+        <div id="abertura-reuniao" class="cantico-card rounded-xl p-4 shadow-2xs mb-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">🎵</span>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Abertura da Reunião</h4>
+              <p class="text-xs font-semibold text-[#212529] mt-0.5">${dados.abertura?.cantico || "Cântico e oração | Comentários iniciais (1 min)"}</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-[#6c757d] bg-white px-2.5 py-1 rounded-md border border-[#dee2e6]">1 min</span>
+        </div>
+      `;
+
       let ultimaSecao = '';
 
       dados.partes.forEach(p => {
+        // Separador de Seção
         if (p.secao !== ultimaSecao) {
           ultimaSecao = p.secao;
           const conf = coresSecao[p.secao] || coresSecao.TESOUROS;
+
+          // Se for Vida Cristã, mostra o Cântico do meio antes
+          if (p.secao === 'VIDACRISTA' && dados.canticoMeio) {
+            html += `
+              <div class="cantico-card rounded-xl p-4 shadow-2xs my-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="text-xl">🎵</span>
+                  <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Cântico Intermediário</h4>
+                    <p class="text-xs font-semibold text-[#212529] mt-0.5">${dados.canticoMeio}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
           html += `
             <div class="mt-8 mb-4 border-b-2 ${conf.border} pb-1 flex items-center justify-between">
               <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider ${conf.text}">
@@ -1352,6 +1421,7 @@
           `;
         }
 
+        // Card da Parte da Reunião
         html += `
           <div id="parte-${p.id}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
             <div class="flex items-center justify-between mb-2">
@@ -1359,39 +1429,59 @@
               <span class="text-xs font-bold text-[#6c757d] bg-[#f1f3f5] px-2 py-0.5 rounded">${p.duracao}</span>
             </div>
             
-            <p class="text-sm leading-relaxed text-[#495057] mb-3">${p.texto}</p>
+            <div class="text-sm leading-relaxed text-[#495057] mb-3 whitespace-pre-line">${p.texto}</div>
 
             ${p.perguntas && p.perguntas.length > 0 ? `
               <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-3 mt-3">
                 <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
                 ${p.perguntas.map((q, idx) => `
-                  <div class="border-l-3 border-[#4a3b69] pl-3 py-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
-                    <button onclick="responderComIA('${q.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
-                      <span class="text-amber-300">✦</span> Comentar com IA
-                    </button>
+                  <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-1.5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
+                      <button onclick="responderComIA('${q.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                        <span class="text-amber-300">✦</span> Comentar com IA
+                      </button>
+                    </div>
+                    <textarea id="nota-pergunta-${p.id}-${idx}" placeholder="Meu comentário para esta pergunta..." class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
                   </div>
                 `).join('')}
               </div>
             ` : `
-              <div class="pt-2">
+              <div class="pt-2 flex items-center justify-between">
                 <button onclick="responderComIA('Como estruturar a ${p.titulo.replace(/'/g, "\\'")} de forma clara e objetiva para a congregação?')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
                   <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
                 </button>
               </div>
             `}
 
-            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
+            <div class="mt-3 pt-3 border-t border-[#f1f3f5]">
               <textarea id="nota-parte-${p.id}" placeholder="Minhas anotações para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
             </div>
           </div>
         `;
       });
 
+      // Conclusão com Cântico Final
+      html += `
+        <div id="conclusao-reuniao" class="cantico-card rounded-xl p-4 shadow-2xs mt-6 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">🎵</span>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Conclusão da Reunião</h4>
+              <p class="text-xs font-semibold text-[#212529] mt-0.5">${dados.conclusao?.cantico || "Comentários finais (3 min) | Cântico e oração"}</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-[#6c757d] bg-white px-2.5 py-1 rounded-md border border-[#dee2e6]">3 min</span>
+        </div>
+      `;
+
       leitor.innerHTML = html;
       atualizarChips(["Resumo da Reunião", "Joias Espirituais", "Dica de Preparação", "Aplicação Ministerial"]);
     }
 
+    // ==========================================
+    // RENDERIZADOR 2: ESTUDO DE A SENTINELA
+    // ==========================================
     function renderizarSentinela() {
       const dados = bancoSemanasJW[semanaAtiva]?.fimSemana;
       if (!dados) return;
@@ -1400,6 +1490,7 @@
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
+      // Sidebar com a lista de parágrafos
       const sidebar = document.getElementById('lista-partes-sidebar');
       sidebar.innerHTML = dados.paragrafos.map(p => `
         <a href="#paragrafo-${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
@@ -1408,13 +1499,34 @@
       `).join('');
 
       const leitor = document.getElementById('conteudo-leitor');
-      let html = `
-        <div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800">Cânticos & Oração</h4>
-          <p class="text-xs text-amber-900 mt-1">Prepare seus comentários com antecedência. O tempo ideal para cada participação é de 30 a 45 segundos.</p>
-        </div>
-      `;
+      let html = '';
 
+      // Banner Cântico Inicial
+      if (dados.canticoInicial) {
+        html += `
+          <div class="cantico-card rounded-xl p-4 shadow-2xs mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🎵</span>
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#4a3b69]">Abertura do Estudo</h4>
+                <p class="text-xs font-semibold text-[#212529] mt-0.5">${dados.canticoInicial}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Banner Objetivo
+      if (dados.objetivo) {
+        html += `
+          <div class="bg-amber-50/80 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6 shadow-2xs">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900">OBJETIVO DO ESTUDO</h4>
+            <p class="text-xs text-amber-950 mt-1 leading-relaxed">${dados.objetivo}</p>
+          </div>
+        `;
+      }
+
+      // Parágrafos Oficiais
       dados.paragrafos.forEach(p => {
         html += `
           <div id="paragrafo-${p.num}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
@@ -1434,16 +1546,10 @@
                 <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
                   ${p.pergunta}
                 </p>
-                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.respostaSugerida || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").substring(0, 150)}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
                   <span class="text-amber-300">✦</span> Comentar com IA
                 </button>
               </div>
-
-              ${p.respostaSugerida ? `
-                <div class="pt-2 border-t border-[#dee2e6] text-xs text-[#6c757d]">
-                  <span class="font-bold text-[#4a3b69]">Ponto-chave:</span> ${p.respostaSugerida}
-                </div>
-              ` : ''}
             </div>
 
             <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
@@ -1454,7 +1560,7 @@
       });
 
       leitor.innerHTML = html;
-      atualizarChips(dados.chips || ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica"]);
+      atualizarChips(["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica", "Ponto Principal"]);
     }
 
     // Controle de Gavetas e Painéis
