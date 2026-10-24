@@ -1659,7 +1659,55 @@
               </div>
             ` : ''}
 
-            ${p.perguntas && p.perguntas.length > 0 ? `
+            ${p.id === 1 ? `
+              <!-- PAINEL DE DISCURSO DE 10 MINUTOS (ITEM 1 - TESOUROS DA PALAVRA DE DEUS) -->
+              <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-5 space-y-3 mt-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#dee2e6]">
+                  <div>
+                    <span class="text-[10px] font-bold text-[#596b7a] uppercase tracking-wider block">Discurso da Reunião (10 min)</span>
+                    <h4 class="text-xs sm:text-sm font-bold text-[#212529] mt-0.5">${p.titulo}</h4>
+                  </div>
+                  <button onclick="prepararDiscursoItem1('${p.titulo.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-1', this)" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1.5 shadow-2xs shrink-0 self-start sm:self-auto">
+                    <span>🎤</span> Gerar Esboço do Discurso (10 min)
+                  </button>
+                </div>
+
+                <!-- Ferramentas Rápidas do Orador -->
+                <div class="flex items-center gap-1.5 flex-wrap pt-0.5 text-xs">
+                  <span class="text-[10px] font-bold text-[#6c757d] uppercase tracking-wider">Auxílio ao Orador:</span>
+                  <button onclick="prepararSecaoDiscurso('introducao', '${p.titulo.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-1', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Ideias para uma introdução cativante">
+                    🎯 Introdução cativante
+                  </button>
+                  <button onclick="prepararSecaoDiscurso('ilustracao', '${p.titulo.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-1', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Ilustrações práticas para este tema">
+                    💡 Ilustrações práticas
+                  </button>
+                  <button onclick="prepararSecaoDiscurso('conclusao', '${p.titulo.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-1', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Conclusão motivadora com apelo">
+                    🏁 Conclusão motivadora
+                  </button>
+                  <button onclick="toggleDuvidaInline('parte-1')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs">
+                    💬 Perguntar ao Gemini
+                  </button>
+                </div>
+
+                <div id="box-duvida-parte-1" class="hidden pt-1">
+                  <div class="flex items-center gap-2 bg-white rounded-lg border border-[#dee2e6] p-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
+                    <input id="input-duvida-parte-1" type="text" placeholder="Pergunte ao Gemini algo sobre este discurso..." onkeydown="if(event.key==='Enter') enviarDuvidaInline('parte-1', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-1', this)" class="w-full text-xs px-2 bg-transparent focus:outline-none text-[#212529]">
+                    <button onclick="enviarDuvidaInline('parte-1', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-1', this)" class="px-2.5 py-1 rounded-md bg-[#4a3b69] text-white text-xs font-bold hover:bg-[#3b2e55] shrink-0">
+                      ➤
+                    </button>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-[#dee2e6]">
+                  <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                    <span class="font-bold">🎤 Esboço do Discurso (Começo, Meio e Fim):</span>
+                    <button onclick="copiarTexto('nota-parte-1')" class="text-xs text-[#4a3b69] hover:underline font-semibold flex items-center gap-1">📋 Copiar Esboço</button>
+                  </div>
+                  <textarea id="nota-parte-1" placeholder="Toque em '🎤 Gerar Esboço do Discurso (10 min)' para preparar um esboço completo com Começo, Meio e Fim baseado na matéria e nos textos indicados..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y font-mono leading-relaxed" rows="8"></textarea>
+                  <div id="feedback-nota-parte-1"></div>
+                </div>
+              </div>
+            ` : p.perguntas && p.perguntas.length > 0 ? `
               <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-4 space-y-3 mt-3">
                 <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
                 ${p.perguntas.map((q, idx) => `
@@ -1925,6 +1973,44 @@
       await responderComIA(promptApoio, textoMateria, targetTextareaId, btnElement);
     }
 
+    async function prepararDiscursoItem1(titulo, textoMateria, targetTextareaId, btnElement) {
+      const prompt = 'Prepare um ESBOÇO COMPLETO DE DISCURSO DE 10 MINUTOS baseado no tema: "' + titulo + '".\n\n' +
+        'Estrutura obrigatória:\n' +
+        '1. TEMA DO DISCURSO (em destaque no topo)\n' +
+        '2. INTRODUÇÃO (aprox. 1 a 2 min): Gancho cativante, declaração clara do tema e relevância para a congregação hoje.\n' +
+        '3. CORPO / DESENVOLVIMENTO (aprox. 6 a 7 min):\n' +
+        '   - Ponto Principal 1: Análise bíblica com os textos e ideias da matéria da apostila. [Indicar texto a ser lido com expressividade e aplicação].\n' +
+        '   - Ponto Principal 2: Lição prática para o dia a dia e serviço de campo. [Incluir uma ilustração simples e calorosa].\n' +
+        '4. CONCLUSÃO (aprox. 1 a 2 min): Recapitulação breve dos pontos vitais e apelo motivador encorajando a congregação a confiar em Jeová.\n\n' +
+        'Formate em tópicos limpos, marcadores e tempos sugeridos. Entregue o esboço pronto para o orador usar no púlpito.';
+
+      await responderComIA(prompt, textoMateria, targetTextareaId, btnElement, 'discurso');
+    }
+
+    async function prepararSecaoDiscurso(secao, titulo, textoMateria, targetTextareaId, btnElement) {
+      let promptSecao = "";
+      if (secao === 'introducao') {
+        promptSecao = 'Para o discurso de 10 min com tema "' + titulo + '", formule 2 opções de INTRODUÇÃO CATIVANTE (1 a 2 min): uma usando uma pergunta reflexiva e outra usando um cenário da vida real, despertando o interesse da congregação.';
+      } else if (secao === 'ilustracao') {
+        promptSecao = 'Para o discurso de 10 min com tema "' + titulo + '", elabore 2 sugestões de ILUSTRAÇÕES PRÁTICAS e calorosas que tornem os pontos bíblicos fáceis de visualizar e lembrar.';
+      } else if (secao === 'conclusao') {
+        promptSecao = 'Para o discurso de 10 min com tema "' + titulo + '", formule uma CONCLUSÃO MOTIVADORA (1 a 2 min) com resumo dos pontos principais e um apelo cordial que incentive a congregação a confiar em Jeová.';
+      }
+      await responderComIA(promptSecao, textoMateria, targetTextareaId, btnElement, 'discurso');
+    }
+
+    function copiarTexto(id) {
+      const el = document.getElementById(id);
+      if (!el || !el.value) return;
+      navigator.clipboard.writeText(el.value).then(() => {
+        const feedback = document.getElementById('feedback-' + id);
+        if (feedback) {
+          feedback.innerHTML = '<span class="text-emerald-700 font-semibold text-xs">📋 Esboço copiado para a área de transferência!</span>';
+          setTimeout(() => { if (feedback) feedback.innerHTML = ''; }, 3000);
+        }
+      });
+    }
+
     function toggleStudyPane() {}
     function toggleMenuMobile() {}
     function fecharPaineisMobile() {
@@ -1933,13 +2019,15 @@
     }
 
     // CHAMADA HÍBRIDA AO GOOGLE GEMINI (Vercel API -> Direct Client -> Fallback)
-    async function chamarGeminiIA({ question, prompt, context }) {
+    async function chamarGeminiIA({ question, prompt, context, tipo = "comentario" }) {
+      const isDiscurso = tipo === 'discurso' || (question || prompt || '').toLowerCase().includes('discurso') || (question || prompt || '').toLowerCase().includes('esboço');
+
       // 1. Tenta API do Vercel (/api/gemini)
       try {
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question, prompt, context })
+          body: JSON.stringify({ question, prompt, context, tipo: isDiscurso ? 'discurso' : 'comentario' })
         });
         if (res.ok) {
           const data = await res.json();
@@ -1950,14 +2038,24 @@
       // 2. Chamada Direta à API do Gemini (GitHub Pages ou PWA)
       const apiKey = localStorage.getItem('gemini_api_key') || GEMINI_DEFAULT_KEY;
       if (apiKey) {
-        const systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional. Seu objetivo é formular o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos). Diretrizes estritas: Responda DIRETAMENTE com o comentário em português do Brasil, caloroso, respeitoso e natural. Comece direto no assunto (ex: 'Todos nós temos a responsabilidade de...', 'Podemos comentar que...'). NUNCA faça rascunhos, nunca pense em voz alta, nunca escreva em inglês e NUNCA use prefixos como '*Attempt*' ou 'Aqui está uma sugestão'. Foque na essência com base na matéria fornecida.";
+        let systemPrompt = "";
+        let instr = "";
+
+        if (isDiscurso) {
+          systemPrompt = "Você é um orador e instrutor experiente das Testemunhas de Jeová preparando um esboço completo de discurso de 10 minutos (Tesouros da Palavra de Deus). Seu objetivo é gerar um ESBOÇO COMPLETO E BEM ESTRUTURADO com Começo (Introdução 1-2 min), Meio (Corpo 6-7 min com pontos bíblicos e textos lidos) e Fim (Conclusão motivadora 1-2 min) em português do Brasil com tópicos limpos.";
+          instr = "Formule o esboço completo do discurso de 10 minutos com Introdução, Desenvolvimento (com textos bíblicos) e Conclusão motivadora.";
+        } else {
+          systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional. Seu objetivo é formular o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos). Diretrizes estritas: Responda DIRETAMENTE com o comentário em português do Brasil, caloroso, respeitoso e natural. Comece direto no assunto. NUNCA faça rascunhos, nunca pense em voz alta e nunca use prefixos como '*Attempt*'.";
+          instr = "Formule o comentário final objetivo e natural de 30 a 45 segundos em português.";
+        }
+
         const requestBody = {
           contents: [{
             role: "user",
-            parts: [{ text: `CONTEXTO DA MATÉRIA:\n${context || ''}\n\nPERGUNTA OU PONTO:\n${question || prompt}\n\nINSTRUÇÃO: Formule o comentário final objetivo e natural de 30 a 45 segundos em português.` }]
+            parts: [{ text: `CONTEXTO DA MATÉRIA:\n${context || ''}\n\nPERGUNTA OU PONTO:\n${question || prompt}\n\nINSTRUÇÃO: ${instr}` }]
           }],
           systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: { temperature: 0.5, maxOutputTokens: 1000 }
+          generationConfig: { temperature: 0.5, maxOutputTokens: isDiscurso ? 2000 : 1000 }
         };
 
         const modelos = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
@@ -2007,8 +2105,9 @@
       } catch (e) {}
     }
 
-    async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "", btnElement = null) {
+    async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "", btnElement = null, tipo = "comentario") {
       dispensarDicaAssistente();
+      const isDiscurso = tipo === 'discurso' || (pergunta || '').toLowerCase().includes('discurso') || (pergunta || '').toLowerCase().includes('esboço');
 
       // Feedback visual no botão que foi clicado
       let btnOriginalHtml = "";
@@ -2023,7 +2122,9 @@
       if (targetTextareaId) {
         area = document.getElementById(targetTextareaId);
         if (area && !area.value.trim()) {
-          area.placeholder = "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)...";
+          area.placeholder = isDiscurso
+            ? "✦ O Gemini está estruturando o esboço completo do discurso de 10 min (Introdução, Desenvolvimento e Conclusão)..."
+            : "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)...";
         }
       }
 
@@ -2031,8 +2132,8 @@
         ? `TEXTO DA MATÉRIA / PARÁGRAFO:\n"${textoMateria}"\n\nSEMANA: Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
         : `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`;
 
-      const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto });
-      const respostaFinal = respostaIA || textoMateria || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
+      const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto, tipo: isDiscurso ? 'discurso' : 'comentario' });
+      const respostaFinal = respostaIA || textoMateria || (isDiscurso ? "Esboço do discurso preparado com base no tema e nos textos indicados." : "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação.");
 
       // Restaura o botão
       if (btnElement) {
@@ -2044,7 +2145,8 @@
       if (area) {
         area.value = respostaFinal;
         area.style.height = 'auto';
-        area.style.height = Math.max(70, area.scrollHeight + 8) + 'px';
+        const minH = isDiscurso ? 240 : 70;
+        area.style.height = Math.max(minH, area.scrollHeight + 12) + 'px';
         
         // Efeito visual de destaque (brilho verde esmeralda)
         area.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/40', 'transition', 'duration-300');
@@ -2060,7 +2162,9 @@
           feedbackEl.className = "text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1 transition duration-300";
           area.parentNode.appendChild(feedbackEl);
         }
-        feedbackEl.innerHTML = '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>';
+        feedbackEl.innerHTML = isDiscurso
+          ? '<span>✅ Esboço completo do discurso estruturado e salvo nas suas anotações!</span>'
+          : '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>';
         setTimeout(() => {
           if (feedbackEl) feedbackEl.innerHTML = '';
         }, 4000);
