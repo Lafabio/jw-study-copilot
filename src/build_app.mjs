@@ -195,9 +195,10 @@ const htmlTemplate = `<!DOCTYPE html>
 
       <!-- Histórico de Conversa -->
       <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
-        <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
+        <div id="card-assistente-dica" class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed relative">
+          <button onclick="dispensarDicaAssistente()" class="absolute top-2.5 right-2.5 text-[#adb5bd] hover:text-[#495057] text-xs p-1 leading-none rounded hover:bg-black/5 transition" title="Dispensar">✕</button>
           <p class="font-bold text-[#4a3b69] mb-1">💡 Assistente de Comentários:</p>
-          <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
+          <p class="pr-5">Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
         </div>
       </div>
 
@@ -421,6 +422,7 @@ const htmlTemplate = `<!DOCTYPE html>
     // Inicialização da Página
     window.addEventListener('DOMContentLoaded', async () => {
       inicializarPerfilUsuario();
+      verificarDicaAssistente();
       popularSeletorSemanas();
       await sincronizarComSupabase();
       popularSeletorSemanas();
@@ -787,7 +789,29 @@ const htmlTemplate = `<!DOCTYPE html>
       return null;
     }
 
+    function dispensarDicaAssistente() {
+      try {
+        localStorage.setItem('jw_assistente_dica_vista', '1');
+      } catch (e) {}
+      const card = document.getElementById('card-assistente-dica');
+      if (card) {
+        card.remove();
+      }
+    }
+
+    function verificarDicaAssistente() {
+      try {
+        if (localStorage.getItem('jw_assistente_dica_vista') === '1') {
+          const card = document.getElementById('card-assistente-dica');
+          if (card) {
+            card.remove();
+          }
+        }
+      } catch (e) {}
+    }
+
     async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "") {
+      dispensarDicaAssistente();
       const pane = document.getElementById('study-pane');
       if (pane.classList.contains('translate-x-full')) {
         toggleStudyPane();
@@ -884,6 +908,7 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     async function enviarPerguntaEstudo() {
+      dispensarDicaAssistente();
       const input = document.getElementById('input-estudo');
       const val = input.value.trim();
       if (!val) return;
@@ -904,6 +929,7 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     function limparChat() {
+      dispensarDicaAssistente();
       document.getElementById('mensagens-estudo').innerHTML = '';
       adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
     }
