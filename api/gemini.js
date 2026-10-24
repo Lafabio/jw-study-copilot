@@ -1,6 +1,7 @@
 /**
  * Vercel Serverless Function: api/gemini.js
  * Rota segura para processar prompts com o Google Gemini sem expor a API key no cliente.
+ * Atualizado com gemini-3.5-flash e fallback dinâmico.
  */
 
 export default async function handler(req, res) {
