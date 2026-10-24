@@ -9,6 +9,9 @@ const htmlTemplate = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>JW Library - Reuniões</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#4a3b69">
@@ -308,6 +311,17 @@ const htmlTemplate = `<!DOCTYPE html>
             <label class="block font-semibold text-[#495057] mb-1">Supabase Anon Key:</label>
             <input id="cfg-supa-key" type="password" placeholder="sb_publishable_..." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
           </div>
+        </div>
+
+        <!-- Sincronização de Versão e Limpeza de Cache -->
+        <div class="p-3 bg-[#f8f9fa] border border-[#dee2e6] rounded-xl flex items-center justify-between gap-2">
+          <div>
+            <p class="font-bold text-[#212529] text-xs">Sincronizar Versão (Celular/PC)</p>
+            <p class="text-[10px] text-[#6c757d]">Força o recarregamento da versão mais recente</p>
+          </div>
+          <button onclick="forcarAtualizacaoApp()" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold transition flex items-center gap-1 text-[11px] shrink-0 shadow-3xs">
+            🔄 Sincronizar App
+          </button>
         </div>
 
         <div id="msg-teste-conexao" class="hidden p-2.5 rounded-lg text-xs"></div>
@@ -1496,15 +1510,69 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('modal-imagem').classList.add('hidden');
     }
 
-    // REGISTRO DE PWA (SERVICE WORKER)
+    // REGISTRO DE PWA (SERVICE WORKER) COM ATUALIZAÇÃO AUTOMÁTICA
     function registrarServiceWorker() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(() => {
+        navigator.serviceWorker.register('./sw.js').then((registration) => {
           console.log('✅ ServiceWorker do JW Study registrado para uso offline.');
+          // Checa imediatamente se há nova versão no servidor
+          registration.update().catch(() => {});
+
+          // Monitora se há nova versão sendo instalada
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  exibirAvisoAtualizacao();
+                }
+              });
+            }
+          });
         }).catch(err => {
           console.log('SW registration note:', err);
         });
+
+        // Recarrega automaticamente quando o ServiceWorker assumir controle com versão nova
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       }
+    }
+
+    function exibirAvisoAtualizacao() {
+      if (document.getElementById('toast-atualizacao')) return;
+      const toast = document.createElement('div');
+      toast.id = 'toast-atualizacao';
+      toast.className = 'fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-50 bg-[#4a3b69] text-white p-3.5 rounded-xl shadow-2xl flex items-center justify-between gap-3 border border-white/20 animate-bounce';
+      toast.innerHTML = \`
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-base">🚀</span>
+          <span><strong>Nova versão pronta!</strong> Toque para atualizar.</span>
+        </div>
+        <button onclick="forcarAtualizacaoApp()" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-[#4a3b69] font-bold text-xs rounded-lg shadow-xs shrink-0">
+          Atualizar
+        </button>
+      \`;
+      document.body.appendChild(toast);
+    }
+
+    async function forcarAtualizacaoApp() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const r of regs) await r.unregister();
+        }
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          for (const k of keys) await caches.delete(k);
+        }
+      } catch (e) {}
+      window.location.reload(true);
     }
   </script>
 </body>
