@@ -559,7 +559,7 @@ const htmlTemplate = `<!DOCTYPE html>
                   <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-1.5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <p class="text-xs sm:text-sm font-semibold text-[#212529]">\${q}</p>
-                      <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                      <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'nota-pergunta-\${p.id}-\${idx}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
                         <span class="text-amber-300">✦</span> Comentar com IA
                       </button>
                     </div>
@@ -569,7 +569,7 @@ const htmlTemplate = `<!DOCTYPE html>
               </div>
             \` : \`
               <div class="pt-2 flex items-center justify-between">
-                <button onclick="responderComIA('Como estruturar a \${p.titulo.replace(/'/g, "\\\\'")} de forma clara e objetiva para a congregação?')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
+                <button onclick="responderComIA('Como estruturar a \${p.titulo.replace(/'/g, "\\\\'")} de forma clara e objetiva para a congregação?', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'nota-parte-\${p.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
                   <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
                 </button>
               </div>
@@ -674,7 +674,7 @@ const htmlTemplate = `<!DOCTYPE html>
                 <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
                   \${p.pergunta}
                 </p>
-                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'nota-sentinela-\${p.num}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
                   <span class="text-amber-300">✦</span> Comentar com IA
                 </button>
               </div>
@@ -766,7 +766,7 @@ const htmlTemplate = `<!DOCTYPE html>
       return null;
     }
 
-    async function responderComIA(pergunta, textoMateria = "") {
+    async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "") {
       const pane = document.getElementById('study-pane');
       if (pane.classList.contains('translate-x-full')) {
         toggleStudyPane();
@@ -782,11 +782,45 @@ const htmlTemplate = `<!DOCTYPE html>
       const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto });
 
       removerUltimaMensagemIA();
-      if (respostaIA) {
-        adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão (30 a 45s):</strong><br><br>\${respostaIA.replace(/\\n/g, '<br>')}\`);
-      } else {
-        const texto = textoMateria || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
-        adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"\${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>\`);
+      const respostaFinal = respostaIA || textoMateria || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
+
+      // Encaminha a resposta automaticamente para o espaço Minhas Anotações
+      let notaMsg = "";
+      if (targetTextareaId) {
+        const area = document.getElementById(targetTextareaId);
+        if (area) {
+          area.value = respostaFinal;
+          // Auto-expande a altura do campo
+          area.style.height = 'auto';
+          area.style.height = Math.max(70, area.scrollHeight + 8) + 'px';
+          
+          // Efeito visual de destaque (brilho verde esmeralda)
+          area.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/30', 'transition', 'duration-300');
+          setTimeout(() => {
+            area.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50/30');
+          }, 3000);
+
+          // Salva silenciosamente no localStorage e no Supabase
+          salvarTudo(true);
+
+          notaMsg = \`
+            <div class="mt-3 pt-2.5 border-t border-[#dee2e6] flex items-center justify-between text-[11px] text-emerald-700 font-semibold bg-emerald-50/60 p-2 rounded-lg">
+              <span class="flex items-center gap-1">✅ Encaminhado para <strong>Minhas Anotações</strong></span>
+              <button onclick="irParaAnotacao('\${targetTextareaId}')" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition text-[10px] shadow-2xs">Ver no texto</button>
+            </div>
+          \`;
+        }
+      }
+
+      adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão (30 a 45s):</strong><br><br>\${respostaFinal.replace(/\\n/g, '<br>')}\${notaMsg}\`);
+    }
+
+    function irParaAnotacao(id) {
+      fecharPaineisMobile();
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus();
       }
     }
 
@@ -854,7 +888,7 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     // Salva notas no Supabase e no localStorage
-    async function salvarTudo() {
+    async function salvarTudo(silencioso = false) {
       const textareas = document.querySelectorAll('textarea');
       const notas = {};
       textareas.forEach(t => {
@@ -888,18 +922,26 @@ const htmlTemplate = `<!DOCTYPE html>
         });
 
         if (res.ok) {
-          alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no Supabase Nuvem e no seu aparelho!\`);
+          if (!silencioso) alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no Supabase Nuvem e no seu aparelho!\`);
           return;
         }
       } catch (e) {
         console.warn('Erro ao salvar no Supabase:', e.message);
       }
 
-      alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no seu dispositivo!\`);
+      if (!silencioso) alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no seu dispositivo!\`);
     }
 
     // Recupera notas salvas
     async function carregarNotasSalvas() {
+      // Limpa os textareas antes de carregar nova semana
+      document.querySelectorAll('textarea').forEach(t => {
+        t.value = '';
+        t.style.height = 'auto';
+      });
+
+      let carregou = false;
+
       // Tenta recuperar do Supabase
       try {
         const res = await fetch(
@@ -918,21 +960,31 @@ const htmlTemplate = `<!DOCTYPE html>
             const notas = JSON.parse(rows[0].note_text);
             Object.entries(notas).forEach(([id, texto]) => {
               const el = document.getElementById(id);
-              if (el) el.value = texto;
+              if (el) {
+                el.value = texto;
+                el.style.height = 'auto';
+                el.style.height = Math.max(60, el.scrollHeight + 8) + 'px';
+              }
             });
-            return;
+            carregou = true;
           }
         }
       } catch (e) {}
 
       // Fallback: localStorage
-      const local = localStorage.getItem(\`jw_notas_\${semanaAtiva}_\${modoAtual}\`);
-      if (local) {
-        const notas = JSON.parse(local);
-        Object.entries(notas).forEach(([id, texto]) => {
-          const el = document.getElementById(id);
-          if (el) el.value = texto;
-        });
+      if (!carregou) {
+        const local = localStorage.getItem(\`jw_notas_\${semanaAtiva}_\${modoAtual}\`);
+        if (local) {
+          const notas = JSON.parse(local);
+          Object.entries(notas).forEach(([id, texto]) => {
+            const el = document.getElementById(id);
+            if (el) {
+              el.value = texto;
+              el.style.height = 'auto';
+              el.style.height = Math.max(60, el.scrollHeight + 8) + 'px';
+            }
+          });
+        }
       }
     }
 
