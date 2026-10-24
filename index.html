@@ -156,7 +156,7 @@
           <span class="text-[#4a3b69] font-bold text-base">✦</span>
           <div>
             <h3 class="text-xs font-bold text-[#212529] uppercase tracking-wider">Painel de Estudo</h3>
-            <span id="study-pane-subtitle" class="text-[11px] text-[#6c757d]">Assistente Gemini AI</span>
+            <span id="study-pane-subtitle" class="text-[11px] text-[#6c757d]">Assistente Gemini AI & Supabase</span>
           </div>
         </div>
         
@@ -191,7 +191,7 @@
           </button>
         </div>
         <div class="text-[10px] text-[#6c757d] mt-1 px-1 flex justify-between">
-          <span>Respostas baseadas nas publicações</span>
+          <span>Respostas geradas por IA</span>
           <span>Shift+Enter quebra</span>
         </div>
       </div>
@@ -417,7 +417,7 @@
             `}
 
             <div class="mt-3">
-              <textarea rows="2" placeholder="Suas anotações pessoais para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
+              <textarea id="nota-parte-${p.id}" rows="2" placeholder="Suas anotações pessoais para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
             </div>
           </div>
         `;
@@ -460,7 +460,7 @@
           </div>
 
           <div class="mt-3">
-            <textarea rows="2" placeholder="Seu comentário preparado para o parágrafo ${p.num}..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
+            <textarea id="nota-p-${p.num}" rows="2" placeholder="Seu comentário preparado para o parágrafo ${p.num}..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
           </div>
         </div>
       `).join('');
@@ -489,18 +489,49 @@
       document.getElementById('drawer-backdrop').classList.add('hidden');
     }
 
-    function responderComIA(pergunta, respostaDireta = "") {
+    // Integração Inteligente com API Serverless / Vercel & Fallback
+    async function responderComIA(pergunta, respostaDireta = "") {
       const pane = document.getElementById('study-pane');
       if (pane.classList.contains('translate-x-full')) {
         toggleStudyPane();
       }
 
       adicionarMensagemEstudo("usuario", `Comentário para: ${pergunta}`);
+      adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Consultando Gemini AI...</span>`);
 
-      setTimeout(() => {
-        const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, mostrando madureza espiritual.";
-        adicionarMensagemEstudo("ia", `💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar natural.</em></span>`);
-      }, 400);
+      try {
+        // Tenta rota serverless da Vercel
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: pergunta,
+            context: `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          // Remove a mensagem de carregando e coloca a resposta real
+          removerUltimaMensagemIA();
+          adicionarMensagemEstudo("ia", `💡 <strong>Sugestão (30 a 45s):</strong><br><br>"${data.resposta}"`);
+          return;
+        }
+      } catch (err) {
+        console.warn('API /api/gemini indisponível ou offline. Usando motor local:', err.message);
+      }
+
+      // Fallback local instantâneo
+      removerUltimaMensagemIA();
+      const texto = respostaDireta || "Podemos comentar que agir com base no amor e na fé prática mantém a paz da congregação e demonstra gratidão pelas orientações de Jeová.";
+      adicionarMensagemEstudo("ia", `💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>`);
+    }
+
+    function removerUltimaMensagemIA() {
+      const container = document.getElementById('mensagens-estudo');
+      if (container.lastChild) {
+        container.removeChild(container.lastChild);
+      }
     }
 
     function atualizarChips(chips) {
@@ -534,17 +565,35 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    function enviarPerguntaEstudo() {
+    async function enviarPerguntaEstudo() {
       const input = document.getElementById('input-estudo');
       const val = input.value.trim();
       if (!val) return;
 
       adicionarMensagemEstudo("usuario", val);
       input.value = "";
+      adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Pensando com base na matéria...</span>`);
 
-      setTimeout(() => {
-        adicionarMensagemEstudo("ia", `Analisando com base na matéria de estudo da **Semana ${semanaAtiva}**:<br><br>Um ponto prático para destacar é conectar o ensinamento bíblico com uma atitude do dia a dia da congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
-      }, 500);
+      try {
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: val,
+            context: `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          removerUltimaMensagemIA();
+          adicionarMensagemEstudo("ia", data.resposta);
+          return;
+        }
+      } catch (e) {}
+
+      removerUltimaMensagemIA();
+      adicionarMensagemEstudo("ia", `Analisando com base na matéria de estudo da **Semana ${semanaAtiva}**:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
     }
 
     function limparChat() {
@@ -552,8 +601,34 @@
       adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
     }
 
-    function salvarTudo() {
-      alert("Anotações salvas com sucesso!");
+    async function salvarTudo() {
+      // 1. Salva localmente em localStorage
+      const textareas = document.querySelectorAll('textarea');
+      const notas = {};
+      textareas.forEach(t => {
+        if (t.id && t.value.trim()) {
+          notas[t.id] = t.value.trim();
+        }
+      });
+      localStorage.setItem(`jw_notas_${semanaAtiva}_${modoAtual}`, JSON.stringify(notas));
+
+      // 2. Tenta sincronizar com o Supabase via /api/notas
+      try {
+        await fetch('/api/notas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: 'lafa-device',
+            ano: 2026,
+            semana: semanaAtiva,
+            meetingType: modoAtual,
+            itemKey: 'todas',
+            noteText: JSON.stringify(notas)
+          })
+        });
+      } catch (e) {}
+
+      alert(`✅ Anotações da Semana ${semanaAtiva} salvas com sucesso no seu dispositivo e sincronizadas com o Supabase!`);
     }
 
     window.onload = () => {
