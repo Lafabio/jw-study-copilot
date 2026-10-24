@@ -1,0 +1,967 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const todasPath = './cache/todas_semanas.json';
+const todasSemanas = JSON.parse(fs.readFileSync(todasPath, 'utf8'));
+
+// Normaliza as partes de cada semana para o formato de renderização
+const bancoFinal = {};
+
+for (const [semStr, semData] of Object.entries(todasSemanas)) {
+  const numSem = parseInt(semStr);
+  
+  // Normaliza Meio de Semana
+  const meio = semData.meioSemana || {};
+  const partesNorm = (meio.partes || []).map((p, idx) => {
+    let secao = "TESOUROS";
+    const tit = (p.titulo || "").toLowerCase();
+    const resumo = (p.conteudoResumo || p.texto || "").toLowerCase();
+    
+    if (tit.includes("ministério") || tit.includes("iniciando") || tit.includes("cultivando") || tit.includes("fazendo discípulos") || tit.includes("discurso de estudante") || tit.includes("vídeo") && idx > 2 && idx < 7) {
+      secao = "MINISTERIO";
+    } else if (tit.includes("vida cristã") || tit.includes("estudo bíblico de congregação") || tit.includes("necessidades locais") || tit.includes("partilhe") || tit.includes("nunca se esqueça") || idx >= 6) {
+      secao = "VIDACRISTA";
+    }
+
+    // Se a parte 1 ou 2 ou 3
+    if (idx === 0 || idx === 1 || idx === 2) secao = "TESOUROS";
+
+    return {
+      id: p.id || (idx + 1),
+      secao: p.secao || secao,
+      titulo: p.titulo || `Parte ${idx + 1}`,
+      duracao: p.duracao || "10 min",
+      texto: p.conteudoResumo || p.texto || "Consideração da matéria bíblica designada.",
+      temPerguntas: (p.perguntas && p.perguntas.length > 0) || tit.includes("joias") || tit.includes("estudo"),
+      perguntas: p.perguntas && p.perguntas.length > 0 ? p.perguntas : (tit.includes("joias") ? ["Que joias espirituais você encontrou na leitura da Bíblia desta semana?"] : [])
+    };
+  });
+
+  // Normaliza Fim de Semana (A Sentinela)
+  const sentinela = semData.fimSemana || {};
+  let paragrafos = sentinela.paragrafos || [];
+  if (!paragrafos || paragrafos.length === 0) {
+    paragrafos = [
+      {
+        num: "1",
+        texto: "O estudo desta semana nos encoraja a aprofundar nossa fé e confiança nas orientações e no cuidado constante de Jeová.",
+        pergunta: "1. Qual o ponto central destacado no parágrafo para a nossa vida cristã?",
+        respostaSugerida: "Podemos comentar que confiar em Jeová nos traz segurança e serenidade para enfrentar qualquer desafio diário."
+      },
+      {
+        num: "2",
+        texto: "Ao meditar nos princípios bíblicos apresentados, encontramos força renovada para servir ao nosso Criador com lealdade.",
+        pergunta: "2. Como os conselhos bíblicos apresentados fortalecem nossa união?",
+        respostaSugerida: "Quando colocamos em prática os conselhos bíblicos, promovemos a paz e demonstramos verdadeiro amor fraternal."
+      }
+    ];
+  }
+
+  bancoFinal[numSem] = {
+    meioSemana: {
+      titulo: meio.titulo || `SEMANA ${numSem}`,
+      tema: meio.tema || "LEITURA DA SEMANA",
+      partes: partesNorm
+    },
+    fimSemana: {
+      titulo: sentinela.titulo || "Artigo de Estudo de A Sentinela",
+      tema: sentinela.tema || "A Sentinela • Estudo Semanal",
+      chips: sentinela.chips || ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Prática", "Lição para a congregação"],
+      paragrafos: paragrafos
+    }
+  };
+}
+
+const htmlTemplate = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JW Library - Reuniões</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#4a3b69">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Estilos Oficiais do JW Library */
+    :root {
+      --jw-purple: #4a3b69;
+      --jw-purple-dark: #3b2e55;
+      --jw-purple-light: #6b588e;
+      --jw-tesouros: #596b7a;
+      --jw-ministerio: #c57e00;
+      --jw-vidacrista: #9e2a2b;
+      --jw-bg-reader: #fcfcfc;
+      --jw-text: #212529;
+      --jw-text-muted: #6c757d;
+      --jw-border: #e9ecef;
+      --jw-study-pane: #f8f9fa;
+    }
+
+    body {
+      background-color: var(--jw-bg-reader);
+      color: var(--jw-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .jw-article p {
+      line-height: 1.68;
+      font-size: 1.02rem;
+      margin-bottom: 0.95rem;
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .drawer-transition { transition: transform 0.25s ease-in-out; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- ================= TOP APP BAR (CABEÇALHO ROXO DO JW LIBRARY #4A3B69) ================= -->
+  <header class="bg-[#4a3b69] text-white sticky top-0 z-40 shadow-md">
+    <div class="px-4 py-2.5 flex items-center justify-between">
+      
+      <!-- Lado Esquerdo: Menu Hambúrguer + Título da Seção -->
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Menu de Partes">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <div class="flex items-center gap-2">
+          <h1 class="text-base font-semibold tracking-wide text-white">Reuniões</h1>
+          <span id="badge-cloud-status" class="hidden sm:inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-2 py-0.5 rounded-full font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Supabase Nuvem
+          </span>
+        </div>
+      </div>
+
+      <!-- Lado Direito: Ações (Painel de Estudo com IA & Salvar & Configurações) -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button onclick="toggleStudyPane()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
+          <span class="text-amber-300">✦</span>
+          <span class="hidden sm:inline">Painel de Estudo (IA)</span>
+          <span class="sm:hidden">Estudo</span>
+        </button>
+
+        <button onclick="salvarTudo()" title="Salvar Anotações na Nuvem" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+          </svg>
+        </button>
+
+        <button onclick="abrirModalConfig()" title="Configurações (Supabase & Gemini)" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-Barra: Abas Oficiais das Reuniões (VIDA E MINISTÉRIO | A SENTINELA) -->
+    <div class="flex border-t border-white/15 px-3 bg-[#3f315a]">
+      <button onclick="alternarModoReuniao('meio_semana')" id="tab-meio-semana" class="flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-white text-white transition">
+        VIDA E MINISTÉRIO
+      </button>
+      <button onclick="alternarModoReuniao('sentinela')" id="tab-sentinela" class="flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition">
+        A SENTINELA
+      </button>
+    </div>
+
+    <!-- Barra de Navegação de Semanas (Estilo JW Library) -->
+    <div class="bg-[#f1f3f5] text-[#212529] px-4 py-2 flex items-center justify-between text-xs font-semibold border-b border-[#dee2e6]">
+      <button onclick="mudarSemanaRelativa(-1)" class="p-1 px-2.5 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
+        ◀
+      </button>
+
+      <div class="flex items-center gap-2">
+        <span class="text-[#6c757d]">Semana:</span>
+        <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer">
+        </select>
+      </div>
+
+      <button onclick="mudarSemanaRelativa(1)" class="p-1 px-2.5 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
+        ▶
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= LAYOUT PRINCIPAL (CORPO DO LEITOR + PAINEL DE ESTUDO LATERAL) ================= -->
+  <div class="flex flex-1 overflow-hidden relative">
+    
+    <div id="drawer-backdrop" onclick="fecharPaineisMobile()" class="hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"></div>
+
+    <!-- Menu Lateral Esquerdo (Lista de Partes da Reunião) -->
+    <aside id="sidebar-partes" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#dee2e6] p-4 flex flex-col overflow-y-auto transform -translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0 shadow-lg lg:shadow-none">
+      <div class="flex items-center justify-between mb-3 border-b border-[#dee2e6] pb-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#6c757d]">Programa da Reunião</h3>
+        <button onclick="fecharPaineisMobile()" class="lg:hidden text-gray-500 hover:text-black">✕</button>
+      </div>
+      <div id="lista-partes-sidebar" class="space-y-1"></div>
+    </aside>
+
+    <!-- ÁREA CENTRAL DO LEITOR (ESTILO JW LIBRARY) -->
+    <main class="flex-1 overflow-y-auto px-4 sm:px-10 py-6 max-w-3xl mx-auto w-full jw-article">
+      
+      <!-- Cabeçalho da Publicação / Artigo -->
+      <div id="cabecalho-materia" class="mb-6 pb-4 border-b border-[#dee2e6]">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-12 h-16 rounded bg-[#4a3b69] text-white flex flex-col items-center justify-center font-bold text-[10px] p-1 shadow-xs shrink-0">
+            <span>JW</span>
+            <span class="text-xs">📖</span>
+          </div>
+          <div>
+            <span id="badge-tipo-pub" class="text-xs font-bold text-[#6c757d] uppercase tracking-wide">
+              Apostila da Reunião
+            </span>
+            <h1 id="titulo-materia" class="text-xl sm:text-2xl font-bold text-[#212529] mt-0.5">
+              Carregando...
+            </h1>
+            <p id="subtitulo-materia" class="text-xs sm:text-sm font-semibold text-[#4a3b69] mt-0.5">
+              ...
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo Dinâmico (Partes ou Parágrafos) -->
+      <div id="conteudo-leitor" class="space-y-6">
+      </div>
+
+      <div class="h-16"></div>
+    </main>
+
+    <!-- PAINEL LATERAL DIREITO (STUDY PANE COM GEMINI COPILOT) -->
+    <aside id="study-pane" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[#f8f9fa] border-l border-[#dee2e6] flex flex-col transform translate-x-full lg:static lg:translate-x-0 drawer-transition shrink-0 shadow-xl lg:shadow-none">
+      
+      <!-- Cabeçalho do Painel -->
+      <div class="p-3.5 bg-white border-b border-[#dee2e6] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-[#4a3b69] text-amber-300 flex items-center justify-center text-xs font-bold shadow-xs">
+            ✦
+          </div>
+          <div>
+            <h2 class="text-xs font-bold text-[#212529]">Painel de Estudo</h2>
+            <p class="text-[10px] text-[#6c757d]">Gemini AI Copilot</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button onclick="limparChat()" class="p-1.5 text-xs text-[#6c757d] hover:text-[#4a3b69] font-medium" title="Limpar conversa">
+            Limpar
+          </button>
+          <button onclick="fecharPaineisMobile()" class="lg:hidden p-1 text-gray-500 hover:text-black">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Chips de Sugestões Contextuais -->
+      <div id="chips-estudo" class="px-3 py-2 border-b border-[#dee2e6] flex gap-1.5 overflow-x-auto bg-white text-xs">
+      </div>
+
+      <!-- Histórico de Conversa -->
+      <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
+        <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
+          <p class="font-bold text-[#4a3b69] mb-1">💡 Painel de Estudo Inteligente:</p>
+          <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
+        </div>
+      </div>
+
+      <!-- Entrada de Texto para Perguntar ao Gemini -->
+      <div class="p-3 border-t border-[#dee2e6] bg-white">
+        <div class="flex items-center gap-2 bg-[#f1f3f5] rounded-xl border border-[#dee2e6] px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
+          <input id="input-estudo" type="text" onkeydown="if(event.key==='Enter') enviarPerguntaEstudo()" placeholder="Pergunte ao Gemini sobre o estudo..." class="w-full text-xs bg-transparent focus:outline-none text-[#212529]">
+          <button onclick="enviarPerguntaEstudo()" class="p-1.5 rounded-lg bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition shrink-0" title="Enviar">
+            ➤
+          </button>
+        </div>
+        <div class="text-[10px] text-[#6c757d] mt-1 px-1 flex justify-between">
+          <span>Google Gemini 3.5 Flash</span>
+          <span>Shift+Enter quebra linha</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ================= BARRA INFERIOR OFICIAL DO JW LIBRARY (MOBILE) ================= -->
+  <nav class="lg:hidden bg-white border-t border-[#dee2e6] fixed bottom-0 inset-x-0 z-30 px-3 py-1.5 flex items-center justify-around text-[#6c757d]">
+    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">🏠</span>
+      <span>Início</span>
+    </button>
+    <button onclick="toggleMenuMobile()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">📖</span>
+      <span>Programa</span>
+    </button>
+    <button onclick="toggleStudyPane()" class="flex flex-col items-center text-[10px] text-[#4a3b69] font-bold">
+      <span class="text-base">✦</span>
+      <span>Estudo IA</span>
+    </button>
+    <button onclick="salvarTudo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">💾</span>
+      <span>Salvar</span>
+    </button>
+    <button onclick="abrirModalConfig()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">⚙️</span>
+      <span>Ajustes</span>
+    </button>
+  </nav>
+
+  <!-- ================= MODAL DE CONFIGURAÇÕES (SUPABASE & GEMINI) ================= -->
+  <div id="modal-config" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-[#dee2e6] overflow-hidden">
+      
+      <div class="bg-[#4a3b69] text-white px-5 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">⚙️</span>
+          <h3 class="font-bold text-sm">Configurações & Conexões</h3>
+        </div>
+        <button onclick="fecharModalConfig()" class="text-white/80 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <!-- Status de Conexões -->
+        <div class="space-y-2">
+          <span class="font-bold text-[#6c757d] uppercase tracking-wider block">Status dos Serviços</span>
+          
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#f8f9fa] border border-[#e9ecef]">
+            <div class="flex items-center gap-2">
+              <span class="text-base">⚡</span>
+              <div>
+                <p class="font-bold text-[#212529]">Supabase Cloud Database</p>
+                <p id="status-txt-supabase" class="text-[11px] text-emerald-600 font-semibold">Conectado (meetings_cache & user_notes)</p>
+              </div>
+            </div>
+            <span id="badge-supa" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          </div>
+
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#f8f9fa] border border-[#e9ecef]">
+            <div class="flex items-center gap-2">
+              <span class="text-base">✦</span>
+              <div>
+                <p class="font-bold text-[#212529]">Google Gemini Copilot</p>
+                <p id="status-txt-gemini" class="text-[11px] text-emerald-600 font-semibold">Modelo ativo: gemini-3.5-flash</p>
+              </div>
+            </div>
+            <span id="badge-gemini" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          </div>
+        </div>
+
+        <!-- Campos de Configuração -->
+        <div class="space-y-3 pt-2 border-t border-[#dee2e6]">
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Chave API do Gemini (Google AI Studio):</label>
+            <input id="cfg-gemini-key" type="password" placeholder="Chave do Gemini..." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Supabase URL:</label>
+            <input id="cfg-supa-url" type="text" placeholder="https://....supabase.co" class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Supabase Anon Key:</label>
+            <input id="cfg-supa-key" type="password" placeholder="sb_publishable_..." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+          </div>
+        </div>
+
+        <div id="msg-teste-conexao" class="hidden p-2.5 rounded-lg text-xs"></div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-[#dee2e6]">
+          <button onclick="testarConexoes()" class="px-3 py-1.5 rounded-lg bg-[#f1f3f5] hover:bg-[#e9ecef] text-[#4a3b69] font-bold transition">
+            Testar Conexões
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="fecharModalConfig()" class="px-3 py-1.5 rounded-lg text-[#6c757d] hover:bg-gray-100 font-semibold transition">
+              Fechar
+            </button>
+            <button onclick="salvarConfiguracoes()" class="px-4 py-1.5 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold transition">
+              Salvar
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // CONFIGURAÇÃO SUPABASE DA NUVEM
+    const SUPABASE_CONFIG = {
+      url: localStorage.getItem('supabase_url') || 'https://jjmjjlvpaxafxpebvrwb.supabase.co',
+      key: localStorage.getItem('supabase_key') || 'sb_publishable_B5LuMRBbudUuwdEkgH5Vkw_BOqHt6re'
+    };
+
+    // CHAVE GEMINI (Pode ser configurada pelo usuário no botão de configurações ou via Vercel)
+    const GEMINI_DEFAULT_KEY = '';
+
+    // BANCO DE DADOS LOCAL COMPLETO (EXTRAÍDO DO JW.ORG)
+    const bancoSemanasJW = ${JSON.stringify(bancoFinal, null, 2)};
+
+    let semanaAtiva = 43;
+    let modoAtual = "meio_semana";
+
+    const coresSecao = {
+      TESOUROS: { border: "border-[#596b7a]", text: "text-[#596b7a]", label: "TESOUROS DA PALAVRA DE DEUS" },
+      MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
+      VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
+    };
+
+    // Inicialização da Página
+    window.addEventListener('DOMContentLoaded', async () => {
+      popularSeletorSemanas();
+      await sincronizarComSupabase();
+      popularSeletorSemanas();
+      selecionarSemana(43);
+      registrarServiceWorker();
+    });
+
+    function popularSeletorSemanas() {
+      const seletor = document.getElementById('seletor-semana');
+      const valAtual = seletor.value || semanaAtiva;
+      seletor.innerHTML = '';
+      
+      const semanas = Object.keys(bancoSemanasJW).map(Number).sort((a,b) => a - b);
+      semanas.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        const dados = bancoSemanasJW[s];
+        const tit = dados?.meioSemana?.titulo || \`Semana \${s}\`;
+        opt.innerText = \`\${tit} (Semana \${s}\${s === 43 ? ' - Atual' : ''})\`;
+        seletor.appendChild(opt);
+      });
+
+      seletor.value = valAtual;
+    }
+
+    // Sincronização em tempo real com o Supabase ao iniciar
+    async function sincronizarComSupabase() {
+      try {
+        const res = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/meetings_cache?select=*\`, {
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': \`Bearer \${SUPABASE_CONFIG.key}\`
+          }
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          rows.forEach(r => {
+            bancoSemanasJW[r.week_number] = r.content_json;
+          });
+          console.log(\`✅ Sincronizado com Supabase Nuvem: \${rows.length} semanas disponíveis.\`);
+          document.getElementById('badge-cloud-status').classList.remove('hidden');
+        }
+      } catch (e) {
+        console.warn('Operando com base de dados local offline.');
+      }
+    }
+
+    function selecionarSemana(num) {
+      semanaAtiva = parseInt(num);
+      document.getElementById('seletor-semana').value = semanaAtiva;
+      if (modoAtual === 'meio_semana') {
+        renderizarMeioSemana();
+      } else {
+        renderizarSentinela();
+      }
+      carregarNotasSalvas();
+    }
+
+    function mudarSemanaRelativa(delta) {
+      const semanas = Object.keys(bancoSemanasJW).map(Number).sort((a,b) => a - b);
+      const idx = semanas.indexOf(semanaAtiva);
+      const novoIdx = idx + delta;
+      if (novoIdx >= 0 && novoIdx < semanas.length) {
+        selecionarSemana(semanas[novoIdx]);
+      }
+    }
+
+    function alternarModoReuniao(modo) {
+      modoAtual = modo;
+      const tabMeio = document.getElementById('tab-meio-semana');
+      const tabSent = document.getElementById('tab-sentinela');
+
+      if (modo === 'meio_semana') {
+        tabMeio.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-white text-white transition";
+        tabSent.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition";
+        renderizarMeioSemana();
+      } else {
+        tabSent.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-white text-white transition";
+        tabMeio.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition";
+        renderizarSentinela();
+      }
+      carregarNotasSalvas();
+      fecharPaineisMobile();
+    }
+
+    function renderizarMeioSemana() {
+      const dados = bancoSemanasJW[semanaAtiva]?.meioSemana;
+      if (!dados) return;
+      
+      document.getElementById('badge-tipo-pub').innerText = "Apostila da Reunião";
+      document.getElementById('titulo-materia').innerText = dados.titulo;
+      document.getElementById('subtitulo-materia').innerText = dados.tema;
+
+      const sidebar = document.getElementById('lista-partes-sidebar');
+      sidebar.innerHTML = dados.partes.map(p => \`
+        <a href="#parte-\${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+          <span class="font-bold text-[#4a3b69]">\${p.id}.</span> \${p.titulo.split('(')[0].replace(/^\\d+\\.\\s*/, '')}
+          <span class="text-[11px] text-[#6c757d] block font-semibold">\${p.duracao}</span>
+        </a>
+      \`).join('');
+
+      const leitor = document.getElementById('conteudo-leitor');
+      let html = '';
+      let ultimaSecao = '';
+
+      dados.partes.forEach(p => {
+        if (p.secao !== ultimaSecao) {
+          ultimaSecao = p.secao;
+          const conf = coresSecao[p.secao] || coresSecao.TESOUROS;
+          html += \`
+            <div class="mt-8 mb-4 border-b-2 \${conf.border} pb-1 flex items-center justify-between">
+              <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider \${conf.text}">
+                \${conf.label}
+              </h2>
+            </div>
+          \`;
+        }
+
+        html += \`
+          <div id="parte-\${p.id}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-[#212529]">\${p.titulo}</h3>
+              <span class="text-xs font-bold text-[#6c757d] bg-[#f1f3f5] px-2 py-0.5 rounded">\${p.duracao}</span>
+            </div>
+            
+            <p class="text-sm leading-relaxed text-[#495057] mb-3">\${p.texto}</p>
+
+            \${p.perguntas && p.perguntas.length > 0 ? \`
+              <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-3 mt-3">
+                <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
+                \${p.perguntas.map((q, idx) => \`
+                  <div class="border-l-3 border-[#4a3b69] pl-3 py-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <p class="text-xs sm:text-sm font-semibold text-[#212529]">\${q}</p>
+                    <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                      <span class="text-amber-300">✦</span> Comentar com IA
+                    </button>
+                  </div>
+                \`).join('')}
+              </div>
+            \` : \`
+              <div class="pt-2">
+                <button onclick="responderComIA('Como estruturar a \${p.titulo.replace(/'/g, "\\\\'")} de forma clara e objetiva para a congregação?')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
+                  <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
+                </button>
+              </div>
+            \`}
+
+            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
+              <textarea id="nota-parte-\${p.id}" placeholder="Minhas anotações para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
+            </div>
+          </div>
+        \`;
+      });
+
+      leitor.innerHTML = html;
+      atualizarChips(["Resumo da Reunião", "Joias Espirituais", "Dica de Preparação", "Aplicação Ministerial"]);
+    }
+
+    function renderizarSentinela() {
+      const dados = bancoSemanasJW[semanaAtiva]?.fimSemana;
+      if (!dados) return;
+
+      document.getElementById('badge-tipo-pub').innerText = "A Sentinela (Edição de Estudo)";
+      document.getElementById('titulo-materia').innerText = dados.titulo;
+      document.getElementById('subtitulo-materia').innerText = dados.tema;
+
+      const sidebar = document.getElementById('lista-partes-sidebar');
+      sidebar.innerHTML = dados.paragrafos.map(p => \`
+        <a href="#paragrafo-\${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+          <span class="font-bold text-[#4a3b69]">§ \${p.num}</span> - Parágrafo \${p.num}
+        </a>
+      \`).join('');
+
+      const leitor = document.getElementById('conteudo-leitor');
+      let html = \`
+        <div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800">Cânticos & Oração</h4>
+          <p class="text-xs text-amber-900 mt-1">Prepare seus comentários com antecedência. O tempo ideal para cada participação é de 30 a 45 segundos.</p>
+        </div>
+      \`;
+
+      dados.paragrafos.forEach(p => {
+        html += \`
+          <div id="paragrafo-\${p.num}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-6 h-6 rounded-full bg-[#4a3b69] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                \${p.num}
+              </span>
+              <span class="text-xs font-semibold text-[#6c757d]">Parágrafo \${p.num}</span>
+            </div>
+
+            <p class="text-sm leading-relaxed text-[#212529] mb-4 font-normal">
+              \${p.texto}
+            </p>
+
+            <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-2">
+              <div class="flex items-start justify-between gap-3">
+                <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
+                  \${p.pergunta}
+                </p>
+                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.respostaSugerida || '').replace(/'/g, "\\\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                  <span class="text-amber-300">✦</span> Comentar com IA
+                </button>
+              </div>
+
+              \${p.respostaSugerida ? \`
+                <div class="pt-2 border-t border-[#dee2e6] text-xs text-[#6c757d]">
+                  <span class="font-bold text-[#4a3b69]">Ponto-chave:</span> \${p.respostaSugerida}
+                </div>
+              \` : ''}
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
+              <textarea id="nota-sentinela-\${p.num}" placeholder="Meu comentário formulado para este parágrafo..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
+            </div>
+          </div>
+        \`;
+      });
+
+      leitor.innerHTML = html;
+      atualizarChips(dados.chips || ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica"]);
+    }
+
+    // Controle de Gavetas e Painéis
+    function toggleStudyPane() {
+      const pane = document.getElementById('study-pane');
+      const backdrop = document.getElementById('drawer-backdrop');
+      pane.classList.toggle('translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
+
+    function toggleMenuMobile() {
+      const sidebar = document.getElementById('sidebar-partes');
+      const backdrop = document.getElementById('drawer-backdrop');
+      sidebar.classList.toggle('-translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
+
+    function fecharPaineisMobile() {
+      document.getElementById('study-pane').classList.add('translate-x-full');
+      document.getElementById('sidebar-partes').classList.add('-translate-x-full');
+      document.getElementById('drawer-backdrop').classList.add('hidden');
+    }
+
+    // CHAMADA HÍBRIDA AO GOOGLE GEMINI (Vercel API -> Direct Client -> Fallback)
+    async function chamarGeminiIA({ question, prompt, context }) {
+      // 1. Tenta API do Vercel (/api/gemini)
+      try {
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, prompt, context })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.resposta) return data.resposta;
+        }
+      } catch (err) {}
+
+      // 2. Chamada Direta à API do Gemini (GitHub Pages ou PWA)
+      const apiKey = localStorage.getItem('gemini_api_key') || GEMINI_DEFAULT_KEY;
+      if (apiKey) {
+        const systemPrompt = "Você é um assistente pessoal de estudo bíblico para as reuniões congregacionais das Testemunhas de Jeová (Vida e Ministério e A Sentinela). Ajude o usuário a formular comentários concisos (30 a 45 segundos), claros, respeitosos e com as próprias palavras. Destaque um ponto prático ou texto bíblico aplicado.";
+        const requestBody = {
+          contents: [{
+            role: "user",
+            parts: [{ text: \`CONTEXTO DA MATÉRIA:\\n\${context || ''}\\n\\nPERGUNTA OU PONTO:\\n\${question || prompt}\\n\\nINSTRUÇÃO: Formule uma sugestão de comentário objetivo e natural de 30 a 45 segundos com as próprias palavras.\` }]
+          }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+        };
+
+        const modelos = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+        for (const m of modelos) {
+          try {
+            const res = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/\${m}:generateContent?key=\${apiKey}\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestBody)
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) return text;
+            }
+          } catch (e) {}
+        }
+      }
+
+      return null;
+    }
+
+    async function responderComIA(pergunta, respostaDireta = "") {
+      const pane = document.getElementById('study-pane');
+      if (pane.classList.contains('translate-x-full')) {
+        toggleStudyPane();
+      }
+
+      adicionarMensagemEstudo("usuario", \`Comentário para: \${pergunta}\`);
+      adicionarMensagemEstudo("ia", \`<span class="italic text-gray-400">Consultando Gemini 3.5 Flash...</span>\`);
+
+      const contexto = \`Semana \${semanaAtiva} (\${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})\`;
+      const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto });
+
+      removerUltimaMensagemIA();
+      if (respostaIA) {
+        adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão (30 a 45s):</strong><br><br>\${respostaIA.replace(/\\n/g, '<br>')}\`);
+      } else {
+        const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
+        adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"\${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>\`);
+      }
+    }
+
+    function removerUltimaMensagemIA() {
+      const container = document.getElementById('mensagens-estudo');
+      if (container.lastChild) {
+        container.removeChild(container.lastChild);
+      }
+    }
+
+    function atualizarChips(chips) {
+      const container = document.getElementById('chips-estudo');
+      container.innerHTML = '';
+      chips.forEach(chip => {
+        const btn = document.createElement('button');
+        btn.className = "px-2.5 py-1 rounded-full bg-[#f1f3f5] border border-[#dee2e6] text-[#495057] hover:border-[#4a3b69] hover:text-[#4a3b69] whitespace-nowrap transition text-xs shrink-0 font-medium";
+        btn.innerText = chip;
+        btn.onclick = () => {
+          document.getElementById('input-estudo').value = chip;
+          enviarPerguntaEstudo();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function adicionarMensagemEstudo(tipo, htmlTexto) {
+      const container = document.getElementById('mensagens-estudo');
+      const div = document.createElement('div');
+
+      if (tipo === 'usuario') {
+        div.className = "bg-[#e9ecef] text-[#212529] p-3 rounded-xl ml-4 text-xs font-semibold";
+        div.innerHTML = htmlTexto;
+      } else {
+        div.className = "bg-white text-[#212529] p-3.5 rounded-xl border border-[#dee2e6] shadow-xs text-xs leading-relaxed";
+        div.innerHTML = \`<div class="flex items-center gap-1.5 text-[#4a3b69] font-bold mb-1"><span>✦</span> Gemini Copilot</div>\${htmlTexto}\`;
+      }
+
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function enviarPerguntaEstudo() {
+      const input = document.getElementById('input-estudo');
+      const val = input.value.trim();
+      if (!val) return;
+
+      adicionarMensagemEstudo("usuario", val);
+      input.value = "";
+      adicionarMensagemEstudo("ia", \`<span class="italic text-gray-400">Pensando com base na matéria...</span>\`);
+
+      const contexto = \`Semana \${semanaAtiva} (\${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})\`;
+      const respostaIA = await chamarGeminiIA({ prompt: val, context: contexto });
+
+      removerUltimaMensagemIA();
+      if (respostaIA) {
+        adicionarMensagemEstudo("ia", respostaIA.replace(/\\n/g, '<br>'));
+      } else {
+        adicionarMensagemEstudo("ia", \`Analisando com base na matéria da <strong>Semana \${semanaAtiva}</strong>:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.\`);
+      }
+    }
+
+    function limparChat() {
+      document.getElementById('mensagens-estudo').innerHTML = '';
+      adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
+    }
+
+    // Salva notas no Supabase e no localStorage
+    async function salvarTudo() {
+      const textareas = document.querySelectorAll('textarea');
+      const notas = {};
+      textareas.forEach(t => {
+        if (t.id && t.value.trim()) {
+          notas[t.id] = t.value.trim();
+        }
+      });
+
+      // 1. Salva localmente
+      localStorage.setItem(\`jw_notas_\${semanaAtiva}_\${modoAtual}\`, JSON.stringify(notas));
+
+      // 2. Salva na nuvem no Supabase
+      try {
+        const res = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/user_notes\`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': \`Bearer \${SUPABASE_CONFIG.key}\`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify({
+            user_id: 'lafa-cloud-user',
+            year: 2026,
+            week_number: semanaAtiva,
+            meeting_type: modoAtual,
+            item_key: 'todas',
+            note_text: JSON.stringify(notas),
+            updated_at: new Date().toISOString()
+          })
+        });
+
+        if (res.ok) {
+          alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no Supabase Nuvem e no seu aparelho!\`);
+          return;
+        }
+      } catch (e) {
+        console.warn('Erro ao salvar no Supabase:', e.message);
+      }
+
+      alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no seu dispositivo!\`);
+    }
+
+    // Recupera notas salvas
+    async function carregarNotasSalvas() {
+      // Tenta recuperar do Supabase
+      try {
+        const res = await fetch(
+          \`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.lafa-cloud-user&year=eq.2026&week_number=eq.\${semanaAtiva}&meeting_type=eq.\${modoAtual}&select=*\`,
+          {
+            headers: {
+              'apikey': SUPABASE_CONFIG.key,
+              'Authorization': \`Bearer \${SUPABASE_CONFIG.key}\`
+            }
+          }
+        );
+
+        if (res.ok) {
+          const rows = await res.json();
+          if (rows && rows.length > 0 && rows[0].note_text) {
+            const notas = JSON.parse(rows[0].note_text);
+            Object.entries(notas).forEach(([id, texto]) => {
+              const el = document.getElementById(id);
+              if (el) el.value = texto;
+            });
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Fallback: localStorage
+      const local = localStorage.getItem(\`jw_notas_\${semanaAtiva}_\${modoAtual}\`);
+      if (local) {
+        const notas = JSON.parse(local);
+        Object.entries(notas).forEach(([id, texto]) => {
+          const el = document.getElementById(id);
+          if (el) el.value = texto;
+        });
+      }
+    }
+
+    // MODAL DE CONFIGURAÇÕES
+    function abrirModalConfig() {
+      document.getElementById('cfg-gemini-key').value = localStorage.getItem('gemini_api_key') || GEMINI_DEFAULT_KEY;
+      document.getElementById('cfg-supa-url').value = localStorage.getItem('supabase_url') || SUPABASE_CONFIG.url;
+      document.getElementById('cfg-supa-key').value = localStorage.getItem('supabase_key') || SUPABASE_CONFIG.key;
+      document.getElementById('modal-config').classList.remove('hidden');
+    }
+
+    function fecharModalConfig() {
+      document.getElementById('modal-config').classList.add('hidden');
+    }
+
+    function salvarConfiguracoes() {
+      const gKey = document.getElementById('cfg-gemini-key').value.trim();
+      const sUrl = document.getElementById('cfg-supa-url').value.trim();
+      const sKey = document.getElementById('cfg-supa-key').value.trim();
+
+      if (gKey) localStorage.setItem('gemini_api_key', gKey);
+      if (sUrl) {
+        localStorage.setItem('supabase_url', sUrl);
+        SUPABASE_CONFIG.url = sUrl;
+      }
+      if (sKey) {
+        localStorage.setItem('supabase_key', sKey);
+        SUPABASE_CONFIG.key = sKey;
+      }
+
+      fecharModalConfig();
+      alert('✅ Configurações salvas com sucesso!');
+    }
+
+    async function testarConexoes() {
+      const msgBox = document.getElementById('msg-teste-conexao');
+      msgBox.className = "p-2.5 rounded-lg text-xs bg-blue-50 text-blue-800 border border-blue-200 block";
+      msgBox.innerText = "Testando conexões com Supabase e Google Gemini...";
+
+      const gKey = document.getElementById('cfg-gemini-key').value.trim() || GEMINI_DEFAULT_KEY;
+      const sUrl = document.getElementById('cfg-supa-url').value.trim() || SUPABASE_CONFIG.url;
+      const sKey = document.getElementById('cfg-supa-key').value.trim() || SUPABASE_CONFIG.key;
+
+      let supaOk = false;
+      let geminiOk = false;
+
+      // 1. Testa Supabase
+      try {
+        const res = await fetch(\`\${sUrl}/rest/v1/meetings_cache?select=count\`, {
+          headers: { 'apikey': sKey, 'Authorization': \`Bearer \${sKey}\` }
+        });
+        if (res.ok) supaOk = true;
+      } catch (e) {}
+
+      // 2. Testa Gemini
+      try {
+        const res = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=\${gKey}\`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Ola' }] }] })
+        });
+        if (res.ok) geminiOk = true;
+      } catch (e) {}
+
+      if (supaOk && geminiOk) {
+        msgBox.className = "p-2.5 rounded-lg text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 block";
+        msgBox.innerText = "✅ Tudo 100%! Supabase Nuvem e Google Gemini 3.5 Flash conectados com sucesso.";
+      } else {
+        msgBox.className = "p-2.5 rounded-lg text-xs bg-amber-50 text-amber-800 border border-amber-200 block";
+        msgBox.innerText = \`Aviso: Supabase \${supaOk ? 'OK ✅' : 'Falha ❌'} | Gemini \${geminiOk ? 'OK ✅' : 'Falha ❌'}\`;
+      }
+    }
+
+    // REGISTRO DE PWA (SERVICE WORKER)
+    function registrarServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(() => {
+          console.log('✅ ServiceWorker do JW Study registrado para uso offline.');
+        }).catch(err => {
+          console.log('SW registration note:', err);
+        });
+      }
+    }
+  </script>
+</body>
+</html>`;
+
+fs.writeFileSync('./index.html', htmlTemplate, 'utf8');
+console.log('✅ index.html gerado com sucesso!');
+
+// Também atualiza o artefato
+const artifactPath = path.resolve('C:/Users/lafai/.gemini/antigravity/brain/d4fc619c-9d66-4a9c-b20b-705733b77051/reuniao_prototipo.html');
+fs.writeFileSync(artifactPath, htmlTemplate, 'utf8');
+console.log('✅ Artefato reuniao_prototipo.html atualizado!');

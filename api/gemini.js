@@ -29,8 +29,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
     const systemInstruction = `
 Você é um assistente pessoal de estudo bíblico para as reuniões congregacionais (Vida e Ministério e A Sentinela).
 Seu objetivo é ajudar o usuário a formular comentários e discursos claros, objetivos e com as próprias palavras.
@@ -62,11 +60,21 @@ Regras fundamentais:
       }
     };
 
-    const apiRes = await fetch(url, {
+    // Tenta primeiro gemini-3.5-flash, depois gemini-3.5-flash-lite
+    let apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody)
     });
+
+    if (!apiRes.ok) {
+      // Fallback para gemini-3.5-flash-lite
+      apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+    }
 
     if (!apiRes.ok) {
       const errText = await apiRes.text();

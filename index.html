@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JW Library - Reuniões</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#4a3b69">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     /* Estilos Oficiais do JW Library */
@@ -47,7 +50,7 @@
       
       <!-- Lado Esquerdo: Menu Hambúrguer + Título da Seção -->
       <div class="flex items-center space-x-3">
-        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition">
+        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition" title="Menu de Partes">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -61,7 +64,7 @@
         </div>
       </div>
 
-      <!-- Lado Direito: Ações (Painel de Estudo com IA & Salvar) -->
+      <!-- Lado Direito: Ações (Painel de Estudo com IA & Salvar & Configurações) -->
       <div class="flex items-center space-x-1.5 sm:space-x-2">
         <button onclick="toggleStudyPane()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
           <span class="text-amber-300">✦</span>
@@ -69,9 +72,16 @@
           <span class="sm:hidden">Estudo</span>
         </button>
 
-        <button onclick="salvarTudo()" title="Salvar Anotações no Supabase" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
+        <button onclick="salvarTudo()" title="Salvar Anotações na Nuvem" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+          </svg>
+        </button>
+
+        <button onclick="abrirModalConfig()" title="Configurações (Supabase & Gemini)" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
           </svg>
         </button>
       </div>
@@ -89,20 +99,17 @@
 
     <!-- Barra de Navegação de Semanas (Estilo JW Library) -->
     <div class="bg-[#f1f3f5] text-[#212529] px-4 py-2 flex items-center justify-between text-xs font-semibold border-b border-[#dee2e6]">
-      <button onclick="mudarSemanaRelativa(-1)" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
+      <button onclick="mudarSemanaRelativa(-1)" class="p-1 px-2.5 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
         ◀
       </button>
 
       <div class="flex items-center gap-2">
         <span class="text-[#6c757d]">Semana:</span>
         <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer">
-          <option value="43">19-25 de outubro (Semana Atual)</option>
-          <option value="44">26 de outubro–1 de novembro</option>
-          <option value="45">2-8 de novembro</option>
         </select>
       </div>
 
-      <button onclick="mudarSemanaRelativa(1)" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
+      <button onclick="mudarSemanaRelativa(1)" class="p-1 px-2.5 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
         ▶
       </button>
     </div>
@@ -137,35 +144,38 @@
               Apostila da Reunião
             </span>
             <h1 id="titulo-materia" class="text-xl sm:text-2xl font-bold text-[#212529] mt-0.5">
-              19-25 DE OUTUBRO
+              Carregando...
             </h1>
-            <p id="subtitulo-materia" class="text-sm font-medium text-[#4a3b69]">
-              JEREMIAS 45-46
+            <p id="subtitulo-materia" class="text-xs sm:text-sm font-semibold text-[#4a3b69] mt-0.5">
+              ...
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Container Dinâmico dos Parágrafos / Seções -->
-      <div id="conteudo-leitor" class="space-y-6 pb-20"></div>
+      <!-- Conteúdo Dinâmico (Partes ou Parágrafos) -->
+      <div id="conteudo-leitor" class="space-y-6">
+      </div>
 
+      <div class="h-16"></div>
     </main>
 
-    <!-- ================= PAINEL DE ESTUDO LATERAL (STUDY PANE COM IA DO GEMINI) ================= -->
-    <aside id="study-pane" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[#f8f9fa] border-l border-[#dee2e6] flex flex-col transform translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0 shadow-2xl lg:shadow-none">
+    <!-- PAINEL LATERAL DIREITO (STUDY PANE COM GEMINI COPILOT) -->
+    <aside id="study-pane" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[#f8f9fa] border-l border-[#dee2e6] flex flex-col transform translate-x-full lg:static lg:translate-x-0 drawer-transition shrink-0 shadow-xl lg:shadow-none">
       
-      <!-- Topo do Painel de Estudo -->
-      <div class="p-3.5 border-b border-[#dee2e6] bg-white flex items-center justify-between">
+      <!-- Cabeçalho do Painel -->
+      <div class="p-3.5 bg-white border-b border-[#dee2e6] flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-[#4a3b69] font-bold text-base">✦</span>
+          <div class="w-7 h-7 rounded-lg bg-[#4a3b69] text-amber-300 flex items-center justify-center text-xs font-bold shadow-xs">
+            ✦
+          </div>
           <div>
-            <h3 class="text-xs font-bold text-[#212529] uppercase tracking-wider">Painel de Estudo</h3>
-            <span id="study-pane-subtitle" class="text-[11px] text-[#6c757d]">Gemini AI • Conectado à Nuvem</span>
+            <h2 class="text-xs font-bold text-[#212529]">Painel de Estudo</h2>
+            <p class="text-[10px] text-[#6c757d]">Gemini AI Copilot</p>
           </div>
         </div>
-        
-        <div class="flex items-center gap-2">
-          <button onclick="limparChat()" title="Limpar conversa" class="text-xs text-[#6c757d] hover:text-red-500">
+        <div class="flex items-center gap-1">
+          <button onclick="limparChat()" class="p-1.5 text-xs text-[#6c757d] hover:text-[#4a3b69] font-medium" title="Limpar conversa">
             Limpar
           </button>
           <button onclick="fecharPaineisMobile()" class="lg:hidden p-1 text-gray-500 hover:text-black">
@@ -182,7 +192,7 @@
       <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
         <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
           <p class="font-bold text-[#4a3b69] mb-1">💡 Painel de Estudo Inteligente:</p>
-          <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas e com as suas próprias palavras.</p>
+          <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas (30 a 45s) e com as suas próprias palavras.</p>
         </div>
       </div>
 
@@ -190,13 +200,13 @@
       <div class="p-3 border-t border-[#dee2e6] bg-white">
         <div class="flex items-center gap-2 bg-[#f1f3f5] rounded-xl border border-[#dee2e6] px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
           <input id="input-estudo" type="text" onkeydown="if(event.key==='Enter') enviarPerguntaEstudo()" placeholder="Pergunte ao Gemini sobre o estudo..." class="w-full text-xs bg-transparent focus:outline-none text-[#212529]">
-          <button onclick="enviarPerguntaEstudo()" class="p-1.5 rounded-lg bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition shrink-0">
+          <button onclick="enviarPerguntaEstudo()" class="p-1.5 rounded-lg bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition shrink-0" title="Enviar">
             ➤
           </button>
         </div>
         <div class="text-[10px] text-[#6c757d] mt-1 px-1 flex justify-between">
-          <span>Respostas geradas por IA</span>
-          <span>Shift+Enter quebra</span>
+          <span>Google Gemini 3.5 Flash</span>
+          <span>Shift+Enter quebra linha</span>
         </div>
       </div>
 
@@ -206,121 +216,1012 @@
 
   <!-- ================= BARRA INFERIOR OFICIAL DO JW LIBRARY (MOBILE) ================= -->
   <nav class="lg:hidden bg-white border-t border-[#dee2e6] fixed bottom-0 inset-x-0 z-30 px-3 py-1.5 flex items-center justify-around text-[#6c757d]">
-    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">🏠</span>
       <span>Início</span>
     </button>
-    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+    <button onclick="toggleMenuMobile()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">📖</span>
-      <span>Bíblia</span>
+      <span>Programa</span>
     </button>
-    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
-      <span class="text-base">📚</span>
-      <span>Publicações</span>
+    <button onclick="toggleStudyPane()" class="flex flex-col items-center text-[10px] text-[#4a3b69] font-bold">
+      <span class="text-base">✦</span>
+      <span>Estudo IA</span>
     </button>
-    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
-      <span class="text-base">🎬</span>
-      <span>Mídia</span>
+    <button onclick="salvarTudo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">💾</span>
+      <span>Salvar</span>
     </button>
-    <button class="flex flex-col items-center text-[10px] text-[#4a3b69] font-bold">
-      <span class="text-base">👥</span>
-      <span>Reuniões</span>
+    <button onclick="abrirModalConfig()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">⚙️</span>
+      <span>Ajustes</span>
     </button>
   </nav>
+
+  <!-- ================= MODAL DE CONFIGURAÇÕES (SUPABASE & GEMINI) ================= -->
+  <div id="modal-config" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-[#dee2e6] overflow-hidden">
+      
+      <div class="bg-[#4a3b69] text-white px-5 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">⚙️</span>
+          <h3 class="font-bold text-sm">Configurações & Conexões</h3>
+        </div>
+        <button onclick="fecharModalConfig()" class="text-white/80 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <!-- Status de Conexões -->
+        <div class="space-y-2">
+          <span class="font-bold text-[#6c757d] uppercase tracking-wider block">Status dos Serviços</span>
+          
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#f8f9fa] border border-[#e9ecef]">
+            <div class="flex items-center gap-2">
+              <span class="text-base">⚡</span>
+              <div>
+                <p class="font-bold text-[#212529]">Supabase Cloud Database</p>
+                <p id="status-txt-supabase" class="text-[11px] text-emerald-600 font-semibold">Conectado (meetings_cache & user_notes)</p>
+              </div>
+            </div>
+            <span id="badge-supa" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          </div>
+
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#f8f9fa] border border-[#e9ecef]">
+            <div class="flex items-center gap-2">
+              <span class="text-base">✦</span>
+              <div>
+                <p class="font-bold text-[#212529]">Google Gemini Copilot</p>
+                <p id="status-txt-gemini" class="text-[11px] text-emerald-600 font-semibold">Modelo ativo: gemini-3.5-flash</p>
+              </div>
+            </div>
+            <span id="badge-gemini" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          </div>
+        </div>
+
+        <!-- Campos de Configuração -->
+        <div class="space-y-3 pt-2 border-t border-[#dee2e6]">
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Chave API do Gemini (Google AI Studio):</label>
+            <input id="cfg-gemini-key" type="password" placeholder="Chave do Gemini..." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Supabase URL:</label>
+            <input id="cfg-supa-url" type="text" placeholder="https://....supabase.co" class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Supabase Anon Key:</label>
+            <input id="cfg-supa-key" type="password" placeholder="sb_publishable_..." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+          </div>
+        </div>
+
+        <div id="msg-teste-conexao" class="hidden p-2.5 rounded-lg text-xs"></div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-[#dee2e6]">
+          <button onclick="testarConexoes()" class="px-3 py-1.5 rounded-lg bg-[#f1f3f5] hover:bg-[#e9ecef] text-[#4a3b69] font-bold transition">
+            Testar Conexões
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="fecharModalConfig()" class="px-3 py-1.5 rounded-lg text-[#6c757d] hover:bg-gray-100 font-semibold transition">
+              Fechar
+            </button>
+            <button onclick="salvarConfiguracoes()" class="px-4 py-1.5 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold transition">
+              Salvar
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <script>
     // CONFIGURAÇÃO SUPABASE DA NUVEM
     const SUPABASE_CONFIG = {
-      url: 'https://jjmjjlvpaxafxpebvrwb.supabase.co',
-      key: 'sb_publishable_B5LuMRBbudUuwdEkgH5Vkw_BOqHt6re'
+      url: localStorage.getItem('supabase_url') || 'https://jjmjjlvpaxafxpebvrwb.supabase.co',
+      key: localStorage.getItem('supabase_key') || 'sb_publishable_B5LuMRBbudUuwdEkgH5Vkw_BOqHt6re'
     };
 
-    // BANCO DE DADOS LOCAL INICIAL (Fallback)
+    // CHAVE GEMINI (Pode ser configurada pelo usuário no botão de configurações ou via Vercel)
+    const GEMINI_DEFAULT_KEY = '';
+
+    // BANCO DE DADOS LOCAL COMPLETO (EXTRAÍDO DO JW.ORG)
     const bancoSemanasJW = {
-      43: {
-        meioSemana: {
-          titulo: "19-25 DE OUTUBRO",
-          tema: "JEREMIAS 45-46",
-          partes: [
-            { id: 1, secao: "TESOUROS", titulo: "1. Ter esperança é o segredo para o contentamento", duracao: "10 min", texto: "Baruque começou a buscar 'grandes coisas para si mesmo' em meio à iminente destruição de Jerusalém. Jeová bondosamente corrigiu seu modo de pensar (Jeremias 45:1-5).", temPerguntas: false, perguntas: [] },
-            { id: 2, secao: "TESOUROS", titulo: "2. Joias espirituais", duracao: "10 min", texto: "Pesquisa bíblica em Jeremias 45 e 46 para extrair lições sobre o cuidado de Deus e o cumprimento de profecias.", temPerguntas: true, perguntas: ["Que joias espirituais você encontrou na leitura da Bíblia desta semana sobre Jeová, o ministério ou outro assunto?"] },
-            { id: 3, secao: "TESOUROS", titulo: "3. Leitura da Bíblia", duracao: "4 min", texto: "Leitura em voz alta de Jeremias 46:1-12 com a devida ênfase e sentimento.", temPerguntas: false, perguntas: [] },
-            { id: 4, secao: "MINISTERIO", titulo: "4. Iniciando conversas (De casa em casa)", duracao: "3 min", texto: "Demonstração usando a brochura Lições do Ministério (lmd lição 1).", temPerguntas: false, perguntas: [] },
-            { id: 5, secao: "MINISTERIO", titulo: "5. Iniciando conversas (Testemunho informal)", duracao: "2 min", texto: "Demonstração com aplicação prática de perguntas de introdução amigáveis.", temPerguntas: false, perguntas: [] },
-            { id: 6, secao: "MINISTERIO", titulo: "6. Iniciando conversas (Testemunho público)", duracao: "2 min", texto: "Demonstração no carrinho ou local público.", temPerguntas: false, perguntas: [] },
-            { id: 7, secao: "MINISTERIO", titulo: "7. Discurso de Estudante", duracao: "4 min", texto: "Discurso explicativo baseado no tema designado da brochura de ensino.", temPerguntas: false, perguntas: [] },
-            { id: 8, secao: "VIDACRISTA", titulo: "8. ‘Partilhe com outros o que você tem’", duracao: "15 min", texto: "Consideração prática com a assistência sobre generosidade cristã e prontidão em ajudar.", temPerguntas: true, perguntas: [
-              "Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo sobre generosidade?",
-              "Pensando no que vai acontecer em breve, por que é importante aprender desde já a compartilhar o que temos?",
-              "O que podemos aprender do exemplo de generosidade dos macedônios?",
-              "O que mais podemos compartilhar com outros além de coisas materiais?",
-              "Que exemplo Jeová nos dá sobre dividir as coisas com outros?"
-            ]},
-            { id: 9, secao: "VIDACRISTA", titulo: "9. Estudo bíblico de congregação", duracao: "30 min", texto: "Estudo do livro oficial com consideração parágrafo a parágrafo e perguntas para a assistência.", temPerguntas: true, perguntas: ["Como as ações dos personagens desta história revelam coragem sob oposição?"] }
+  "43": {
+    "meioSemana": {
+      "titulo": "19-25 DE OUTUBRO",
+      "tema": "JEREMIAS 45-46",
+      "partes": [
+        {
+          "id": 1,
+          "secao": "TESOUROS",
+          "titulo": "1. Ter esperança é o segredo para o contentamento",
+          "duracao": "10 min",
+          "texto": "(10 min) Parece que Baruque não estava satisfeito com sua situação na vida. ( Jer. 45:3 ; w25.07 22 §§ 8-9 ) Sem contentamento, podemos perder nossa alegria e tomar decisões ruins. ( w25.07 20 § 2 ) Jeová ajudou Baruque a mudar o seu ponto de vista dando a ele uma esperança. ( Jer. 45:5 ; w25.07 24 ",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 2,
+          "secao": "TESOUROS",
+          "titulo": "2. Joias espirituais",
+          "duracao": "10 min",
+          "texto": "(10 min) Jer. 46:22 — Em que sentido o som do Egito seria “como o de uma serpente deslizando”? ( it “Voz” § 16 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "temPerguntas": true,
+          "perguntas": [
+            "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
-        fimSemana: {
-          titulo: "Um pedido feito com base no amor",
-          tema: "Artigo de Estudo de A Sentinela • Filêmon 8, 9, 17",
-          chips: ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Explicar Filêmon 8, 9", "Como os anciãos promovem a paz", "Resumo final"],
-          paragrafos: [
-            { num: "1", texto: "Todos nós temos a responsabilidade de promover a união e a paz na congregação cristã. Quando tratamos os irmãos com empatia e carinho, imitamos o exemplo supremo de amor demonstrado por Jesus e Jeová.", pergunta: "1. Que responsabilidade todos nós temos na congregação cristã?", respostaSugerida: "Temos a responsabilidade de promover a paz, a união e o amor genuíno entre os irmãos, tratando uns aos outros com ternura e empatia." },
-            { num: "2", texto: "Onésimo, um escravo que fugiu de Filêmon, encontrou Paulo na prisão e tornou-se cristão. Em sua carta, Paulo não usou de autoridade apostólica para ordenar, mas fez um pedido afetuoso para que Filêmon o recebesse de volta como um irmão amado.", pergunta: "2. O que aconteceu entre Filêmon e Onésimo? (Filêmon 8, 9, 17)", respostaSugerida: "Onésimo fugiu e se tornou cristão. Paulo apelou com amor a Filêmon para que o recebesse de volta não mais como escravo, mas como um querido irmão espiritual." },
-            { num: "3", texto: "Ao enviar Onésimo de volta, Paulo sabia que sentimentos de mágoa poderiam existir. Mesmo assim, ele confiou que Filêmon agiria motivado pelo amor cristão e perdoaria sinceramente.", pergunta: "3. O que pode ter deixado Paulo preocupado ao enviar Onésimo de volta?", respostaSugerida: "A incerteza sobre como Filêmon reagiria emocionalmente, mas Paulo confiou na espiritualidade e na bondade do seu companheiro de fé." },
-            { num: "4, 5", texto: "Os anciãos desempenham um papel vital na preservação da tranquilidade congregacional. Em vez de criarem regras estritas ou agirem com dureza, eles apelam ao coração dos irmãos usando a Bíblia com ternura.", pergunta: "4-5. O que os anciãos podem fazer para contribuir com a paz na congregação?", respostaSugerida: "Podem apelar para o amor em vez de impor regras estritas, escutando com empatia e agindo como pastores pacificadores." },
-            { num: "6", texto: "Um elogio sincero tem o poder de renovar as forças de quem está desanimado. Quando destacamos as boas qualidades e os esforços dos irmãos, fortalecemos os laços que unem a congregação.", pergunta: "6. Por que é importante dar elogios sinceros aos irmãos?", respostaSugerida: "Elogios sinceros fortalecem a autoestima espiritual, confirmam que o esforço do irmão é valorizado e motivam a continuar perseverando com alegria." }
-          ]
-        }
-      },
-      44: {
-        meioSemana: {
-          titulo: "26 DE OUTUBRO–1.º DE NOVEMBRO",
-          tema: "JEREMIAS 47-48",
-          partes: [
-            { id: 1, secao: "TESOUROS", titulo: "1. Jeová é um Juiz justo e misericordioso", duracao: "10 min", texto: "O julgamento contra Moabe e os filisteus mostra que o orgulho precede a queda, mas a misericórdia de Deus alcança os humildes (Jeremias 47 e 48).", temPerguntas: false, perguntas: [] },
-            { id: 2, secao: "TESOUROS", titulo: "2. Joias espirituais", duracao: "10 min", texto: "Pesquisa bíblica em Jeremias 47 e 48 para extrair lições sobre justiça e confiança nas promessas divinas.", temPerguntas: true, perguntas: ["Que joia espiritual sobre a justiça de Jeová você encontrou na leitura desta semana?"] },
-            { id: 3, secao: "TESOUROS", titulo: "3. Leitura da Bíblia", duracao: "4 min", texto: "Leitura em voz alta de Jeremias 48:1-13.", temPerguntas: false, perguntas: [] },
-            { id: 4, secao: "MINISTERIO", titulo: "4. Iniciando conversas", duracao: "3 min", texto: "Demonstração prática.", temPerguntas: false, perguntas: [] },
-            { id: 5, secao: "MINISTERIO", titulo: "5. Cultivando o interesse", duracao: "4 min", texto: "Revisita.", temPerguntas: false, perguntas: [] },
-            { id: 6, secao: "MINISTERIO", titulo: "6. Fazendo discípulos", duracao: "5 min", texto: "Estudo Bíblico.", temPerguntas: false, perguntas: [] },
-            { id: 7, secao: "VIDACRISTA", titulo: "7. Necessidades locais", duracao: "15 min", texto: "Consideração prática para a congregação.", temPerguntas: true, perguntas: ["Como podemos aplicar esses conselhos na rotina diária?"] },
-            { id: 8, secao: "VIDACRISTA", titulo: "8. Estudo bíblico de congregação", duracao: "30 min", texto: "Estudo do livro oficial.", temPerguntas: true, perguntas: ["Qual a lição principal de integridade do relato?"] }
+        {
+          "id": 3,
+          "secao": "TESOUROS",
+          "titulo": "3. Leitura da Bíblia",
+          "duracao": "4 min",
+          "texto": "(4 min) Jer. 46:13-24 ( th lição 10 ) FAÇA SEU MELHOR NO MINISTÉRIO",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 4,
+          "secao": "MINISTERIO",
+          "titulo": "4. Iniciando conversas",
+          "duracao": "3 min",
+          "texto": "(3 min) TESTEMUNHO INFORMAL. Comece a conversar com alguém que parece estar feliz. ( lmd lição 2 ponto 3 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 5,
+          "secao": "MINISTERIO",
+          "titulo": "5. Iniciando conversas",
+          "duracao": "2 min",
+          "texto": "(2 min) DE CASA EM CASA. A pessoa está irritada. ( lmd lição 4 ponto 5 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 6,
+          "secao": "MINISTERIO",
+          "titulo": "6. Iniciando conversas",
+          "duracao": "2 min",
+          "texto": "(2 min) DE CASA EM CASA. Uma pessoa que parece estar triste vem atender. ( lmd lição 2 ponto 4 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 7,
+          "secao": "VIDACRISTA",
+          "titulo": "7. Discurso",
+          "duracao": "4 min",
+          "texto": "(4 min) lmd apêndice A ponto 20 — Tema: Jesus não é o Deus Todo-Poderoso. ( th lição 7 ) NOSSA VIDA CRISTÃ",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 8,
+          "secao": "VIDACRISTA",
+          "titulo": "8. ‘Partilhe com outros o que você tem’",
+          "duracao": "15 min",
+          "texto": "(15 min) Consideração. Em suas cartas, o apóstolo Paulo muitas vezes falou sobre a importância de dividir com outros o que temos. Os conselhos dele foram muito importantes para os cristãos daquela época, e continuam sendo hoje. — Efé. 4:28; 1 Tim. 6:17, 18 . Leia Hebreus 13:16 . Pouco depois de rece",
+          "temPerguntas": true,
+          "perguntas": [
+            "Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo?",
+            "Pensando no que vai acontecer em breve, por que é importante aprender desde já a compartilhar com outros o que temos?",
+            "O que podemos aprender do exemplo dos macedônios?",
+            "O que mais podemos compartilhar com outros, além de coisas materiais?",
+            "Que exemplo Jeová nos dá sobre dividir as coisas com outros?"
           ]
         },
-        fimSemana: {
-          titulo: "Dê valor ao ‘privilégio de prestar destemidamente serviço sagrado’",
-          tema: "Artigo de Estudo de A Sentinela • Lucas 1:74",
-          chips: ["Comentário Parágrafo 1", "O que é serviço sagrado?", "Vencer o medo no ministério"],
-          paragrafos: [
-            { num: "1", texto: "Servir a Deus é uma honra sem igual. Quando participamos na pregação, expressamos nosso apreço pelo resgate.", pergunta: "1. Por que prestar serviço sagrado é um privilégio de valor inestimável?", respostaSugerida: "Porque nos permite colaborar diretamente com o Criador e expressar nossa profunda gratidão pela salvação." }
-          ]
+        {
+          "id": 9,
+          "secao": "VIDACRISTA",
+          "titulo": "9. Estudo bíblico de congregação",
+          "duracao": "30 min",
+          "texto": "(30 min) wcg cap. 13",
+          "temPerguntas": true,
+          "perguntas": []
         }
-      },
-      45: {
-        meioSemana: {
-          titulo: "2-8 DE NOVEMBRO",
-          tema: "JEREMIAS 49-50",
-          partes: [
-            { id: 1, secao: "TESOUROS", titulo: "1. Ajude outros a se beneficiarem do amor de Jeová", duracao: "10 min", texto: "Profecias sobre Amom, Edom e Babilônia.", temPerguntas: false, perguntas: [] },
-            { id: 2, secao: "TESOUROS", titulo: "2. Joias espirituais", duracao: "10 min", texto: "Pesquisa bíblica em Jeremias 49 e 50.", temPerguntas: true, perguntas: ["Que joias você encontrou sobre o cumprimento infalível das profecias de Deus?"] },
-            { id: 3, secao: "TESOUROS", titulo: "3. Leitura da Bíblia", duracao: "4 min", texto: "Jeremias 50:1-10.", temPerguntas: false, perguntas: [] },
-            { id: 4, secao: "MINISTERIO", titulo: "4. Iniciando conversas", duracao: "3 min", texto: "Demonstração.", temPerguntas: false, perguntas: [] },
-            { id: 5, secao: "MINISTERIO", titulo: "5. Cultivando o interesse", duracao: "4 min", texto: "Revisita.", temPerguntas: false, perguntas: [] },
-            { id: 6, secao: "MINISTERIO", titulo: "6. Fazendo discípulos", duracao: "5 min", texto: "Estudo Bíblico.", temPerguntas: false, perguntas: [] },
-            { id: 7, secao: "VIDACRISTA", titulo: "7. Nunca se Esqueça do Que Jeová Fez por Você", duracao: "15 min", texto: "Consideração prática.", temPerguntas: true, perguntas: ["Como a meditação diária nos livramentos divinos nos protege?"] },
-            { id: 8, secao: "VIDACRISTA", titulo: "8. Estudo bíblico de congregação", duracao: "30 min", texto: "História semanal.", temPerguntas: true, perguntas: ["O que aprendemos com a perseverança deste relato?"] }
+      ]
+    },
+    "fimSemana": {
+      "titulo": "Um pedido feito com base no amor",
+      "tema": "A Sentinela • Estudo Semanal",
+      "chips": [
+        "Comentário Parágrafo 1",
+        "Comentário Parágrafo 2",
+        "Aplicação Prática",
+        "Lição para a congregação"
+      ],
+      "paragrafos": [
+        {
+          "numero": "1",
+          "pergunta": "1. Que responsabilidade todos nós temos?",
+          "textosLidos": []
+        },
+        {
+          "numero": "2",
+          "pergunta": "2. O que aconteceu entre Filêmon e Onésimo? (Filêmon 8, 9, 17)",
+          "textosLidos": []
+        },
+        {
+          "numero": "3",
+          "pergunta": "3. O que pode ter deixado Paulo preocupado ao enviar Onésimo de volta? (Veja também a imagem.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "4",
+          "pergunta": "4-5. O que os anciãos podem fazer para contribuir com a paz na congregação?",
+          "textosLidos": []
+        },
+        {
+          "numero": "6",
+          "pergunta": "6. Por que é importante dar elogios?",
+          "textosLidos": []
+        },
+        {
+          "numero": "7",
+          "pergunta": "7. Por que precisamos ter cuidado com o que falamos sobre outros? (Filêmon 10-12)",
+          "textosLidos": []
+        },
+        {
+          "numero": "8",
+          "pergunta": "8. O que pode nos ajudar a falar bem dos irmãos? (Veja também as imagens.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "9",
+          "pergunta": "9. Por que é impressionante o modo como Paulo falou com Filêmon?",
+          "textosLidos": []
+        },
+        {
+          "numero": "10",
+          "pergunta": "10. O que podemos aprender com o exemplo de Onésimo?",
+          "textosLidos": []
+        },
+        {
+          "numero": "11",
+          "pergunta": "11. O que podemos fazer para recuperar a paz quando ofendemos alguém? (Veja também as imagens.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "12",
+          "pergunta": "12. Por que Paulo acreditava que Filêmon iria perdoar Onésimo?",
+          "textosLidos": []
+        },
+        {
+          "numero": "13",
+          "pergunta": "13. Por que o amor é essencial para manter a paz? (Colossenses 3:14)",
+          "textosLidos": []
+        },
+        {
+          "numero": "14",
+          "pergunta": "14. Como sabemos que Filêmon era hospitaleiro?",
+          "textosLidos": []
+        },
+        {
+          "numero": "15",
+          "pergunta": "15. Por que mostrar hospitalidade fortalece nosso amor por outros? (Veja também as imagens.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "16",
+          "pergunta": "16. Qual talvez tenha sido a reação de Filêmon quando ouviu o conselho de Paulo em Colossenses 3:13?",
+          "textosLidos": []
+        },
+        {
+          "numero": "17",
+          "pergunta": "17. O que significa ‘continuar a suportar uns aos outros’?",
+          "textosLidos": []
+        },
+        {
+          "numero": "18",
+          "pergunta": "18. O que você está decidido a fazer?",
+          "textosLidos": []
+        }
+      ]
+    }
+  },
+  "44": {
+    "meioSemana": {
+      "titulo": "26 DE OUTUBRO–1.º DE NOVEMBRO",
+      "tema": "JEREMIAS 47-48",
+      "partes": [
+        {
+          "id": 1,
+          "secao": "TESOUROS",
+          "titulo": "1. Jeová é um Juiz justo e misericordioso",
+          "duracao": "10 min",
+          "texto": "(10 min) Jeremias predisse que Jeová puniria Moabe por ter maltratado Judá. ( Jer. 48:27, 29, 42 ; it “Moabe, Moabitas” n.º 2 § 22 ) Jeová não ficaria feliz em destruir Moabe. ( Jer. 48:31, 36 ) Ele mostraria misericórdia a alguns moabitas. ( Jer. 48:47 ; it “Moabe, Moabitas” n.º 2 § 24 ) PARA MEDIT",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 2,
+          "secao": "TESOUROS",
+          "titulo": "2. Joias espirituais",
+          "duracao": "10 min",
+          "texto": "(10 min) Jer. 48:6 — Em que sentido os moabitas se tornariam “como um junípero no deserto”? ( it “Junípero” n.º 2 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "temPerguntas": true,
+          "perguntas": [
+            "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
           ]
         },
-        fimSemana: {
-          titulo: "Confie em Jeová e seja protegido",
-          tema: "Artigo de Estudo de A Sentinela • Salmo 91:2",
-          chips: ["Comentário Parágrafo 1", "O que é o abrigo do Altíssimo?", "Segurança espiritual"],
-          paragrafos: [
-            { num: "1", texto: "Nenhum mal espiritual pode atingir quem busca refúgio sob as asas protetoras de Jeová.", pergunta: "1. Por que podemos nos sentir completamente seguros sob o abrigo de Jeová?", respostaSugerida: "Porque Deus é uma fortaleza inabalável para todos os que nele confiam de todo o coração." }
-          ]
+        {
+          "id": 3,
+          "secao": "TESOUROS",
+          "titulo": "3. Leitura da Bíblia",
+          "duracao": "4 min",
+          "texto": "(4 min) Jer. 48:1-13 ( th lição 11 ) FAÇA SEU MELHOR NO MINISTÉRIO",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 4,
+          "secao": "MINISTERIO",
+          "titulo": "4. Iniciando conversas",
+          "duracao": "3 min",
+          "texto": "(3 min) DE CASA EM CASA. ( lmd lição 5 ponto 4 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 5,
+          "secao": "MINISTERIO",
+          "titulo": "5. Cultivando o interesse",
+          "duracao": "4 min",
+          "texto": "(4 min) TESTEMUNHO INFORMAL. Fale sobre uma das verdades do apêndice A da brochura Ame as Pessoas. ( lmd lição 9 ponto 5 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 6,
+          "secao": "MINISTERIO",
+          "titulo": "6. Fazendo discípulos",
+          "duracao": "5 min",
+          "texto": "(5 min) Incentive seu estudante a orar mais vezes. ( th lição 8 ) NOSSA VIDA CRISTÃ",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 7,
+          "secao": "VIDACRISTA",
+          "titulo": "7. Necessidades locais",
+          "duracao": "15 min",
+          "texto": "(15 min)",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 8,
+          "secao": "VIDACRISTA",
+          "titulo": "8. Estudo bíblico de congregação",
+          "duracao": "30 min",
+          "texto": "(30 min) wcg cap. 14",
+          "temPerguntas": true,
+          "perguntas": []
         }
-      }
-    };
+      ]
+    },
+    "fimSemana": {
+      "titulo": "Dê valor ao ‘privilégio de prestar destemidamente serviço sagrado’",
+      "tema": "A Sentinela • Estudo Semanal",
+      "chips": [
+        "Comentário Parágrafo 1",
+        "Comentário Parágrafo 2",
+        "Aplicação Prática",
+        "Lição para a congregação"
+      ],
+      "paragrafos": [
+        {
+          "numero": "1",
+          "pergunta": "1. O que Zacarias disse em sua profecia?",
+          "textosLidos": []
+        },
+        {
+          "numero": "2",
+          "pergunta": "2. (a) De acordo com Lucas 1:67-73, o que Deus prometeu ao seu povo? (b) Quem é o “poderoso salvador” mencionado em Lucas 1:69?",
+          "textosLidos": []
+        },
+        {
+          "numero": "3",
+          "pergunta": "3. De que inimigos os judeus precisavam ser salvos?",
+          "textosLidos": []
+        },
+        {
+          "numero": "4",
+          "pergunta": "4. De que inimigos precisamos ser salvos hoje?",
+          "textosLidos": []
+        },
+        {
+          "numero": "5",
+          "pergunta": "5. De que maneiras Jesus nos salva do pecado?",
+          "textosLidos": []
+        },
+        {
+          "numero": "6",
+          "pergunta": "6. O que Jesus vai fazer como Rei no “trono de Davi”? (Veja também a imagem.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "7",
+          "pergunta": "7. De acordo com Lucas 1:74, 75, que privilégio Jeová dá ao seu povo?",
+          "textosLidos": []
+        },
+        {
+          "numero": "8",
+          "pergunta": "8. Do que não precisamos ter medo?",
+          "textosLidos": []
+        },
+        {
+          "numero": "9",
+          "pergunta": "9. Que dificuldade alguns cristãos têm?",
+          "textosLidos": []
+        },
+        {
+          "numero": "10",
+          "pergunta": "10-11. O que podemos fazer se estamos sofrendo em sentido emocional e achamos que Jeová não nos ama mais? Ilustre.",
+          "textosLidos": []
+        },
+        {
+          "numero": "12",
+          "pergunta": "12. Como João Batista preparou os caminhos de Jeová? (Lucas 1:76-79)",
+          "textosLidos": []
+        },
+        {
+          "numero": "13",
+          "pergunta": "13. Em que sentido a vinda do Messias seria “um amanhecer” para o povo de Deus?",
+          "textosLidos": []
+        },
+        {
+          "numero": "14",
+          "pergunta": "14. Que trabalho importante Jesus e seus discípulos fizeram? (Isaías 61:1, 2)",
+          "textosLidos": []
+        },
+        {
+          "numero": "15",
+          "pergunta": "15. Por que hoje a pregação é mais importante do que nunca?",
+          "textosLidos": []
+        },
+        {
+          "numero": "16",
+          "pergunta": "16. O que você está decidido a fazer? (Veja também as imagens.)",
+          "textosLidos": []
+        }
+      ]
+    }
+  },
+  "45": {
+    "meioSemana": {
+      "titulo": "2-8 DE NOVEMBRO",
+      "tema": "JEREMIAS 49-50",
+      "partes": [
+        {
+          "id": 1,
+          "secao": "TESOUROS",
+          "titulo": "1. Ajude outros a se beneficiar da misericórdia de Jeová",
+          "duracao": "10 min",
+          "texto": "(10 min) Jeová condenou Babilônia por causa dos seus pecados graves e da sua atitude arrogante. ( Jer. 50:14, 29, 31 ; it “Presunção” § 10 ) Jeová perdoou completamente os israelitas que se arrependeram. ( Jer. 50:20 ) Os cristãos se esforçam para imitar a misericórdia de Jeová declarando as boas no",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 2,
+          "secao": "TESOUROS",
+          "titulo": "2. Joias espirituais",
+          "duracao": "10 min",
+          "texto": "(10 min) Jer. 50:24 — Em que sentido Jeová capturou Babilônia em um “laço”? ( it “Armadilha” § 3 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "temPerguntas": true,
+          "perguntas": [
+            "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
+          ]
+        },
+        {
+          "id": 3,
+          "secao": "TESOUROS",
+          "titulo": "3. Leitura da Bíblia",
+          "duracao": "4 min",
+          "texto": "(4 min) Jer. 50:24-40 ( th lição 11 ) FAÇA SEU MELHOR NO MINISTÉRIO",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 4,
+          "secao": "MINISTERIO",
+          "titulo": "4. Iniciando conversas",
+          "duracao": "3 min",
+          "texto": "(3 min) DE CASA EM CASA. Fale sobre uma verdade da Bíblia. Talvez você possa usar uma das que estão no apêndice A da brochura Ame as Pessoas. ( lmd lição 1 ponto 5 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 5,
+          "secao": "MINISTERIO",
+          "titulo": "5. Cultivando o interesse",
+          "duracao": "4 min",
+          "texto": "(4 min) DE CASA EM CASA. Você se preparou para falar de um assunto, mas a pessoa quer falar sobre um assunto diferente. ( lmd lição 9 ponto 3 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 6,
+          "secao": "MINISTERIO",
+          "titulo": "6. Fazendo discípulos",
+          "duracao": "5 min",
+          "texto": "(5 min) lff lição 20 ponto 4 ( lmd lição 11 ponto 4 ) NOSSA VIDA CRISTÃ",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 7,
+          "secao": "VIDACRISTA",
+          "titulo": "7. Nunca se Esqueça do Que Jeová se Lembra",
+          "duracao": "15 min",
+          "texto": "(15 min) Consideração. Mostre o VÍDEO. Depois, pergunte: Que lições você aprendeu? Sua resposta",
+          "temPerguntas": true,
+          "perguntas": [
+            "Que lições você aprendeu?"
+          ]
+        },
+        {
+          "id": 8,
+          "secao": "VIDACRISTA",
+          "titulo": "8. Estudo bíblico de congregação",
+          "duracao": "30 min",
+          "texto": "(30 min) wcg cap. 15",
+          "temPerguntas": true,
+          "perguntas": []
+        }
+      ]
+    },
+    "fimSemana": {
+      "titulo": "Confie em Jeová e seja protegido",
+      "tema": "A Sentinela • Estudo Semanal",
+      "chips": [
+        "Comentário Parágrafo 1",
+        "Comentário Parágrafo 2",
+        "Aplicação Prática",
+        "Lição para a congregação"
+      ],
+      "paragrafos": [
+        {
+          "numero": "1",
+          "pergunta": "1-2. Em breve, que acontecimentos vão abalar a Terra?",
+          "textosLidos": []
+        },
+        {
+          "numero": "3",
+          "pergunta": "3. O que vamos ver neste estudo?",
+          "textosLidos": []
+        },
+        {
+          "numero": "4",
+          "pergunta": "4. Como os versículos iniciais do Salmo 91 nos dão uma garantia da proteção de Jeová? (Salmo 91:1, 2)",
+          "textosLidos": []
+        },
+        {
+          "numero": "4",
+          "pergunta": "5-6. No Salmo 91:14-16, o que Jeová promete fazer, e por que podemos confiar nele?",
+          "textosLidos": []
+        },
+        {
+          "numero": "7",
+          "pergunta": "7. De acordo com o Salmo 91, Jeová promete que tipo de proteção?",
+          "textosLidos": []
+        },
+        {
+          "numero": "6",
+          "pergunta": "8-9. De acordo com Mateus 4:5-7, como Jesus respondeu a uma das tentações de Satanás, e o que aprendemos com isso?",
+          "textosLidos": []
+        },
+        {
+          "numero": "10",
+          "pergunta": "10. Que confiança podemos ter?",
+          "textosLidos": []
+        },
+        {
+          "numero": "11",
+          "pergunta": "11. Como Jeová está nos protegendo em sentido espiritual?",
+          "textosLidos": []
+        },
+        {
+          "numero": "9",
+          "pergunta": "12-13. De acordo com Mateus 5:28, 29, como podemos vencer a luta contra desejos errados?",
+          "textosLidos": []
+        },
+        {
+          "numero": "14",
+          "pergunta": "14. Como o espírito santo pode ajudar a nos proteger?",
+          "textosLidos": []
+        },
+        {
+          "numero": "15",
+          "pergunta": "15. Como a organização de Jeová nos protege em sentido espiritual? (Veja também as imagens.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "16",
+          "pergunta": "16. (a) O que acontece com alguns servos de Jeová e por quê? (b) Que certeza podemos ter?",
+          "textosLidos": []
+        },
+        {
+          "numero": "17",
+          "pergunta": "17. Por que não esperamos que Jeová nos proteja de todos os danos físicos hoje?",
+          "textosLidos": []
+        },
+        {
+          "numero": "18",
+          "pergunta": "18. Como Jeová vai nos proteger no futuro?",
+          "textosLidos": []
+        },
+        {
+          "numero": "15",
+          "pergunta": "19-20. Por que não precisamos ter medo do futuro julgamento divino no Armagedom? (Veja também a da capa.)",
+          "textosLidos": []
+        }
+      ]
+    }
+  },
+  "46": {
+    "meioSemana": {
+      "titulo": "9-15 DE NOVEMBRO",
+      "tema": "JEREMIAS 51-52",
+      "partes": [
+        {
+          "id": 1,
+          "secao": "TESOUROS",
+          "titulo": "1. Não siga o exemplo de Zedequias",
+          "duracao": "10 min",
+          "texto": "(10 min) Zedequias não fez o que era certo. ( Jer. 52:1, 2 ; jr 29 ) Zedequias não cumpriu o juramento que fez em nome de Jeová. ( Jer. 52:3 ; w17.10 23 §§ 9-10 ) Zedequias não escapou das consequências das suas ações. ( Jer. 52:8-11 ) PARA MEDITAR: O que eu tenho que fazer para não ser como Zedequi",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 2,
+          "secao": "TESOUROS",
+          "titulo": "2. Joias espirituais",
+          "duracao": "10 min",
+          "texto": "(10 min) Jer. 51:6, 7, 36 — Como a mensagem que Jeremias pregou é semelhante à mensagem que pregamos hoje? ( jr 165 § 21; 167 § 25 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "temPerguntas": true,
+          "perguntas": [
+            "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
+          ]
+        },
+        {
+          "id": 3,
+          "secao": "TESOUROS",
+          "titulo": "3. Leitura da Bíblia",
+          "duracao": "4 min",
+          "texto": "(4 min) Jer. 52:6-20 ( th lição 5 ) FAÇA SEU MELHOR NO MINISTÉRIO",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 4,
+          "secao": "MINISTERIO",
+          "titulo": "4. Iniciando conversas",
+          "duracao": "3 min",
+          "texto": "(3 min) DE CASA EM CASA. Ofereça um estudo bíblico de maneira direta. ( lmd lição 3 ponto 3 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 5,
+          "secao": "MINISTERIO",
+          "titulo": "5. Iniciando conversas",
+          "duracao": "4 min",
+          "texto": "(4 min) DE CASA EM CASA. O morador não concorda com a nossa crença de que Jesus é o Filho de Deus. ( lmd lição 3 ponto 4 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 6,
+          "secao": "TESOUROS",
+          "titulo": "6. Discurso",
+          "duracao": "5 min",
+          "texto": "(5 min) lmd apêndice A ponto 21 — Tema: O Reino de Deus é um governo de verdade lá no céu. ( th lição 7 ) NOSSA VIDA CRISTÃ",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 7,
+          "secao": "VIDACRISTA",
+          "titulo": "7. Nossos donativos dão glória ao belo nome de Jeová",
+          "duracao": "15 min",
+          "texto": "(15 min) Consideração a ser feita por um ancião. Os israelitas que não iam trabalhar diretamente na construção do templo tiveram a oportunidade de dar glória ao nome de Jeová por meio das suas generosas contribuições. ( 1 Crô. 29:8-10 ) Hoje, não conseguimos participar diretamente em todos os projet",
+          "temPerguntas": true,
+          "perguntas": [
+            "Como nossos donativos dão louvor a Jeová?",
+            "Como as atualizações da organização no jw.org e as cartas de agradecimento que você recebe têm te ajudado?",
+            "Por quais projetos da organização você se sente especialmente grato?"
+          ]
+        },
+        {
+          "id": 8,
+          "secao": "VIDACRISTA",
+          "titulo": "8. Estudo bíblico de congregação",
+          "duracao": "30 min",
+          "texto": "(30 min) wcg cap. 16",
+          "temPerguntas": true,
+          "perguntas": []
+        }
+      ]
+    },
+    "fimSemana": {
+      "titulo": "Como desenvolver “um coração obediente”",
+      "tema": "A Sentinela • Estudo Semanal",
+      "chips": [
+        "Comentário Parágrafo 1",
+        "Comentário Parágrafo 2",
+        "Aplicação Prática",
+        "Lição para a congregação"
+      ],
+      "paragrafos": [
+        {
+          "numero": "1",
+          "pergunta": "1. O que leva muitas pessoas a obedecer aqueles que têm autoridade?",
+          "textosLidos": []
+        },
+        {
+          "numero": "2",
+          "pergunta": "2. Qual é o principal motivo de obedecermos a Jeová?",
+          "textosLidos": []
+        },
+        {
+          "numero": "3",
+          "pergunta": "3. Por que os israelitas podem ter ficado com medo de obedecer a ordem de Jeová? (Veja também a imagem.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "4",
+          "pergunta": "4. Que instruções incomuns Jeová deu para os israelitas assim que eles saíram do Egito?",
+          "textosLidos": []
+        },
+        {
+          "numero": "5",
+          "pergunta": "5. Que atitude dos israelitas desagradou a Jeová? (Salmo 106:7, nota)",
+          "textosLidos": []
+        },
+        {
+          "numero": "6",
+          "pergunta": "6. O que vamos fazer se tivermos um coração obediente? (Jeremias 23:4)",
+          "textosLidos": []
+        },
+        {
+          "numero": "7",
+          "pergunta": "7. Como um forte amor por Jeová nos ajuda a ser obedientes?",
+          "textosLidos": []
+        },
+        {
+          "numero": "8",
+          "pergunta": "8. Como um irmão e uma irmã mostraram que estavam decididos a ser obedientes?",
+          "textosLidos": []
+        },
+        {
+          "numero": "9",
+          "pergunta": "9. Como podemos nos preparar para ser obedientes mesmo enfrentando oposição? (Veja também a imagem.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "10",
+          "pergunta": "10. Como o rei Jeosafá se sentiu quando foi ameaçado por exércitos inimigos?",
+          "textosLidos": []
+        },
+        {
+          "numero": "11",
+          "pergunta": "11. O que Jeosafá fez quando sentiu medo? (2 Crônicas 20:5, 6, 10-12)",
+          "textosLidos": []
+        },
+        {
+          "numero": "12",
+          "pergunta": "12. Como podemos fortalecer nossa determinação de obedecer a Jeová?",
+          "textosLidos": []
+        },
+        {
+          "numero": "13",
+          "pergunta": "13. Como a humildade pode nos ajudar?",
+          "textosLidos": []
+        },
+        {
+          "numero": "14",
+          "pergunta": "14. Como Jeosafá reagiu às instruções de Jeová?",
+          "textosLidos": []
+        },
+        {
+          "numero": "15",
+          "pergunta": "15. O que mostra que Jeosafá tinha uma forte fé em Jeová?",
+          "textosLidos": []
+        },
+        {
+          "numero": "16",
+          "pergunta": "16. O que aqueles que têm autoridade podem aprender com Jeosafá? (1 Reis 3:9) (Veja também a imagem.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "17",
+          "pergunta": "17. Por que devemos continuar desenvolvendo um coração obediente?",
+          "textosLidos": []
+        }
+      ]
+    }
+  },
+  "47": {
+    "meioSemana": {
+      "titulo": "16-22 DE NOVEMBRO",
+      "tema": "LAMENTAÇÕES 1-2",
+      "partes": [
+        {
+          "id": 1,
+          "secao": "TESOUROS",
+          "titulo": "1. Uma reação compreensível diante de uma terrível perda",
+          "duracao": "10 min",
+          "texto": "(10 min) [Mostre o VÍDEO Introdução a Lamentações. ] Jeremias ficou arrasado quando as pessoas que ele amava sofreram as consequências por terem deixado de servir a Jeová. ( Lam. 2:11 ) Jeremias esperava que elas fossem cair em si, orar humildemente a Jeová e se arrepender. ( Lam. 2:19 ; w24.08 28 §",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 2,
+          "secao": "TESOUROS",
+          "titulo": "2. Joias espirituais",
+          "duracao": "10 min",
+          "texto": "(10 min) Lam. 2:1 — Como a beleza de Israel foi lançada do céu para a Terra? ( w07 1/6 9 § 1 ) Sua resposta Que joias espirituais você encontrou na leitura da Bíblia desta semana? Sua resposta",
+          "temPerguntas": true,
+          "perguntas": [
+            "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
+          ]
+        },
+        {
+          "id": 3,
+          "secao": "TESOUROS",
+          "titulo": "3. Leitura da Bíblia",
+          "duracao": "4 min",
+          "texto": "(4 min) Lam. 1:8-18 ( th lição 10 ) FAÇA SEU MELHOR NO MINISTÉRIO",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 4,
+          "secao": "MINISTERIO",
+          "titulo": "4. Iniciando conversas",
+          "duracao": "3 min",
+          "texto": "(3 min) TESTEMUNHO INFORMAL. Comece uma conversa amigável com uma pessoa. A conversa termina antes de você conseguir dar testemunho. ( lmd lição 2 ponto 4 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 5,
+          "secao": "MINISTERIO",
+          "titulo": "5. Cultivando o interesse",
+          "duracao": "4 min",
+          "texto": "(4 min) TESTEMUNHO PÚBLICO. Use um vídeo do Kit de Ensino e ofereça um estudo bíblico. ( lmd lição 9 ponto 4 )",
+          "temPerguntas": false,
+          "perguntas": []
+        },
+        {
+          "id": 6,
+          "secao": "TESOUROS",
+          "titulo": "6. O que você diria?",
+          "duracao": "5 min",
+          "texto": "(5 min) Consideração. DE CASA EM CASA. Faça um resumo da lmd lição 1 ponto 4b . Mostre a imagem. Depois, pergunte: De acordo com o que você está vendo, que pergunta você faria para começar uma conversa? Sua resposta Que verdade da Bíblia você poderia mostrar? Sua resposta NOSSA VIDA CRISTÃ",
+          "temPerguntas": true,
+          "perguntas": [
+            "De acordo com o que você está vendo, que pergunta você faria para começar uma conversa?",
+            "Que verdade da Bíblia você poderia mostrar?"
+          ]
+        },
+        {
+          "id": 7,
+          "secao": "VIDACRISTA",
+          "titulo": "7. Não se esqueça de nossos irmãos e irmãs inativos",
+          "duracao": "15 min",
+          "texto": "(15 min) Consideração. Nós fazemos o nosso máximo procurando as pessoas que querem aprender sobre Jeová e servir a ele. Mas não podemos esquecer daqueles que “fazem parte da nossa família na fé” e estão inativos. — Gál. 6:10 . Nossos irmãos e irmãs podem ficar inativos por vários motivos. Alguns se ",
+          "temPerguntas": true,
+          "perguntas": [
+            "Nossos irmãos e irmãs podem ficar inativos por vários motivos. Alguns se envolvem demais com o trabalho, ficam sobrecarregados com os problemas da vida, sofrem de depressão ou outros problemas de saúde. Também, alguns sofrem com uma consciência pesada, e ainda outros tropeçaram por causa do que uma pessoa fez, ou foram magoados por alguém. Muitos que estão inativos ainda amam a Jeová, mas talvez achem que não merecem voltar a servi-lo. Os anciãos querem muito ajudar esses irmãos e irmãs a voltar para Jeová e tomam a iniciativa em fazer isso. (1 Ped. 5:2) Mas e você? Como poderia ajudar alguém que está inativo?",
+            "Que lições você aprendeu com esse vídeo?"
+          ]
+        },
+        {
+          "id": 8,
+          "secao": "VIDACRISTA",
+          "titulo": "8. Estudo bíblico de congregação",
+          "duracao": "30 min",
+          "texto": "(30 min) wcg cap. 17",
+          "temPerguntas": true,
+          "perguntas": []
+        }
+      ]
+    },
+    "fimSemana": {
+      "titulo": "Pregando as boas novas em “todas as línguas das nações”",
+      "tema": "A Sentinela • Estudo Semanal",
+      "chips": [
+        "Comentário Parágrafo 1",
+        "Comentário Parágrafo 2",
+        "Aplicação Prática",
+        "Lição para a congregação"
+      ],
+      "paragrafos": [
+        {
+          "numero": "1",
+          "pergunta": "1. Por que é importante que as boas novas sejam pregadas em muitas línguas? (Romanos 10:13, 14)",
+          "textosLidos": []
+        },
+        {
+          "numero": "2",
+          "pergunta": "2. O que Zacarias foi inspirado a profetizar?",
+          "textosLidos": []
+        },
+        {
+          "numero": "3",
+          "pergunta": "3. Quem o “judeu” e os “dez homens” representam hoje?",
+          "textosLidos": []
+        },
+        {
+          "numero": "4",
+          "pergunta": "4. O que aconteceu depois que Jesus designou “o escravo fiel e prudente” em 1919?",
+          "textosLidos": []
+        },
+        {
+          "numero": "5",
+          "pergunta": "5-6. Como Isaías 2:2-4 está se cumprindo hoje? (Veja também a imagem.)",
+          "textosLidos": []
+        },
+        {
+          "numero": "7",
+          "pergunta": "7. Como nos sentimos ao ver o cumprimento das profecias registradas em Zacarias e Apocalipse? (Apocalipse 14:6)",
+          "textosLidos": []
+        },
+        {
+          "numero": "8",
+          "pergunta": "8. Que milagre Jeová fez no Pentecostes do ano 33?",
+          "textosLidos": []
+        },
+        {
+          "numero": "9",
+          "pergunta": "9. Que ajudas temos para pregar às pessoas que não falam nosso idioma?",
+          "textosLidos": []
+        },
+        {
+          "numero": "9",
+          "pergunta": "10-11. O que você aprendeu com a experiência de Robert e com a história do quadro “Uma refugiada encontra esperança”?",
+          "textosLidos": []
+        },
+        {
+          "numero": "12",
+          "pergunta": "12. Como a Tradução do Novo Mundo tem ajudado o povo de Jeová?",
+          "textosLidos": []
+        },
+        {
+          "numero": "13",
+          "pergunta": "13. Por que poucas traduções da Bíblia usam o nome de Deus atualmente?",
+          "textosLidos": []
+        },
+        {
+          "numero": "14",
+          "pergunta": "14. Como a Bíblia mostra que é importante saber e usar o nome de Deus?",
+          "textosLidos": []
+        },
+        {
+          "numero": "15",
+          "pergunta": "15. O que o povo de Deus sente pelo nome de Jeová?",
+          "textosLidos": []
+        },
+        {
+          "numero": "16",
+          "pergunta": "16. Por que é importante conhecer a Jeová agora? (João 17:3)",
+          "textosLidos": []
+        },
+        {
+          "numero": "17",
+          "pergunta": "17. Que privilégio nós temos?",
+          "textosLidos": []
+        }
+      ]
+    }
+  }
+};
 
     let semanaAtiva = 43;
     let modoAtual = "meio_semana";
@@ -330,6 +1231,33 @@
       MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
       VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
     };
+
+    // Inicialização da Página
+    window.addEventListener('DOMContentLoaded', async () => {
+      popularSeletorSemanas();
+      await sincronizarComSupabase();
+      popularSeletorSemanas();
+      selecionarSemana(43);
+      registrarServiceWorker();
+    });
+
+    function popularSeletorSemanas() {
+      const seletor = document.getElementById('seletor-semana');
+      const valAtual = seletor.value || semanaAtiva;
+      seletor.innerHTML = '';
+      
+      const semanas = Object.keys(bancoSemanasJW).map(Number).sort((a,b) => a - b);
+      semanas.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        const dados = bancoSemanasJW[s];
+        const tit = dados?.meioSemana?.titulo || `Semana ${s}`;
+        opt.innerText = `${tit} (Semana ${s}${s === 43 ? ' - Atual' : ''})`;
+        seletor.appendChild(opt);
+      });
+
+      seletor.value = valAtual;
+    }
 
     // Sincronização em tempo real com o Supabase ao iniciar
     async function sincronizarComSupabase() {
@@ -345,7 +1273,8 @@
           rows.forEach(r => {
             bancoSemanasJW[r.week_number] = r.content_json;
           });
-          console.log(`✅ Sincronizado com Supabase Nuvem: ${rows.length} semanas ativas.`);
+          console.log(`✅ Sincronizado com Supabase Nuvem: ${rows.length} semanas disponíveis.`);
+          document.getElementById('badge-cloud-status').classList.remove('hidden');
         }
       } catch (e) {
         console.warn('Operando com base de dados local offline.');
@@ -364,9 +1293,11 @@
     }
 
     function mudarSemanaRelativa(delta) {
-      const nova = semanaAtiva + delta;
-      if (bancoSemanasJW[nova]) {
-        selecionarSemana(nova);
+      const semanas = Object.keys(bancoSemanasJW).map(Number).sort((a,b) => a - b);
+      const idx = semanas.indexOf(semanaAtiva);
+      const novoIdx = idx + delta;
+      if (novoIdx >= 0 && novoIdx < semanas.length) {
+        selecionarSemana(semanas[novoIdx]);
       }
     }
 
@@ -389,7 +1320,8 @@
     }
 
     function renderizarMeioSemana() {
-      const dados = bancoSemanasJW[semanaAtiva].meioSemana;
+      const dados = bancoSemanasJW[semanaAtiva]?.meioSemana;
+      if (!dados) return;
       
       document.getElementById('badge-tipo-pub').innerText = "Apostila da Reunião";
       document.getElementById('titulo-materia').innerText = dados.titulo;
@@ -410,7 +1342,7 @@
       dados.partes.forEach(p => {
         if (p.secao !== ultimaSecao) {
           ultimaSecao = p.secao;
-          const conf = coresSecao[p.secao];
+          const conf = coresSecao[p.secao] || coresSecao.TESOUROS;
           html += `
             <div class="mt-8 mb-4 border-b-2 ${conf.border} pb-1 flex items-center justify-between">
               <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider ${conf.text}">
@@ -449,59 +1381,83 @@
               </div>
             `}
 
-            <div class="mt-3">
-              <textarea id="nota-parte-${p.id}" rows="2" placeholder="Suas anotações pessoais para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
+            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
+              <textarea id="nota-parte-${p.id}" placeholder="Minhas anotações para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
             </div>
           </div>
         `;
       });
 
       leitor.innerHTML = html;
-      atualizarChips(["Sugerir comentário em 30 segundos", "Como explicar com minhas próprias palavras?", "Aplicação prática para hoje"]);
-      document.getElementById('study-pane-subtitle').innerText = `Semana ${semanaAtiva} • Vida e Ministério`;
+      atualizarChips(["Resumo da Reunião", "Joias Espirituais", "Dica de Preparação", "Aplicação Ministerial"]);
     }
 
     function renderizarSentinela() {
-      const dados = bancoSemanasJW[semanaAtiva].fimSemana;
-      
-      document.getElementById('badge-tipo-pub').innerText = "A Sentinela • Edição de Estudo";
+      const dados = bancoSemanasJW[semanaAtiva]?.fimSemana;
+      if (!dados) return;
+
+      document.getElementById('badge-tipo-pub').innerText = "A Sentinela (Edição de Estudo)";
       document.getElementById('titulo-materia').innerText = dados.titulo;
       document.getElementById('subtitulo-materia').innerText = dados.tema;
 
       const sidebar = document.getElementById('lista-partes-sidebar');
       sidebar.innerHTML = dados.paragrafos.map(p => `
-        <a href="#p-${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
-          <span class="font-bold text-[#4a3b69]">Parágrafo ${p.num}</span>
-          <span class="text-[11px] text-[#6c757d] block truncate">${p.pergunta.substring(0, 35)}...</span>
+        <a href="#paragrafo-${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+          <span class="font-bold text-[#4a3b69]">§ ${p.num}</span> - Parágrafo ${p.num}
         </a>
       `).join('');
 
       const leitor = document.getElementById('conteudo-leitor');
-      leitor.innerHTML = dados.paragrafos.map(p => `
-        <div id="p-${p.num}" class="mb-6 bg-white rounded-xl border border-[#e9ecef] p-5 shadow-2xs">
-          <p class="text-base leading-relaxed text-[#212529]">
-            <strong class="font-bold text-[#4a3b69] mr-1">${p.num}.</strong> ${p.texto}
-          </p>
-
-          <div class="mt-4 p-3.5 rounded-lg bg-[#f8f9fa] border-l-4 border-[#4a3b69] border border-y-[#e9ecef] border-r-[#e9ecef] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <p class="text-xs sm:text-sm font-bold text-[#212529]">
-              ${p.pergunta}
-            </p>
-            <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${p.respostaSugerida ? p.respostaSugerida.replace(/'/g, "\\'") : ''}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto shadow-2xs">
-              <span class="text-amber-300">✦</span> Comentar com IA
-            </button>
-          </div>
-
-          <div class="mt-3">
-            <textarea id="nota-p-${p.num}" rows="2" placeholder="Seu comentário preparado para o parágrafo ${p.num}..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
-          </div>
+      let html = `
+        <div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800">Cânticos & Oração</h4>
+          <p class="text-xs text-amber-900 mt-1">Prepare seus comentários com antecedência. O tempo ideal para cada participação é de 30 a 45 segundos.</p>
         </div>
-      `).join('');
+      `;
 
-      atualizarChips(dados.chips || ["Comentário direto (30s)", "Com as próprias palavras", "Aplicação prática"]);
-      document.getElementById('study-pane-subtitle').innerText = `Semana ${semanaAtiva} • A Sentinela`;
+      dados.paragrafos.forEach(p => {
+        html += `
+          <div id="paragrafo-${p.num}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-6 h-6 rounded-full bg-[#4a3b69] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                ${p.num}
+              </span>
+              <span class="text-xs font-semibold text-[#6c757d]">Parágrafo ${p.num}</span>
+            </div>
+
+            <p class="text-sm leading-relaxed text-[#212529] mb-4 font-normal">
+              ${p.texto}
+            </p>
+
+            <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-2">
+              <div class="flex items-start justify-between gap-3">
+                <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
+                  ${p.pergunta}
+                </p>
+                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.respostaSugerida || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                  <span class="text-amber-300">✦</span> Comentar com IA
+                </button>
+              </div>
+
+              ${p.respostaSugerida ? `
+                <div class="pt-2 border-t border-[#dee2e6] text-xs text-[#6c757d]">
+                  <span class="font-bold text-[#4a3b69]">Ponto-chave:</span> ${p.respostaSugerida}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-[#f1f3f5]">
+              <textarea id="nota-sentinela-${p.num}" placeholder="Meu comentário formulado para este parágrafo..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fcfcfc] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] focus:bg-white resize-y" rows="2"></textarea>
+            </div>
+          </div>
+        `;
+      });
+
+      leitor.innerHTML = html;
+      atualizarChips(dados.chips || ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica"]);
     }
 
+    // Controle de Gavetas e Painéis
     function toggleStudyPane() {
       const pane = document.getElementById('study-pane');
       const backdrop = document.getElementById('drawer-backdrop');
@@ -510,9 +1466,9 @@
     }
 
     function toggleMenuMobile() {
-      const menu = document.getElementById('sidebar-partes');
+      const sidebar = document.getElementById('sidebar-partes');
       const backdrop = document.getElementById('drawer-backdrop');
-      menu.classList.toggle('-translate-x-full');
+      sidebar.classList.toggle('-translate-x-full');
       backdrop.classList.toggle('hidden');
     }
 
@@ -522,6 +1478,54 @@
       document.getElementById('drawer-backdrop').classList.add('hidden');
     }
 
+    // CHAMADA HÍBRIDA AO GOOGLE GEMINI (Vercel API -> Direct Client -> Fallback)
+    async function chamarGeminiIA({ question, prompt, context }) {
+      // 1. Tenta API do Vercel (/api/gemini)
+      try {
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, prompt, context })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.resposta) return data.resposta;
+        }
+      } catch (err) {}
+
+      // 2. Chamada Direta à API do Gemini (GitHub Pages ou PWA)
+      const apiKey = localStorage.getItem('gemini_api_key') || GEMINI_DEFAULT_KEY;
+      if (apiKey) {
+        const systemPrompt = "Você é um assistente pessoal de estudo bíblico para as reuniões congregacionais das Testemunhas de Jeová (Vida e Ministério e A Sentinela). Ajude o usuário a formular comentários concisos (30 a 45 segundos), claros, respeitosos e com as próprias palavras. Destaque um ponto prático ou texto bíblico aplicado.";
+        const requestBody = {
+          contents: [{
+            role: "user",
+            parts: [{ text: `CONTEXTO DA MATÉRIA:\n${context || ''}\n\nPERGUNTA OU PONTO:\n${question || prompt}\n\nINSTRUÇÃO: Formule uma sugestão de comentário objetivo e natural de 30 a 45 segundos com as próprias palavras.` }]
+          }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+        };
+
+        const modelos = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+        for (const m of modelos) {
+          try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestBody)
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) return text;
+            }
+          } catch (e) {}
+        }
+      }
+
+      return null;
+    }
+
     async function responderComIA(pergunta, respostaDireta = "") {
       const pane = document.getElementById('study-pane');
       if (pane.classList.contains('translate-x-full')) {
@@ -529,29 +1533,18 @@
       }
 
       adicionarMensagemEstudo("usuario", `Comentário para: ${pergunta}`);
-      adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Consultando Gemini AI...</span>`);
+      adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Consultando Gemini 3.5 Flash...</span>`);
 
-      try {
-        const res = await fetch('/api/gemini', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            question: pergunta,
-            context: `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
-          })
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          removerUltimaMensagemIA();
-          adicionarMensagemEstudo("ia", `💡 <strong>Sugestão (30 a 45s):</strong><br><br>"${data.resposta}"`);
-          return;
-        }
-      } catch (err) {}
+      const contexto = `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`;
+      const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto });
 
       removerUltimaMensagemIA();
-      const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
-      adicionarMensagemEstudo("ia", `💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>`);
+      if (respostaIA) {
+        adicionarMensagemEstudo("ia", `💡 <strong>Sugestão (30 a 45s):</strong><br><br>${respostaIA.replace(/\n/g, '<br>')}`);
+      } else {
+        const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
+        adicionarMensagemEstudo("ia", `💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>`);
+      }
     }
 
     function removerUltimaMensagemIA() {
@@ -601,26 +1594,15 @@
       input.value = "";
       adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Pensando com base na matéria...</span>`);
 
-      try {
-        const res = await fetch('/api/gemini', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: val,
-            context: `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
-          })
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          removerUltimaMensagemIA();
-          adicionarMensagemEstudo("ia", data.resposta);
-          return;
-        }
-      } catch (e) {}
+      const contexto = `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`;
+      const respostaIA = await chamarGeminiIA({ prompt: val, context: contexto });
 
       removerUltimaMensagemIA();
-      adicionarMensagemEstudo("ia", `Analisando com base na matéria da **Semana ${semanaAtiva}**:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
+      if (respostaIA) {
+        adicionarMensagemEstudo("ia", respostaIA.replace(/\n/g, '<br>'));
+      } else {
+        adicionarMensagemEstudo("ia", `Analisando com base na matéria da <strong>Semana ${semanaAtiva}</strong>:<br><br>Um ponto prático excelente é conectar o ensinamento bíblico com uma atitude do dia a dia na congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
+      }
     }
 
     function limparChat() {
@@ -711,10 +1693,86 @@
       }
     }
 
-    window.onload = async () => {
-      await sincronizarComSupabase();
-      selecionarSemana(43);
-    };
+    // MODAL DE CONFIGURAÇÕES
+    function abrirModalConfig() {
+      document.getElementById('cfg-gemini-key').value = localStorage.getItem('gemini_api_key') || GEMINI_DEFAULT_KEY;
+      document.getElementById('cfg-supa-url').value = localStorage.getItem('supabase_url') || SUPABASE_CONFIG.url;
+      document.getElementById('cfg-supa-key').value = localStorage.getItem('supabase_key') || SUPABASE_CONFIG.key;
+      document.getElementById('modal-config').classList.remove('hidden');
+    }
+
+    function fecharModalConfig() {
+      document.getElementById('modal-config').classList.add('hidden');
+    }
+
+    function salvarConfiguracoes() {
+      const gKey = document.getElementById('cfg-gemini-key').value.trim();
+      const sUrl = document.getElementById('cfg-supa-url').value.trim();
+      const sKey = document.getElementById('cfg-supa-key').value.trim();
+
+      if (gKey) localStorage.setItem('gemini_api_key', gKey);
+      if (sUrl) {
+        localStorage.setItem('supabase_url', sUrl);
+        SUPABASE_CONFIG.url = sUrl;
+      }
+      if (sKey) {
+        localStorage.setItem('supabase_key', sKey);
+        SUPABASE_CONFIG.key = sKey;
+      }
+
+      fecharModalConfig();
+      alert('✅ Configurações salvas com sucesso!');
+    }
+
+    async function testarConexoes() {
+      const msgBox = document.getElementById('msg-teste-conexao');
+      msgBox.className = "p-2.5 rounded-lg text-xs bg-blue-50 text-blue-800 border border-blue-200 block";
+      msgBox.innerText = "Testando conexões com Supabase e Google Gemini...";
+
+      const gKey = document.getElementById('cfg-gemini-key').value.trim() || GEMINI_DEFAULT_KEY;
+      const sUrl = document.getElementById('cfg-supa-url').value.trim() || SUPABASE_CONFIG.url;
+      const sKey = document.getElementById('cfg-supa-key').value.trim() || SUPABASE_CONFIG.key;
+
+      let supaOk = false;
+      let geminiOk = false;
+
+      // 1. Testa Supabase
+      try {
+        const res = await fetch(`${sUrl}/rest/v1/meetings_cache?select=count`, {
+          headers: { 'apikey': sKey, 'Authorization': `Bearer ${sKey}` }
+        });
+        if (res.ok) supaOk = true;
+      } catch (e) {}
+
+      // 2. Testa Gemini
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${gKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Ola' }] }] })
+        });
+        if (res.ok) geminiOk = true;
+      } catch (e) {}
+
+      if (supaOk && geminiOk) {
+        msgBox.className = "p-2.5 rounded-lg text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 block";
+        msgBox.innerText = "✅ Tudo 100%! Supabase Nuvem e Google Gemini 3.5 Flash conectados com sucesso.";
+      } else {
+        msgBox.className = "p-2.5 rounded-lg text-xs bg-amber-50 text-amber-800 border border-amber-200 block";
+        msgBox.innerText = `Aviso: Supabase ${supaOk ? 'OK ✅' : 'Falha ❌'} | Gemini ${geminiOk ? 'OK ✅' : 'Falha ❌'}`;
+      }
+    }
+
+    // REGISTRO DE PWA (SERVICE WORKER)
+    function registrarServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(() => {
+          console.log('✅ ServiceWorker do JW Study registrado para uso offline.');
+        }).catch(err => {
+          console.log('SW registration note:', err);
+        });
+      }
+    }
   </script>
 </body>
 </html>
