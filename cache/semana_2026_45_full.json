@@ -15,7 +15,11 @@
         "duracao": "10 min",
         "texto": "(10 min) Jeová condenou Babilônia por causa dos seus pecados graves e da sua atitude arrogante. ( Jer. 50:14, 29, 31 ; it “Presunção” § 10 ) Jeová perdoou completamente os israelitas que se arrependeram. ( Jer. 50:20 ) Os cristãos se esforçam para imitar a misericórdia de Jeová declarando as boas novas e ajudando as pessoas a sair da religião falsa. ( Jer. 50:2, 8 ; w08 15/6 8-9 §§ 8-11 )",
         "temPerguntas": false,
-        "perguntas": []
+        "perguntas": [],
+        "imagem": {
+          "src": "https://wol.jw.org/pt/wol/mp/r5/lp-t/mwb26/2026/403",
+          "caption": "Uma irmã estuda a Bíblia com uma idosa que tem várias imagens em casa. Elas estão lendo textos na Bíblia da estudante."
+        }
       },
       {
         "id": 2,
@@ -27,7 +31,8 @@
         "perguntas": [
           "Jer. 50:24 — Em que sentido Jeová capturou Babilônia em um “laço”? ( it “Armadilha” § 3 )",
           "Que joias espirituais você encontrou na leitura da Bíblia desta semana?"
-        ]
+        ],
+        "imagem": null
       },
       {
         "id": 3,
@@ -36,7 +41,8 @@
         "duracao": "10 min",
         "texto": "(4 min) Jer. 50:24-40 ( th lição 11 ) FAÇA SEU MELHOR NO MINISTÉRIO",
         "temPerguntas": false,
-        "perguntas": []
+        "perguntas": [],
+        "imagem": null
       },
       {
         "id": 4,
@@ -45,7 +51,8 @@
         "duracao": "10 min",
         "texto": "(3 min) DE CASA EM CASA. Fale sobre uma verdade da Bíblia. Talvez você possa usar uma das que estão no apêndice A da brochura Ame as Pessoas. ( lmd lição 1 ponto 5 )",
         "temPerguntas": false,
-        "perguntas": []
+        "perguntas": [],
+        "imagem": null
       },
       {
         "id": 5,
@@ -54,7 +61,8 @@
         "duracao": "10 min",
         "texto": "(4 min) DE CASA EM CASA. Você se preparou para falar de um assunto, mas a pessoa quer falar sobre um assunto diferente. ( lmd lição 9 ponto 3 )",
         "temPerguntas": false,
-        "perguntas": []
+        "perguntas": [],
+        "imagem": null
       },
       {
         "id": 6,
@@ -63,7 +71,8 @@
         "duracao": "10 min",
         "texto": "(5 min) lff lição 20 ponto 4 ( lmd lição 11 ponto 4 )",
         "temPerguntas": false,
-        "perguntas": []
+        "perguntas": [],
+        "imagem": null
       },
       {
         "id": 7,
@@ -74,7 +83,8 @@
         "temPerguntas": true,
         "perguntas": [
           "Que lições você aprendeu?"
-        ]
+        ],
+        "imagem": null
       },
       {
         "id": 8,
@@ -85,7 +95,8 @@
         "temPerguntas": true,
         "perguntas": [
           "Como podemos colocar em prática este princípio bíblico na nossa vida diária e na congregação?"
-        ]
+        ],
+        "imagem": null
       }
     ],
     "canticoMeio": "Cântico da Reunião",
@@ -102,77 +113,100 @@
       {
         "num": "1-2",
         "pergunta": "1-2. Em breve, que acontecimentos vão abalar a Terra?",
-        "texto": "VIVEMOS nos últimos dos últimos dias. Em breve, acontecerão coisas que vão abalar o mundo. Jeová irá colocar no coração dos governantes o “pensamento dele”, ou seja, de dar “à fera [a ONU] o reino que possuem”. a ( Apo. 17:17 ) Daí a fera, cheia de poder e com total apoio de todos os governos, acabará com as organizações religiosas falsas de uma vez por todas. ( Apo. 17:16 ) Esse evento irá marcar o início da grande tribulação. Mas e depois?"
+        "texto": "VIVEMOS nos últimos dos últimos dias. Em breve, acontecerão coisas que vão abalar o mundo. Jeová irá colocar no coração dos governantes o “pensamento dele”, ou seja, de dar “à fera [a ONU] o reino que possuem”. a ( Apo. 17:17 ) Daí a fera, cheia de poder e com total apoio de todos os governos, acabará com as organizações religiosas falsas de uma vez por todas. ( Apo. 17:16 ) Esse evento irá marcar o início da grande tribulação. Mas e depois?",
+        "imagem": null
       },
       {
         "num": "3",
         "pergunta": "3. O que vamos ver neste estudo?",
-        "texto": "2 Teremos mais acontecimentos marcantes. Nações do mundo todo vão trabalhar juntas num ataque total ao povo de Jeová. ( Eze. 38:14-16 ) Por quê? O livro A Adoração Pura de Jeová É Restaurada! explica: “Influenciadas por Satanás, as nações vão tentar eliminar da Terra os adoradores verdadeiros e, junto com eles, a adoração pura.” Então, o momento mais importante de todos irá acontecer: a guerra do Armagedom. Jesus vai liderar seu exército celestial, o que inclui os 144 mil, para destruir os maus e abrir para nós as portas do novo mundo justo de Jeová. — Apo. 16:14-16; 19:11-21 ."
+        "texto": "2 Teremos mais acontecimentos marcantes. Nações do mundo todo vão trabalhar juntas num ataque total ao povo de Jeová. ( Eze. 38:14-16 ) Por quê? O livro A Adoração Pura de Jeová É Restaurada! explica: “Influenciadas por Satanás, as nações vão tentar eliminar da Terra os adoradores verdadeiros e, junto com eles, a adoração pura.” Então, o momento mais importante de todos irá acontecer: a guerra do Armagedom. Jesus vai liderar seu exército celestial, o que inclui os 144 mil, para destruir os maus e abrir para nós as portas do novo mundo justo de Jeová. — Apo. 16:14-16; 19:11-21 .",
+        "imagem": null
       },
       {
         "num": "4",
         "pergunta": "4. Como os versículos iniciais do Salmo 91 nos dão uma garantia da proteção de Jeová? ( Salmo 91:1, 2 )",
-        "texto": "3 Será que precisamos ficar com medo do julgamento divino que em breve virá sobre este mundo mau? Não! Por quê? Porque Jeová promete que vai nos proteger. Ele deixou essa promessa registrada em sua Palavra: “Mil cairão ao seu lado, e dez mil à sua direita; mas nada o atingirá.” ( Sal. 91:7 ) Neste estudo, vamos analisar o Salmo 91 e responder às seguintes perguntas: Que tipo de proteção Jeová nos promete? Como Jeová nos protege hoje? E como ele vai nos proteger no futuro? Mas antes, vamos ter uma visão geral do Salmo 91 ."
+        "texto": "3 Será que precisamos ficar com medo do julgamento divino que em breve virá sobre este mundo mau? Não! Por quê? Porque Jeová promete que vai nos proteger. Ele deixou essa promessa registrada em sua Palavra: “Mil cairão ao seu lado, e dez mil à sua direita; mas nada o atingirá.” ( Sal. 91:7 ) Neste estudo, vamos analisar o Salmo 91 e responder às seguintes perguntas: Que tipo de proteção Jeová nos promete? Como Jeová nos protege hoje? E como ele vai nos proteger no futuro? Mas antes, vamos ter uma visão geral do Salmo 91 .",
+        "imagem": null
       },
       {
         "num": "5-6",
         "pergunta": "5-6. No Salmo 91:14-16 , o que Jeová promete fazer, e por que podemos confiar nele?",
-        "texto": "4 A ideia principal do Salmo 91 pode ser resumida em poucas palavras: confiança na proteção de Deus. Logo nos dois primeiros versículos, já temos a garantia de que Jeová irá proteger aqueles que confiam nele. (Leia Salmo 91:1, 2 .) Imagine estar debaixo da sombra e das asas protetoras do Altíssimo, o Todo-Poderoso! Com certeza, não existe proteção melhor que essa, não concorda? ( Rute 2:12; Sal. 17:8 ) As palavras “refúgio” e “fortaleza” nos lembram das cidades nos tempos bíblicos que eram cercadas e protegidas por uma muralha. Os habitantes da cidade ficavam seguros quando estavam dentro das muralhas, e aqueles que estavam do lado de fora podiam correr para a cidade para se proteger dos inimigos. Nos versículos seguintes, o salmista usa belas ilustrações para nos garantir que Jeová pode proteger seu povo, não importa que perigos enfrentem. — Sal. 91:3-13 ."
+        "texto": "4 A ideia principal do Salmo 91 pode ser resumida em poucas palavras: confiança na proteção de Deus. Logo nos dois primeiros versículos, já temos a garantia de que Jeová irá proteger aqueles que confiam nele. (Leia Salmo 91:1, 2 .) Imagine estar debaixo da sombra e das asas protetoras do Altíssimo, o Todo-Poderoso! Com certeza, não existe proteção melhor que essa, não concorda? ( Rute 2:12; Sal. 17:8 ) As palavras “refúgio” e “fortaleza” nos lembram das cidades nos tempos bíblicos que eram cercadas e protegidas por uma muralha. Os habitantes da cidade ficavam seguros quando estavam dentro das muralhas, e aqueles que estavam do lado de fora podiam correr para a cidade para se proteger dos inimigos. Nos versículos seguintes, o salmista usa belas ilustrações para nos garantir que Jeová pode proteger seu povo, não importa que perigos enfrentem. — Sal. 91:3-13 .",
+        "imagem": null
       },
       {
         "num": "7",
         "pergunta": "7. De acordo com o Salmo 91 , Jeová promete que tipo de proteção?",
-        "texto": "5 Nos versículos finais do Salmo 91 , encontramos uma mudança surpreendente que nos enche de confiança: antes, o salmista descrevia o cuidado protetor de Jeová, mas agora são palavras do próprio Jeová . Jeová faz uma promessa, ou garantia, a seus adoradores. (Leia Salmo 91:14-16 .) Nesses versículos, Jeová repete várias vezes que vai proteger seus servos de diferentes formas porque eles o amam, confiam nele, conhecem seu nome e oram a ele. Podemos confiar totalmente no Cumpridor de promessas. ( Jos. 23:14 ) Sua proteção não é uma simples possibilidade, é uma certeza absoluta! — Núm. 23:19 ."
+        "texto": "5 Nos versículos finais do Salmo 91 , encontramos uma mudança surpreendente que nos enche de confiança: antes, o salmista descrevia o cuidado protetor de Jeová, mas agora são palavras do próprio Jeová . Jeová faz uma promessa, ou garantia, a seus adoradores. (Leia Salmo 91:14-16 .) Nesses versículos, Jeová repete várias vezes que vai proteger seus servos de diferentes formas porque eles o amam, confiam nele, conhecem seu nome e oram a ele. Podemos confiar totalmente no Cumpridor de promessas. ( Jos. 23:14 ) Sua proteção não é uma simples possibilidade, é uma certeza absoluta! — Núm. 23:19 .",
+        "imagem": null
       },
       {
         "num": "8-9",
         "pergunta": "8-9. De acordo com Mateus 4:5-7 , como Jesus respondeu a uma das tentações de Satanás, e o que aprendemos com isso?",
-        "texto": "6 Jeová inspirou o salmista a escrever as palavras no Salmo 91 porque ele quer que a gente se sinta seguro e confie nele. ( Rom. 15:4 ) Fazemos nossas as palavras do salmista e dizemos para Jeová: “Tu és meu refúgio e minha fortaleza.” ( Sal. 91:2 ) Mas que tipo de proteção podemos esperar de Jeová?"
+        "texto": "6 Jeová inspirou o salmista a escrever as palavras no Salmo 91 porque ele quer que a gente se sinta seguro e confie nele. ( Rom. 15:4 ) Fazemos nossas as palavras do salmista e dizemos para Jeová: “Tu és meu refúgio e minha fortaleza.” ( Sal. 91:2 ) Mas que tipo de proteção podemos esperar de Jeová?",
+        "imagem": null
       },
       {
         "num": "10",
         "pergunta": "10. Que confiança podemos ter?",
-        "texto": "7 Como nossas publicações já explicaram, o Salmo 91 é uma promessa de segurança ou proteção espiritual. Nós podemos ter certeza de que Jeová sempre vai nos dar tudo que precisamos para nos proteger contra perigos espirituais e preservar nossa amizade tão preciosa com ele. Mas será que esse salmo é apenas uma promessa de proteção espiritual? Não. Esse salmo também é uma promessa de que Jeová vai dar ao seu povo, como grupo, proteção física contra qualquer dano causado por seus inimigos. Jeová também dá paz mental aos seus servos mesmo quando estão sofrendo. Mas como sabemos disso?"
+        "texto": "7 Como nossas publicações já explicaram, o Salmo 91 é uma promessa de segurança ou proteção espiritual. Nós podemos ter certeza de que Jeová sempre vai nos dar tudo que precisamos para nos proteger contra perigos espirituais e preservar nossa amizade tão preciosa com ele. Mas será que esse salmo é apenas uma promessa de proteção espiritual? Não. Esse salmo também é uma promessa de que Jeová vai dar ao seu povo, como grupo, proteção física contra qualquer dano causado por seus inimigos. Jeová também dá paz mental aos seus servos mesmo quando estão sofrendo. Mas como sabemos disso?",
+        "imagem": null
       },
       {
         "num": "11",
         "pergunta": "11. Como Jeová está nos protegendo em sentido espiritual?",
-        "texto": "8 Veja a resposta que Jesus deu quando Satanás o tentou e citou as palavras do Salmo 91 . (Leia Mateus 4:5-7 .) Fazendo referência ao Salmo 91:11, 12 como uma promessa de proteção física, Satanás desafiou Jesus a se jogar do parapeito do templo para ver se os anjos o protegeriam de qualquer dano. Como Jesus respondeu? Ele não disse: ‘Você está errado, Satanás! Esse salmo não promete proteção física.’ Em vez disso, Jesus disse: “Não ponha Jeová, seu Deus, à prova.” O que podemos aprender com a resposta de Jesus?"
+        "texto": "8 Veja a resposta que Jesus deu quando Satanás o tentou e citou as palavras do Salmo 91 . (Leia Mateus 4:5-7 .) Fazendo referência ao Salmo 91:11, 12 como uma promessa de proteção física, Satanás desafiou Jesus a se jogar do parapeito do templo para ver se os anjos o protegeriam de qualquer dano. Como Jesus respondeu? Ele não disse: ‘Você está errado, Satanás! Esse salmo não promete proteção física.’ Em vez disso, Jesus disse: “Não ponha Jeová, seu Deus, à prova.” O que podemos aprender com a resposta de Jesus?",
+        "imagem": null
       },
       {
         "num": "12-13",
         "pergunta": "12-13. De acordo com Mateus 5:28, 29 , como podemos vencer a luta contra desejos errados?",
-        "texto": "9 Jesus sabia muito bem que, em algumas ocasiões, Jeová tinha usado anjos para proteger fisicamente seus servos. ( 2 Reis 6:15-17; 19:34, 35; Dan. 3:19, 20, 26-28; 6:16-22 ) Mas Jesus se recusou a colocar Jeová à prova. Jesus sabia que, se fizesse algo imprudente, não seria correto esperar que Jeová mandasse anjos para protegê-lo. Satanás aplicou de forma errada o Salmo 91 , não por citar esse salmo como uma promessa de proteção física, mas por usá-lo como justificativa para colocar Jeová à prova. b É por isso que, de acordo com a resposta de Jesus a Satanás, podemos concluir que o Salmo 91 é uma promessa de proteção completa: não só espiritual, mas também física e emocional."
+        "texto": "9 Jesus sabia muito bem que, em algumas ocasiões, Jeová tinha usado anjos para proteger fisicamente seus servos. ( 2 Reis 6:15-17; 19:34, 35; Dan. 3:19, 20, 26-28; 6:16-22 ) Mas Jesus se recusou a colocar Jeová à prova. Jesus sabia que, se fizesse algo imprudente, não seria correto esperar que Jeová mandasse anjos para protegê-lo. Satanás aplicou de forma errada o Salmo 91 , não por citar esse salmo como uma promessa de proteção física, mas por usá-lo como justificativa para colocar Jeová à prova. b É por isso que, de acordo com a resposta de Jesus a Satanás, podemos concluir que o Salmo 91 é uma promessa de proteção completa: não só espiritual, mas também física e emocional.",
+        "imagem": null
       },
       {
         "num": "14",
         "pergunta": "14. Como o espírito santo pode ajudar a nos proteger?",
-        "texto": "10 As palavras inspiradas do Salmo 91 nos enchem de confiança. Estamos convencidos de que Jeová é o Protetor de todos os que confiam nele como seu refúgio e sua fortaleza. Então, não precisamos viver com medo dos eventos impactantes que estão à nossa frente. Agora vamos estudar mais a fundo sobre como Jeová nos protege hoje e como ele vai nos proteger no futuro."
+        "texto": "10 As palavras inspiradas do Salmo 91 nos enchem de confiança. Estamos convencidos de que Jeová é o Protetor de todos os que confiam nele como seu refúgio e sua fortaleza. Então, não precisamos viver com medo dos eventos impactantes que estão à nossa frente. Agora vamos estudar mais a fundo sobre como Jeová nos protege hoje e como ele vai nos proteger no futuro.",
+        "imagem": null
       },
       {
         "num": "15",
         "pergunta": "15. Como a organização de Jeová nos protege em sentido espiritual? (Veja também as imagens.)",
-        "texto": "11 Jeová nos dá proteção espiritual. Isso significa que ele nos dá a ajuda que precisamos para combater perigos espirituais, ou seja, influências que poderiam ameaçar nossa amizade com ele. Pense, por exemplo, na batalha constante que temos para não ser dominados pelas garras do pecado. Jeová entende totalmente nossa condição imperfeita. ( Rom. 6:16; 7:21-23 ) Por isso, vamos ver algumas maneiras de Jeová nos ajudar a vencer essa batalha."
+        "texto": "11 Jeová nos dá proteção espiritual. Isso significa que ele nos dá a ajuda que precisamos para combater perigos espirituais, ou seja, influências que poderiam ameaçar nossa amizade com ele. Pense, por exemplo, na batalha constante que temos para não ser dominados pelas garras do pecado. Jeová entende totalmente nossa condição imperfeita. ( Rom. 6:16; 7:21-23 ) Por isso, vamos ver algumas maneiras de Jeová nos ajudar a vencer essa batalha.",
+        "imagem": {
+          "src": "https://wol.jw.org/pt/wol/mp/r5/lp-t/w26/2026/516",
+          "caption": "Jeová usa sua organização para nos dar publicações no momento certo que protegem nossa espiritualidade (Veja o parágrafo 15.)",
+          "paraNum": 15
+        }
       },
       {
         "num": "16",
         "pergunta": "16. (a) O que acontece com alguns servos de Jeová e por quê? (b) Que certeza podemos ter?",
-        "texto": "12 Sua Palavra. A Palavra de Jeová, além de nos alertar sobre desejos errados, também nos diz como podemos vencer nossa luta contra eles. Por exemplo, veja o que Jesus disse em Mateus 5:28, 29 . (Leia.) Aqui Jesus está falando de um homem “que persiste em olhar para uma mulher, a ponto de sentir paixão por ela”. Jesus explica que esse homem “já cometeu no coração adultério com ela”. Qual a lição para nós?"
+        "texto": "12 Sua Palavra. A Palavra de Jeová, além de nos alertar sobre desejos errados, também nos diz como podemos vencer nossa luta contra eles. Por exemplo, veja o que Jesus disse em Mateus 5:28, 29 . (Leia.) Aqui Jesus está falando de um homem “que persiste em olhar para uma mulher, a ponto de sentir paixão por ela”. Jesus explica que esse homem “já cometeu no coração adultério com ela”. Qual a lição para nós?",
+        "imagem": null
       },
       {
         "num": "17",
         "pergunta": "17. Por que não esperamos que Jeová nos proteja de todos os danos físicos hoje?",
-        "texto": "13 Se continuarmos olhando para imagens imorais, vamos estimular desejos errados no nosso coração. E quando esses desejos encontrarem uma oportunidade, provavelmente vamos acabar nos envolvendo em imoralidade sexual. ( Tia. 1:14, 15 ) Para vencer esses desejos errados, precisamos tomar uma atitude drástica. Certo comentarista bíblico diz que esse conselho de Jesus é como uma “intervenção cirúrgica”. Devemos atacar a raiz do problema, eliminando essas imagens de uma vez por todas de nossa vida, como se fossem um tumor maligno. ( Col. 3:5 ) Se aplicarmos esse conselho, vamos preservar nossa amizade com Jeová."
+        "texto": "13 Se continuarmos olhando para imagens imorais, vamos estimular desejos errados no nosso coração. E quando esses desejos encontrarem uma oportunidade, provavelmente vamos acabar nos envolvendo em imoralidade sexual. ( Tia. 1:14, 15 ) Para vencer esses desejos errados, precisamos tomar uma atitude drástica. Certo comentarista bíblico diz que esse conselho de Jesus é como uma “intervenção cirúrgica”. Devemos atacar a raiz do problema, eliminando essas imagens de uma vez por todas de nossa vida, como se fossem um tumor maligno. ( Col. 3:5 ) Se aplicarmos esse conselho, vamos preservar nossa amizade com Jeová.",
+        "imagem": null
       },
       {
         "num": "18",
         "pergunta": "18. Como Jeová vai nos proteger no futuro?",
-        "texto": "14 Seu espírito santo. Jeová também usa seu espírito santo para nos ajudar a lutar contra nossos desejos errados. Se continuarmos pedindo espírito santo em nossas orações, ele vai nos dar. ( Luc. 11:9-13 ) Como o espírito santo pode nos proteger? O apóstolo Paulo diz: “Continuem andando por espírito, e não executarão nenhum desejo carnal.” ( Gál. 5:16 ) A nota de estudo explica: “A expressão ‘andar por espírito’ passa a ideia de que a pessoa busca a orientação do espírito de Deus e permite que ele influencie seus pensamentos e ações. Essa pessoa talvez ainda tenha desejos errados; mas, quando eles surgem, ela os rejeita imediatamente, recusando-se a pensar neles.” O espírito de Jeová não elimina desejos errados, mas nos ajuda a fortalecer nossa determinação de fazer o que é certo e de não ceder aos nossos desejos. Essa determinação vai ajudar a proteger nossa espiritualidade."
+        "texto": "14 Seu espírito santo. Jeová também usa seu espírito santo para nos ajudar a lutar contra nossos desejos errados. Se continuarmos pedindo espírito santo em nossas orações, ele vai nos dar. ( Luc. 11:9-13 ) Como o espírito santo pode nos proteger? O apóstolo Paulo diz: “Continuem andando por espírito, e não executarão nenhum desejo carnal.” ( Gál. 5:16 ) A nota de estudo explica: “A expressão ‘andar por espírito’ passa a ideia de que a pessoa busca a orientação do espírito de Deus e permite que ele influencie seus pensamentos e ações. Essa pessoa talvez ainda tenha desejos errados; mas, quando eles surgem, ela os rejeita imediatamente, recusando-se a pensar neles.” O espírito de Jeová não elimina desejos errados, mas nos ajuda a fortalecer nossa determinação de fazer o que é certo e de não ceder aos nossos desejos. Essa determinação vai ajudar a proteger nossa espiritualidade.",
+        "imagem": null
       },
       {
         "num": "19-20",
         "pergunta": "19-20. Por que não precisamos ter medo do futuro julgamento divino no Armagedom? (Veja também a da capa.)",
-        "texto": "15 Sua organização. Jeová usa sua organização para nos dar publicações no tempo certo que protegem nossa espiritualidade. Pare e pense: Por causa da nossa imperfeição e tendência para o pecado, às vezes temos uma luta intensa contra nossos pensamentos e sentimentos negativos. Por exemplo, talvez tenhamos que lutar contra ansiedade excessiva, culpa sem fim por causa de erros do passado ou o pensamento de que ninguém se importa com a gente. Satanás, “o Tentador”, se aproveita desses sentimentos para nos fazer desistir. ( Mat. 4:3; 6:13 ) O alimento espiritual que recebemos de Jeová por meio da sua organização nos dá as seguintes certezas: Jeová cuida das nossas necessidades, perdoa nossos pecados e dá muito valor a cada um de nós. ( Sal. 86:5; Mat. 10:29-31; Luc. 12:28; Heb. 13:5 ) Você já leu algo nas publicações que tocou seu coração? Talvez você até pensou: ‘Isso foi escrito pra mim!’ Essa é uma prova de que Jeová usa sua organização para nos dar o alimento espiritual que precisamos no tempo certo e, assim, proteger nossa amizade com ele."
+        "texto": "15 Sua organização. Jeová usa sua organização para nos dar publicações no tempo certo que protegem nossa espiritualidade. Pare e pense: Por causa da nossa imperfeição e tendência para o pecado, às vezes temos uma luta intensa contra nossos pensamentos e sentimentos negativos. Por exemplo, talvez tenhamos que lutar contra ansiedade excessiva, culpa sem fim por causa de erros do passado ou o pensamento de que ninguém se importa com a gente. Satanás, “o Tentador”, se aproveita desses sentimentos para nos fazer desistir. ( Mat. 4:3; 6:13 ) O alimento espiritual que recebemos de Jeová por meio da sua organização nos dá as seguintes certezas: Jeová cuida das nossas necessidades, perdoa nossos pecados e dá muito valor a cada um de nós. ( Sal. 86:5; Mat. 10:29-31; Luc. 12:28; Heb. 13:5 ) Você já leu algo nas publicações que tocou seu coração? Talvez você até pensou: ‘Isso foi escrito pra mim!’ Essa é uma prova de que Jeová usa sua organização para nos dar o alimento espiritual que precisamos no tempo certo e, assim, proteger nossa amizade com ele.",
+        "imagem": {
+          "src": "https://wol.jw.org/pt/wol/mp/r5/lp-t/w26/2026/518",
+          "caption": "Durante o Armagedom, nós seremos protegidos em sentido físico e emocional. (Veja os parágrafos 19-20.)",
+          "paraNum": 19
+        }
       }
     ]
   }

@@ -57,11 +57,23 @@ async function extractFullMeeting(year, week) {
   const cFimMatch = mwbHtml.match(/<h3[^>]*class="[^"]*du-borderStyle-top--solid[^"]*"[^>]*>([\s\S]*?)<\/h3>/gi);
   const canticoFinal = cFimMatch && cFimMatch.length > 0 ? cleanText(cFimMatch[cFimMatch.length - 1]) : "Comentários finais (3 min) | Cântico e oração";
 
+  // === EXTRAÇÃO DE FIGURAS DO MWB ===
+  const figurasMwb = [...mwbHtml.matchAll(/<figure[\s\S]*?<\/figure>/gi)].map(m => {
+    const fig = m[0];
+    const srcMatch = fig.match(/src="([^"]+)"/i);
+    const altMatch = fig.match(/alt="([^"]*)"/i);
+    const capMatch = fig.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/i);
+    const src = srcMatch ? 'https://wol.jw.org' + srcMatch[1] : '';
+    const caption = capMatch ? cleanText(capMatch[1]) : (altMatch ? altMatch[1].trim() : '');
+    return { src, caption };
+  }).filter(f => f.src);
+
   // Extrai todas as partes H3 numeradas (1. , 2. , 3. ...)
   const regex = /<h3[^>]*>(?:<strong[^>]*>)?([0-9]+\.[\s\S]*?)(?:<\/strong>)?<\/h3>([\s\S]*?)(?=<h3|<h2 class="[^"]*color--maroon|<h3 class="[^"]*borderStyle-top|<article|$)/gi;
   const partesMatches = [...mwbHtml.matchAll(regex)];
   
   const partesEstruturadas = [];
+  let mwbFigIdx = 0;
   partesMatches.forEach((p, idx) => {
     const rawTit = cleanText(p[1]);
     const rawConteudo = cleanText(p[2]);
@@ -78,7 +90,6 @@ async function extractFullMeeting(year, week) {
     if (pMatches.length > 0) {
       perguntas.push(...pMatches.filter(Boolean));
     } else if (rawTit.includes("Joias espirituais")) {
-      // Extrai a pergunta específica do texto se existir
       const qEspecifica = rawConteudo.match(/Jer\.\s*[0-9]+:[0-9]+[^—]*—[^?]+\?/i);
       if (qEspecifica) {
         perguntas.push(qEspecifica[0]);
@@ -90,6 +101,14 @@ async function extractFullMeeting(year, week) {
       perguntas.push("Como podemos colocar em prática este princípio bíblico na nossa vida diária e na congregação?");
     }
 
+    // Associa imagem se for Parte 1 ou Parte de consideração
+    let imagemParte = null;
+    if (num === 1 && figurasMwb[0]) {
+      imagemParte = figurasMwb[0];
+    } else if (secao === "VIDACRISTA" && figurasMwb.length > 1 && !partesEstruturadas.some(x => x.imagem === figurasMwb[1])) {
+      imagemParte = figurasMwb[1];
+    }
+
     partesEstruturadas.push({
       id: num,
       secao: secao,
@@ -97,7 +116,8 @@ async function extractFullMeeting(year, week) {
       duracao: rawTit.match(/\(([0-9]+\s*min)\)/i)?.[1] || "10 min",
       texto: rawConteudo.replace(/Sua resposta/gi, '').trim(),
       temPerguntas: perguntas.length > 0,
-      perguntas: perguntas
+      perguntas: perguntas,
+      imagem: imagemParte
     });
   });
 
@@ -105,6 +125,19 @@ async function extractFullMeeting(year, week) {
   const sentTitulo = sentHtml.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1]?.replace(/<[^>]+>/g, '').trim() || "Artigo de Estudo de A Sentinela";
   const sentTema = sentHtml.match(/<p[^>]*class="[^"]*themeScrp[^"]*"[^>]*>([\s\S]*?)<\/p>/i)?.[1]?.replace(/<[^>]+>/g, '').trim() || "Texto Temático de Estudo";
   const sentObjetivo = sentHtml.match(/<p[^>]*class="[^"]*pubRefs[^"]*"[^>]*>Ver que[\s\S]*?<\/p>/i)?.[0]?.replace(/<[^>]+>/g, '').trim() || "";
+
+  // Imagens da Sentinela
+  const figurasSent = [...sentHtml.matchAll(/<figure[\s\S]*?<\/figure>/gi)].map(m => {
+    const fig = m[0];
+    const srcMatch = fig.match(/src="([^"]+)"/i);
+    const altMatch = fig.match(/alt="([^"]*)"/i);
+    const capMatch = fig.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/i);
+    const src = srcMatch ? 'https://wol.jw.org' + srcMatch[1] : '';
+    const caption = capMatch ? cleanText(capMatch[1]) : (altMatch ? altMatch[1].trim() : '');
+    const pNumMatch = caption.match(/parágrafo[s]?\s*([0-9]+)/i);
+    const paraNum = pNumMatch ? parseInt(pNumMatch[1]) : null;
+    return { src, caption, paraNum };
+  }).filter(f => f.src);
 
   // Cânticos da Sentinela
   const cSentInicialMatch = sentHtml.match(/<p[^>]*class="[^"]*pubRefs[^"]*"[^>]*><a[^>]*>(<strong>CÂNTICO\s*[0-9]+<\/strong>)<\/a>([\s\S]*?)<\/p>/i);
@@ -118,12 +151,21 @@ async function extractFullMeeting(year, week) {
     const q = perguntasSent[i];
     const numMatch = q.match(/^([0-9]+(?:-[0-9]+)?)\./);
     const num = numMatch ? numMatch[1] : `${i + 1}`;
+    const numInt = parseInt(num.split('-')[0]);
     const textoPara = paragrafosSent[i] || "Texto bíblico e reflexão sobre o parágrafo.";
+
+    // Verifica se alguma figura corresponde a este parágrafo
+    let imgCorrespondente = figurasSent.find(f => f.paraNum === numInt);
+    // Se a primeira figura não tem número específico e estamos no parágrafo 3
+    if (!imgCorrespondente && i === 2 && figurasSent[0] && !figurasSent[0].paraNum) {
+      imgCorrespondente = figurasSent[0];
+    }
 
     listaSentinela.push({
       num: num,
       pergunta: q,
-      texto: textoPara
+      texto: textoPara,
+      imagem: imgCorrespondente || null
     });
   }
 

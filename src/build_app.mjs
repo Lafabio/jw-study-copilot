@@ -328,6 +328,17 @@ const htmlTemplate = `<!DOCTYPE html>
     </div>
   </div>
 
+  <!-- ================= MODAL LIGHTBOX DE IMAGENS ================= -->
+  <div id="modal-imagem" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs cursor-pointer" onclick="fecharImagemModal()">
+    <div class="relative max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl cursor-default" onclick="event.stopPropagation()">
+      <div class="absolute top-3 right-3 z-10">
+        <button onclick="fecharImagemModal()" class="w-8 h-8 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black transition text-sm">✕</button>
+      </div>
+      <img id="img-modal-src" src="" class="w-full max-h-[75vh] object-contain bg-black/5">
+      <div id="img-modal-caption" class="p-4 text-xs text-[#495057] italic leading-relaxed border-t border-[#dee2e6] bg-white"></div>
+    </div>
+  </div>
+
   <script>
     // CONFIGURAÇÃO SUPABASE DA NUVEM
     const SUPABASE_CONFIG = {
@@ -534,6 +545,13 @@ const htmlTemplate = `<!DOCTYPE html>
             
             <div class="text-sm leading-relaxed text-[#495057] mb-3 whitespace-pre-line">\${p.texto}</div>
 
+            \${p.imagem ? \`
+              <div class="my-3 rounded-xl overflow-hidden border border-[#dee2e6] bg-[#f8f9fa] shadow-2xs">
+                <img src="\${p.imagem.src}" alt="\${(p.imagem.caption || '').replace(/"/g, '&quot;')}" loading="lazy" class="w-full object-cover max-h-96 hover:opacity-95 transition cursor-pointer" onclick="abrirImagemModal('\${p.imagem.src}', '\${(p.imagem.caption || '').replace(/'/g, "\\\\'")}')">
+                \${p.imagem.caption ? \`<p class="p-2.5 text-xs text-[#6c757d] italic leading-normal border-t border-[#dee2e6] bg-white">\${p.imagem.caption}</p>\` : ''}
+              </div>
+            \` : ''}
+
             \${p.perguntas && p.perguntas.length > 0 ? \`
               <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-3 mt-3">
                 <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
@@ -643,6 +661,13 @@ const htmlTemplate = `<!DOCTYPE html>
             <p class="text-sm leading-relaxed text-[#212529] mb-4 font-normal">
               \${p.texto}
             </p>
+
+            \${p.imagem ? \`
+              <div class="my-3 rounded-xl overflow-hidden border border-[#dee2e6] bg-[#f8f9fa] shadow-2xs">
+                <img src="\${p.imagem.src}" alt="\${(p.imagem.caption || '').replace(/"/g, '&quot;')}" loading="lazy" class="w-full object-cover max-h-96 hover:opacity-95 transition cursor-pointer" onclick="abrirImagemModal('\${p.imagem.src}', '\${(p.imagem.caption || '').replace(/'/g, "\\\\'")}')">
+                \${p.imagem.caption ? \`<p class="p-2.5 text-xs text-[#6c757d] italic leading-normal border-t border-[#dee2e6] bg-white">\${p.imagem.caption}</p>\` : ''}
+              </div>
+            \` : ''}
 
             <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-2">
               <div class="flex items-start justify-between gap-3">
@@ -970,6 +995,17 @@ const htmlTemplate = `<!DOCTYPE html>
         msgBox.className = "p-2.5 rounded-lg text-xs bg-amber-50 text-amber-800 border border-amber-200 block";
         msgBox.innerText = \`Aviso: Supabase \${supaOk ? 'OK ✅' : 'Falha ❌'} | Gemini \${geminiOk ? 'OK ✅' : 'Falha ❌'}\`;
       }
+    }
+
+    // MODAL DE IMAGEM (LIGHTBOX)
+    function abrirImagemModal(src, caption) {
+      document.getElementById('img-modal-src').src = src;
+      document.getElementById('img-modal-caption').innerText = caption || '';
+      document.getElementById('modal-imagem').classList.remove('hidden');
+    }
+
+    function fecharImagemModal() {
+      document.getElementById('modal-imagem').classList.add('hidden');
     }
 
     // REGISTRO DE PWA (SERVICE WORKER)
