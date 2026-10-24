@@ -3,151 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>JW Study Copilot - Seletor de Semanas Futuras</title>
+  <title>JW Library - Reuniões</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
+    /* Estilos Oficiais do JW Library */
+    :root {
+      --jw-purple: #4a3b69;
+      --jw-purple-dark: #3b2e55;
+      --jw-purple-light: #6b588e;
+      --jw-tesouros: #596b7a;
+      --jw-ministerio: #c57e00;
+      --jw-vidacrista: #9e2a2b;
+      --jw-bg-reader: #fcfcfc;
+      --jw-text: #212529;
+      --jw-text-muted: #6c757d;
+      --jw-border: #e9ecef;
+      --jw-study-pane: #f8f9fa;
+    }
+
+    body {
+      background-color: var(--jw-bg-reader);
+      color: var(--jw-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .jw-article p {
+      line-height: 1.68;
+      font-size: 1.02rem;
+      margin-bottom: 0.95rem;
+    }
+
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border, #cbd5e1); border-radius: 9999px; }
-    .drawer-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .drawer-transition { transition: transform 0.25s ease-in-out; }
   </style>
 </head>
-<body class="bg-[var(--background,#f8fafc)] text-[var(--foreground,#0f172a)] antialiased min-h-screen flex flex-col font-sans select-none md:select-auto">
+<body class="min-h-screen flex flex-col antialiased">
 
-  <!-- ================= TOP HEADER RESPONSIVO COM SELETOR DE SEMANAS ================= -->
-  <header class="bg-[var(--card,#ffffff)] border-b border-[var(--border,#e2e8f0)] px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between sticky top-0 z-40 shadow-xs gap-2">
-    
-    <!-- Lado Esquerdo: Botão Menu + Alternador Meio/Fim de Semana -->
-    <div class="flex items-center space-x-2">
-      <button onclick="toggleSidebarMobile()" class="lg:hidden p-1.5 rounded-xl text-[var(--foreground)] hover:bg-[var(--secondary,#f1f5f9)] transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
-
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
-        📖
+  <!-- ================= TOP APP BAR (CABEÇALHO ROXO DO JW LIBRARY #4A3B69) ================= -->
+  <header class="bg-[#4a3b69] text-white sticky top-0 z-40 shadow-md">
+    <div class="px-4 py-2.5 flex items-center justify-between">
+      
+      <!-- Lado Esquerdo: Menu Hambúrguer + Título da Seção -->
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleMenuMobile()" class="p-1.5 rounded-lg hover:bg-white/10 transition">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <div class="flex items-center gap-2">
+          <h1 class="text-base font-semibold tracking-wide text-white">Reuniões</h1>
+        </div>
       </div>
 
-      <!-- Alternador de Reunião -->
-      <div class="flex items-center bg-[var(--background,#f1f5f9)] p-0.5 rounded-lg border border-[var(--border,#e2e8f0)]">
-        <button onclick="alternarModoReuniao('meio_semana')" id="tab-meio-semana" class="px-2.5 py-1 rounded-md text-xs font-bold transition-all bg-[var(--card,#ffffff)] text-indigo-700 shadow-xs">
-          🏢 <span class="hidden sm:inline">Meio de Semana</span><span class="sm:hidden">Meio</span>
+      <!-- Lado Direito: Ações (Painel de Estudo com IA & Salvar) -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button onclick="toggleStudyPane()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
+          <span class="text-amber-300">✦</span>
+          <span class="hidden sm:inline">Painel de Estudo (IA)</span>
+          <span class="sm:hidden">Estudo</span>
         </button>
-        <button onclick="alternarModoReuniao('sentinela')" id="tab-sentinela" class="px-2.5 py-1 rounded-md text-xs font-bold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-          🗼 <span class="hidden sm:inline">A Sentinela</span><span class="sm:hidden">Sentinela</span>
+
+        <button onclick="salvarTudo()" title="Salvar Anotações" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+          </svg>
         </button>
       </div>
     </div>
 
-    <!-- Centro: SELETOR DE SEMANAS (ANTERIOR | DROPDOWN | PRÓXIMA) -->
-    <div class="flex items-center gap-1.5 bg-[var(--background,#f1f5f9)] p-1 rounded-xl border border-[var(--border,#e2e8f0)]">
-      <button onclick="mudarSemanaRelativa(-1)" title="Semana Anterior" class="p-1 rounded-lg text-xs hover:bg-[var(--card,#ffffff)] text-[var(--foreground)] transition">
+    <!-- Sub-Barra: Abas Oficiais das Reuniões (VIDA E MINISTÉRIO | A SENTINELA) -->
+    <div class="flex border-t border-white/15 px-3 bg-[#3f315a]">
+      <button onclick="alternarModoReuniao('meio_semana')" id="tab-meio-semana" class="flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-white text-white transition">
+        VIDA E MINISTÉRIO
+      </button>
+      <button onclick="alternarModoReuniao('sentinela')" id="tab-sentinela" class="flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition">
+        A SENTINELA
+      </button>
+    </div>
+
+    <!-- Barra de Navegação de Semanas (Estilo JW Library) -->
+    <div class="bg-[#f1f3f5] text-[#212529] px-4 py-2 flex items-center justify-between text-xs font-semibold border-b border-[#dee2e6]">
+      <button onclick="mudarSemanaRelativa(-1)" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
         ◀
       </button>
 
-      <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="text-xs font-bold bg-transparent text-[var(--foreground)] focus:outline-none cursor-pointer px-1 py-0.5">
-        <option value="43">Semana 43: 19-25 Out (Atual)</option>
-        <option value="44">Semana 44: 26 Out–1 Nov (Próxima)</option>
-        <option value="45">Semana 45: 2-8 Nov (Futura)</option>
-      </select>
+      <div class="flex items-center gap-2">
+        <span class="text-[#6c757d]">Semana:</span>
+        <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer">
+          <option value="43">19-25 de outubro (Semana Atual)</option>
+          <option value="44">26 de outubro–1 de novembro</option>
+          <option value="45">2-8 de novembro</option>
+        </select>
+      </div>
 
-      <button onclick="mudarSemanaRelativa(1)" title="Semana Seguinte" class="p-1 rounded-lg text-xs hover:bg-[var(--card,#ffffff)] text-[var(--foreground)] transition">
+      <button onclick="mudarSemanaRelativa(1)" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
         ▶
-      </button>
-    </div>
-    
-    <!-- Lado Direito: Status e Chat Mobile -->
-    <div class="flex items-center space-x-2">
-      <button onclick="toggleChatMobile()" class="lg:hidden px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold flex items-center gap-1 shadow-sm">
-        <span>✨</span> <span>Gemini</span>
-      </button>
-
-      <button onclick="salvarTudo()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[var(--primary,#4f46e5)] text-white hover:opacity-90 transition flex items-center gap-1 shadow-sm">
-        <span>💾</span> <span class="hidden sm:inline">Salvar</span>
       </button>
     </div>
   </header>
 
-  <!-- ================= CORPO PRINCIPAL ================= -->
+  <!-- ================= LAYOUT PRINCIPAL (CORPO DO LEITOR + PAINEL DE ESTUDO LATERAL) ================= -->
   <div class="flex flex-1 overflow-hidden relative">
     
-    <div id="drawer-backdrop" onclick="fecharGavetasMobile()" class="hidden fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs transition-opacity"></div>
+    <div id="drawer-backdrop" onclick="fecharPaineisMobile()" class="hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"></div>
 
-    <!-- SIDEBAR DE NAVEGAÇÃO -->
-    <aside id="sidebar-container" class="fixed inset-y-0 left-0 z-50 w-72 bg-[var(--card,#ffffff)] border-r border-[var(--border,#e2e8f0)] p-4 flex flex-col overflow-y-auto transform -translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0">
+    <!-- Menu Lateral Esquerdo (Lista de Partes da Reunião) -->
+    <aside id="sidebar-partes" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#dee2e6] p-4 flex flex-col overflow-y-auto transform -translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0 shadow-lg lg:shadow-none">
+      <div class="flex items-center justify-between mb-3 border-b border-[#dee2e6] pb-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#6c757d]">Programa da Reunião</h3>
+        <button onclick="fecharPaineisMobile()" class="lg:hidden text-gray-500 hover:text-black">✕</button>
+      </div>
+      <div id="lista-partes-sidebar" class="space-y-1"></div>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4 max-w-4xl mx-auto w-full">
+    <!-- ÁREA CENTRAL DO LEITOR (ESTILO JW LIBRARY) -->
+    <main class="flex-1 overflow-y-auto px-4 sm:px-10 py-6 max-w-3xl mx-auto w-full jw-article">
       
-      <!-- Banner Contextual da Semana Selecionada -->
-      <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 sm:p-5 shadow-xs">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span id="badge-principal" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
-                Vida e Ministério Cristãos
-              </span>
-              <span id="badge-status-semana" class="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                Semana 43 (Atual)
-              </span>
-            </div>
-            <h2 id="titulo-principal" class="text-base sm:text-lg font-bold text-[var(--foreground,#0f172a)] leading-snug">
-              19-25 DE OUTUBRO
-            </h2>
-            <p id="subtitulo-principal" class="text-xs text-[var(--muted-foreground,#64748b)] mt-1">
-              Tema da Leitura: JEREMIAS 45-46 • Dados Oficiais JW.ORG
-            </p>
+      <!-- Cabeçalho da Publicação / Artigo -->
+      <div id="cabecalho-materia" class="mb-6 pb-4 border-b border-[#dee2e6]">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-12 h-16 rounded bg-[#4a3b69] text-white flex flex-col items-center justify-center font-bold text-[10px] p-1 shadow-xs shrink-0">
+            <span>JW</span>
+            <span class="text-xs">📖</span>
           </div>
-          <div class="sm:text-right shrink-0">
-            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900 inline-block">
-              ⏳ <span id="duracao-principal">1h 45m</span>
+          <div>
+            <span id="badge-tipo-pub" class="text-xs font-bold text-[#6c757d] uppercase tracking-wide">
+              Apostila da Reunião
             </span>
+            <h1 id="titulo-materia" class="text-xl sm:text-2xl font-bold text-[#212529] mt-0.5">
+              19-25 DE OUTUBRO
+            </h1>
+            <p id="subtitulo-materia" class="text-sm font-medium text-[#4a3b69]">
+              JEREMIAS 45-46
+            </p>
           </div>
         </div>
       </div>
 
-      <div id="corpo-conteudo" class="space-y-4 pb-16 lg:pb-6"></div>
+      <!-- Container Dinâmico dos Parágrafos / Seções -->
+      <div id="conteudo-leitor" class="space-y-6 pb-20"></div>
 
     </main>
 
-    <!-- CHAT GEMINI COPILOT -->
-    <aside id="chat-container" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[var(--card,#ffffff)] border-l border-[var(--border,#e2e8f0)] flex flex-col transform translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0 shadow-xl lg:shadow-none">
+    <!-- ================= PAINEL DE ESTUDO LATERAL (STUDY PANE COM IA DO GEMINI) ================= -->
+    <aside id="study-pane" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-[#f8f9fa] border-l border-[#dee2e6] flex flex-col transform translate-x-full lg:translate-x-0 lg:static drawer-transition shrink-0 shadow-2xl lg:shadow-none">
       
-      <div class="p-3 border-b border-[var(--border,#e2e8f0)] bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
+      <!-- Topo do Painel de Estudo -->
+      <div class="p-3.5 border-b border-[#dee2e6] bg-white flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-            ✦
-          </div>
+          <span class="text-[#4a3b69] font-bold text-base">✦</span>
           <div>
-            <h3 class="text-xs font-bold text-[var(--foreground,#0f172a)]">
-              Gemini Copilot
-            </h3>
-            <span id="chat-subtitulo" class="text-[11px] text-[var(--muted-foreground,#64748b)]">Contexto: Semana 43</span>
+            <h3 class="text-xs font-bold text-[#212529] uppercase tracking-wider">Painel de Estudo</h3>
+            <span id="study-pane-subtitle" class="text-[11px] text-[#6c757d]">Assistente Gemini AI</span>
           </div>
         </div>
         
-        <div class="flex items-center gap-1">
-          <button onclick="limparChat()" title="Limpar conversa" class="p-1.5 text-xs text-[var(--muted-foreground)] hover:text-red-500 transition">
-            🗑️
+        <div class="flex items-center gap-2">
+          <button onclick="limparChat()" title="Limpar conversa" class="text-xs text-[#6c757d] hover:text-red-500">
+            Limpar
           </button>
-          <button onclick="fecharGavetasMobile()" class="lg:hidden p-1.5 text-xs text-[var(--foreground)] hover:bg-[var(--secondary)] rounded-lg">
+          <button onclick="fecharPaineisMobile()" class="lg:hidden p-1 text-gray-500 hover:text-black">
             ✕
           </button>
         </div>
       </div>
 
-      <div id="chips-sugestoes" class="px-3 py-2 border-b border-[var(--border,#e2e8f0)] flex gap-1.5 overflow-x-auto text-xs bg-[var(--background,#f8fafc)]"></div>
+      <!-- Chips de Sugestões Contextuais -->
+      <div id="chips-estudo" class="px-3 py-2 border-b border-[#dee2e6] flex gap-1.5 overflow-x-auto bg-white text-xs">
+      </div>
 
-      <div id="mensagens-chat" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs"></div>
+      <!-- Histórico de Conversa -->
+      <div id="mensagens-estudo" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs">
+        <div class="bg-white p-3 rounded-xl border border-[#dee2e6] shadow-xs text-[#495057] leading-relaxed">
+          <p class="font-bold text-[#4a3b69] mb-1">💡 Como usar o Painel de Estudo:</p>
+          <p>Ao ler a matéria, toque no botão <strong>"✦ Comentar com IA"</strong> ao lado de qualquer pergunta para receber sugestões de respostas objetivas e com as suas próprias palavras.</p>
+        </div>
+      </div>
 
-      <div class="p-3 border-t border-[var(--border,#e2e8f0)] bg-[var(--card,#ffffff)]">
-        <div class="flex items-center gap-2 bg-[var(--background,#f1f5f9)] rounded-xl border border-[var(--border,#e2e8f0)] px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
-          <input id="input-prompt" type="text" onkeydown="if(event.key==='Enter') enviarPrompt()" placeholder="Pergunte ao Gemini..." class="w-full text-xs bg-transparent focus:outline-none text-[var(--foreground,#0f172a)]">
-          <button onclick="enviarPrompt()" class="p-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition shrink-0">
+      <!-- Entrada de Texto para Perguntar ao Gemini -->
+      <div class="p-3 border-t border-[#dee2e6] bg-white">
+        <div class="flex items-center gap-2 bg-[#f1f3f5] rounded-xl border border-[#dee2e6] px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
+          <input id="input-estudo" type="text" onkeydown="if(event.key==='Enter') enviarPerguntaEstudo()" placeholder="Pergunte ao Gemini sobre o estudo..." class="w-full text-xs bg-transparent focus:outline-none text-[#212529]">
+          <button onclick="enviarPerguntaEstudo()" class="p-1.5 rounded-lg bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition shrink-0">
             ➤
           </button>
+        </div>
+        <div class="text-[10px] text-[#6c757d] mt-1 px-1 flex justify-between">
+          <span>Respostas baseadas nas publicações</span>
+          <span>Shift+Enter quebra</span>
         </div>
       </div>
 
@@ -155,113 +200,113 @@
 
   </div>
 
-  <!-- NAVEGAÇÃO INFERIOR MOBILE -->
-  <nav class="lg:hidden bg-[var(--card,#ffffff)] border-t border-[var(--border,#e2e8f0)] fixed bottom-0 inset-x-0 z-30 px-6 py-2 flex items-center justify-around shadow-lg">
-    <button onclick="toggleSidebarMobile()" class="flex flex-col items-center text-xs font-semibold text-[var(--muted-foreground)] hover:text-indigo-600">
-      <span class="text-base">📑</span>
-      <span>Partes</span>
+  <!-- ================= BARRA INFERIOR OFICIAL DO JW LIBRARY (MOBILE) ================= -->
+  <nav class="lg:hidden bg-white border-t border-[#dee2e6] fixed bottom-0 inset-x-0 z-30 px-3 py-1.5 flex items-center justify-around text-[#6c757d]">
+    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">🏠</span>
+      <span>Início</span>
     </button>
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center text-xs font-semibold text-indigo-600">
+    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">📖</span>
-      <span>Matéria</span>
+      <span>Bíblia</span>
     </button>
-    <button onclick="toggleChatMobile()" class="flex flex-col items-center text-xs font-semibold text-violet-600">
-      <span class="text-base">✨</span>
-      <span>Copilot</span>
+    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">📚</span>
+      <span>Publicações</span>
+    </button>
+    <button class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">🎬</span>
+      <span>Mídia</span>
+    </button>
+    <button class="flex flex-col items-center text-[10px] text-[#4a3b69] font-bold">
+      <span class="text-base">👥</span>
+      <span>Reuniões</span>
     </button>
   </nav>
 
   <script>
-    // BASE DE DADOS COMPLETA EXTRAÍDA DO JW.ORG (Semana 43, 44 e 45)
+    // DADOS REAIS EXTRAÍDOS DO JW.ORG (Semanas 43, 44 e 45)
     const bancoSemanasJW = {
       43: {
-        status: "Semana Atual",
         meioSemana: {
           titulo: "19-25 DE OUTUBRO",
           tema: "JEREMIAS 45-46",
-          duracao: "1h 45m",
           partes: [
-            { id: 1, titulo: "1. Ter esperança é o segredo para o contentamento", duracao: "10 min", resumo: "Baruque começou a buscar 'grandes coisas para si mesmo' em meio à iminente destruição de Jerusalém. Jeová bondosamente corrigiu seu modo de pensar (Jeremias 45:1-5).", temPerguntas: false, perguntas: [] },
-            { id: 2, titulo: "2. Joias espirituais", duracao: "10 min", resumo: "Pesquisa bíblica em Jeremias 45 e 46 para extrair lições sobre o cuidado de Deus e o cumprimento de profecias.", temPerguntas: true, perguntas: ["Que joias espirituais você encontrou na leitura da Bíblia desta semana sobre Jeová, o ministério ou outro assunto?"] },
-            { id: 3, titulo: "3. Leitura da Bíblia", duracao: "4 min", resumo: "Leitura em voz alta de Jeremias 46:1-12 com a devida ênfase e sentimento.", temPerguntas: false, perguntas: [] },
-            { id: 4, titulo: "4. Iniciando conversas (De casa em casa)", duracao: "3 min", resumo: "Demonstração usando a brochura Lições do Ministério (lmd lição 1).", temPerguntas: false, perguntas: [] },
-            { id: 5, titulo: "5. Iniciando conversas (Testemunho informal)", duracao: "2 min", resumo: "Demonstração com aplicação prática de perguntas de introdução amigáveis.", temPerguntas: false, perguntas: [] },
-            { id: 6, titulo: "6. Iniciando conversas (Testemunho público)", duracao: "2 min", resumo: "Demonstração no carrinho ou local público.", temPerguntas: false, perguntas: [] },
-            { id: 7, titulo: "7. Discurso de Estudante", duracao: "4 min", resumo: "Discurso explicativo baseado no tema designado da brochura de ensino.", temPerguntas: false, perguntas: [] },
-            { id: 8, titulo: "8. ‘Partilhe com outros o que você tem’", duracao: "15 min", resumo: "Consideração prática com a assistência sobre generosidade cristã e prontidão em ajudar.", temPerguntas: true, perguntas: ["Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo sobre generosidade?", "Pensando no que vai acontecer em breve, por que é importante aprender desde já a compartilhar o que temos?", "O que podemos aprender do exemplo de generosidade dos macedônios?", "O que mais podemos compartilhar com outros além de coisas materiais?", "Que exemplo Jeová nos dá sobre dividir as coisas com outros?"] },
-            { id: 9, titulo: "9. Estudo bíblico de congregação", duracao: "30 min", resumo: "Estudo do livro com consideração parágrafo por parágrafo e perguntas para a assistência.", temPerguntas: true, perguntas: ["Como as ações dos personagens desta história revelam coragem sob oposição?"] }
+            { id: 1, secao: "TESOUROS", titulo: "1. Ter esperança é o segredo para o contentamento", duracao: "10 min", texto: "Baruque começou a buscar 'grandes coisas para si mesmo' em meio à iminente destruição de Jerusalém. Jeová bondosamente corrigiu seu modo de pensar (Jeremias 45:1-5).", temPerguntas: false, perguntas: [] },
+            { id: 2, secao: "TESOUROS", titulo: "2. Joias espirituais", duracao: "10 min", texto: "Pesquisa bíblica em Jeremias 45 e 46 para extrair lições sobre o cuidado de Deus e o cumprimento de profecias.", temPerguntas: true, perguntas: ["Que joias espirituais você encontrou na leitura da Bíblia desta semana sobre Jeová, o ministério ou outro assunto?"] },
+            { id: 3, secao: "TESOUROS", titulo: "3. Leitura da Bíblia", duracao: "4 min", texto: "Leitura em voz alta de Jeremias 46:1-12 com a devida ênfase e sentimento.", temPerguntas: false, perguntas: [] },
+            { id: 4, secao: "MINISTERIO", titulo: "4. Iniciando conversas (De casa em casa)", duracao: "3 min", texto: "Demonstração usando a brochura Lições do Ministério (lmd lição 1).", temPerguntas: false, perguntas: [] },
+            { id: 5, secao: "MINISTERIO", titulo: "5. Iniciando conversas (Testemunho informal)", duracao: "2 min", texto: "Demonstração com aplicação prática de perguntas de introdução amigáveis.", temPerguntas: false, perguntas: [] },
+            { id: 6, secao: "MINISTERIO", titulo: "6. Iniciando conversas (Testemunho público)", duracao: "2 min", texto: "Demonstração no carrinho ou local público.", temPerguntas: false, perguntas: [] },
+            { id: 7, secao: "MINISTERIO", titulo: "7. Discurso de Estudante", duracao: "4 min", texto: "Discurso explicativo baseado no tema designado da brochura de ensino.", temPerguntas: false, perguntas: [] },
+            { id: 8, secao: "VIDACRISTA", titulo: "8. ‘Partilhe com outros o que você tem’", duracao: "15 min", texto: "Consideração prática com a assistência sobre generosidade cristã e prontidão em ajudar.", temPerguntas: true, perguntas: [
+              "Por que seria bom para os cristãos daquela época aplicar os conselhos de Paulo sobre generosidade?",
+              "Pensando no que vai acontecer em breve, por que é importante aprender desde já a compartilhar o que temos?",
+              "O que podemos aprender do exemplo de generosidade dos macedônios?",
+              "O que mais podemos compartilhar com outros além de coisas materiais?",
+              "Que exemplo Jeová nos dá sobre dividir as coisas com outros?"
+            ]},
+            { id: 9, secao: "VIDACRISTA", titulo: "9. Estudo bíblico de congregação", duracao: "30 min", texto: "Estudo do livro oficial com consideração parágrafo a parágrafo e perguntas para a assistência.", temPerguntas: true, perguntas: ["Como as ações dos personagens desta história revelam coragem sob oposição?"] }
           ]
         },
         fimSemana: {
           titulo: "Um pedido feito com base no amor",
           tema: "Artigo de Estudo de A Sentinela • Filêmon 8, 9, 17",
-          duracao: "60 min",
-          chips: ["Comentário no Parágrafo 1", "Comentário no Parágrafo 2", "Explicar Filêmon 8, 9", "Como os anciãos contribuem para a paz", "Quadro de Recapitulação"],
+          chips: ["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Explicar Filêmon 8, 9", "Como os anciãos promovem a paz", "Resumo final"],
           paragrafos: [
-            { num: "1", pergunta: "1. Que responsabilidade todos nós temos na congregação cristã?", respostaSugerida: "Todos nós temos a responsabilidade de promover a paz, a união e o amor genuíno entre os irmãos, tratando uns aos outros com ternura e empatia." },
-            { num: "2", pergunta: "2. O que aconteceu entre Filêmon e Onésimo? (Filêmon 8, 9, 17)", respostaSugerida: "Onésimo, um escravo de Filêmon, fugiu e depois se tornou cristão com a ajuda de Paulo. Em vez de ordenar com autoridade apostólica, Paulo apelou para o amor cristão de Filêmon para que recebesse Onésimo de volta como um querido irmão." },
-            { num: "3", pergunta: "3. O que pode ter deixado Paulo preocupado ao enviar Onésimo de volta?", respostaSugerida: "A incerteza sobre como Filêmon reagiria emocionalmente, mas Paulo confiou na espiritualidade e na bondade do seu companheiro de fé." },
-            { num: "4, 5", pergunta: "4-5. O que os anciãos podem fazer para contribuir com a paz na congregação?", respostaSugerida: "Podem apelar para o amor em vez de impor regras humanas estritas, escutando com empatia e agindo como pastores pacificadores." },
-            { num: "6", pergunta: "6. Por que é importante dar elogios sinceros aos irmãos?", respostaSugerida: "Elogios sinceros fortalecem a autoestima espiritual, confirmam que o esforço do irmão é valorizado e motivam a continuar perseverando com alegria." }
+            { num: "1", texto: "Todos nós temos a responsabilidade de promover a união e a paz na congregação cristã. Quando tratamos os irmãos com empatia e carinho, imitamos o exemplo supremo de amor demonstrado por Jesus e Jeová.", pergunta: "1. Que responsabilidade todos nós temos na congregação cristã?", respostaSugerida: "Temos a responsabilidade de promover a paz, a união e o amor genuíno entre os irmãos, tratando uns aos outros com ternura e empatia." },
+            { num: "2", texto: "Onésimo, um escravo que fugiu de Filêmon, encontrou Paulo na prisão e tornou-se cristão. Em sua carta, Paulo não usou de autoridade apostólica para ordenar, mas fez um pedido afetuoso para que Filêmon o recebesse de volta como um irmão amado.", pergunta: "2. O que aconteceu entre Filêmon e Onésimo? (Filêmon 8, 9, 17)", respostaSugerida: "Onésimo fugiu e se tornou cristão. Paulo apelou com amor a Filêmon para que o recebesse de volta não mais como escravo, mas como um querido irmão espiritual." },
+            { num: "3", texto: "Ao enviar Onésimo de volta, Paulo sabia que sentimentos de mágoa poderiam existir. Mesmo assim, ele confiou que Filêmon agiria motivado pelo amor cristão e perdoaria sinceramente.", pergunta: "3. O que pode ter deixado Paulo preocupado ao enviar Onésimo de volta?", respostaSugerida: "A incerteza sobre como Filêmon reagiria emocionalmente, mas Paulo confiou na espiritualidade e na bondade do seu companheiro de fé." },
+            { num: "4, 5", texto: "Os anciãos desempenham um papel vital na preservação da tranquilidade congregacional. Em vez de criarem regras estritas ou agirem com dureza, eles apelam ao coração dos irmãos usando a Bíblia com ternura.", pergunta: "4-5. O que os anciãos podem fazer para contribuir com a paz na congregação?", respostaSugerida: "Podem apelar para o amor em vez de impor regras estritas, escutando com empatia e agindo como pastores pacificadores." },
+            { num: "6", texto: "Um elogio sincero tem o poder de renovar as forças de quem está desanimado. Quando destacamos as boas qualidades e os esforços dos irmãos, fortalecemos os laços que unem a congregação.", pergunta: "6. Por que é importante dar elogios sinceros aos irmãos?", respostaSugerida: "Elogios sinceros fortalecem a autoestima espiritual, confirmam que o esforço do irmão é valorizado e motivam a continuar perseverando com alegria." }
           ]
         }
       },
       44: {
-        status: "Próxima Semana",
         meioSemana: {
           titulo: "26 DE OUTUBRO–1.º DE NOVEMBRO",
           tema: "JEREMIAS 47-48",
-          duracao: "1h 45m",
           partes: [
-            { id: 1, titulo: "1. Jeová é um Juiz justo e misericordioso", duracao: "10 min", resumo: "O julgamento contra Moabe e os filisteus mostra que o orgulho precede a queda, mas a misericórdia de Deus alcança os humildes (Jeremias 47 e 48).", temPerguntas: false, perguntas: [] },
-            { id: 2, titulo: "2. Joias espirituais", duracao: "10 min", resumo: "Pesquisa bíblica em Jeremias 47 e 48 para extrair lições sobre justiça e confiança nas promessas divinas.", temPerguntas: true, perguntas: ["Que joia espiritual sobre a justiça de Jeová você encontrou na leitura desta semana?"] },
-            { id: 3, titulo: "3. Leitura da Bíblia", duracao: "4 min", resumo: "Leitura em voz alta de Jeremias 48:1-13 com pronúncia correta dos nomes geográficos.", temPerguntas: false, perguntas: [] },
-            { id: 4, titulo: "4. Iniciando conversas", duracao: "3 min", resumo: "Demonstração com pergunta de introdução sobre a justiça no mundo.", temPerguntas: false, perguntas: [] },
-            { id: 5, titulo: "5. Cultivando o interesse", duracao: "4 min", resumo: "Revisita explicando por que podemos confiar que o mal acabará.", temPerguntas: false, perguntas: [] },
-            { id: 6, titulo: "6. Fazendo discípulos", duracao: "5 min", resumo: "Estudo bíblico usando a brochura Seja Feliz para Sempre.", temPerguntas: false, perguntas: [] },
-            { id: 7, titulo: "7. Necessidades locais", duracao: "15 min", resumo: "Consideração prática baseada nas circunstâncias da congregação local.", temPerguntas: true, perguntas: ["Como podemos aplicar esses princípios na nossa rotina congregacional?"] },
-            { id: 8, titulo: "8. Estudo bíblico de congregação", duracao: "30 min", resumo: "Estudo parágrafo a parágrafo do livro oficial.", temPerguntas: true, perguntas: ["Qual a principal lição desta história para mantermos a integridade?"] }
+            { id: 1, secao: "TESOUROS", titulo: "1. Jeová é um Juiz justo e misericordioso", duracao: "10 min", texto: "O julgamento contra Moabe e os filisteus mostra que o orgulho precede a queda, mas a misericórdia de Deus alcança os humildes (Jeremias 47 e 48).", temPerguntas: false, perguntas: [] },
+            { id: 2, secao: "TESOUROS", titulo: "2. Joias espirituais", duracao: "10 min", texto: "Pesquisa bíblica em Jeremias 47 e 48 para extrair lições sobre justiça e confiança nas promessas divinas.", temPerguntas: true, perguntas: ["Que joia espiritual sobre a justiça de Jeová você encontrou na leitura desta semana?"] },
+            { id: 3, secao: "TESOUROS", titulo: "3. Leitura da Bíblia", duracao: "4 min", texto: "Leitura em voz alta de Jeremias 48:1-13.", temPerguntas: false, perguntas: [] },
+            { id: 4, secao: "MINISTERIO", titulo: "4. Iniciando conversas", duracao: "3 min", texto: "Demonstração prática.", temPerguntas: false, perguntas: [] },
+            { id: 5, secao: "MINISTERIO", titulo: "5. Cultivando o interesse", duracao: "4 min", texto: "Revisita.", temPerguntas: false, perguntas: [] },
+            { id: 6, secao: "MINISTERIO", titulo: "6. Fazendo discípulos", duracao: "5 min", texto: "Estudo Bíblico.", temPerguntas: false, perguntas: [] },
+            { id: 7, secao: "VIDACRISTA", titulo: "7. Necessidades locais", duracao: "15 min", texto: "Consideração prática para a congregação.", temPerguntas: true, perguntas: ["Como podemos aplicar esses conselhos na rotina diária?"] },
+            { id: 8, secao: "VIDACRISTA", titulo: "8. Estudo bíblico de congregação", duracao: "30 min", texto: "Estudo do livro oficial.", temPerguntas: true, perguntas: ["Qual a lição principal de integridade do relato?"] }
           ]
         },
         fimSemana: {
           titulo: "Dê valor ao ‘privilégio de prestar destemidamente serviço sagrado’",
           tema: "Artigo de Estudo de A Sentinela • Lucas 1:74",
-          duracao: "60 min",
-          chips: ["Comentário Parágrafo 1", "O que significa serviço sagrado?", "Como vencer o medo?", "Aplicação prática"],
+          chips: ["Comentário Parágrafo 1", "O que é serviço sagrado?", "Vencer o medo no ministério"],
           paragrafos: [
-            { num: "1", pergunta: "1. Por que prestar serviço sagrado é um privilégio de valor inestimável?", respostaSugerida: "Porque nos permite colaborar diretamente com o Soberano do Universo e expressar nossa gratidão por seu imenso amor e redenção." },
-            { num: "2", pergunta: "2. Como Zacarias profetizou sobre o serviço destemido em Lucas 1:74, 75?", respostaSugerida: "Zacarias destacou que o resgate nos livraria de inimigos espirituais para servirmos a Jeová sem medo, com lealdade e justiça todos os dias." },
-            { num: "3", pergunta: "3. Que obstáculos podem testar nosso destemor no ministério?", respostaSugerida: "A oposição familiar, o medo do ridículo e a apatia das pessoas podem nos intimidar se não orarmos pedindo espírito santo e coragem." },
-            { num: "4", pergunta: "4. Como o exemplo dos apóstolos em Atos nos encoraja a não recuar?", respostaSugerida: "Mesmo diante de ameaças e prisões, eles responderam com firmeza que 'temos de obedecer a Deus como governante em primeiro lugar'." }
+            { num: "1", texto: "Servir a Deus é uma honra sem igual. Quando participamos na pregação, expressamos nosso apreço pelo resgate.", pergunta: "1. Por que prestar serviço sagrado é um privilégio de valor inestimável?", respostaSugerida: "Porque nos permite colaborar diretamente com o Criador e expressar nossa profunda gratidão pela salvação." }
           ]
         }
       },
       45: {
-        status: "Em 2 Semanas (Futura)",
         meioSemana: {
           titulo: "2-8 DE NOVEMBRO",
           tema: "JEREMIAS 49-50",
-          duracao: "1h 45m",
           partes: [
-            { id: 1, titulo: "1. Ajude outros a se beneficiarem do amor de Jeová", duracao: "10 min", resumo: "Profecias sobre Amom, Edom e Babilônia e como a fidelidade a Jeová é o único refúgio seguro.", temPerguntas: false, perguntas: [] },
-            { id: 2, titulo: "2. Joias espirituais", duracao: "10 min", resumo: "Pesquisa bíblica em Jeremias 49 e 50.", temPerguntas: true, perguntas: ["Que joias você encontrou sobre o cumprimento infalível das profecias de Deus?"] },
-            { id: 3, titulo: "3. Leitura da Bíblia", duracao: "4 min", resumo: "Jeremias 50:1-10.", temPerguntas: false, perguntas: [] },
-            { id: 4, titulo: "4. Iniciando conversas", duracao: "3 min", resumo: "Demonstração prática.", temPerguntas: false, perguntas: [] },
-            { id: 5, titulo: "5. Cultivando o interesse", duracao: "4 min", resumo: "Revisita.", temPerguntas: false, perguntas: [] },
-            { id: 6, titulo: "6. Fazendo discípulos", duracao: "5 min", resumo: "Estudo Bíblico.", temPerguntas: false, perguntas: [] },
-            { id: 7, titulo: "7. Nunca se Esqueça do Que Jeová Fez por Você", duracao: "15 min", resumo: "Consideração com a congregação.", temPerguntas: true, perguntas: ["Como a meditação diária nos livramentos de Deus protege nosso coração?"] },
-            { id: 8, titulo: "8. Estudo bíblico de congregação", duracao: "30 min", resumo: "Estudo do livro da história bíblica.", temPerguntas: true, perguntas: ["O que aprendemos com a perseverança deste relato?"] }
+            { id: 1, secao: "TESOUROS", titulo: "1. Ajude outros a se beneficiarem do amor de Jeová", duracao: "10 min", texto: "Profecias sobre Amom, Edom e Babilônia.", temPerguntas: false, perguntas: [] },
+            { id: 2, secao: "TESOUROS", titulo: "2. Joias espirituais", duracao: "10 min", texto: "Pesquisa bíblica em Jeremias 49 e 50.", temPerguntas: true, perguntas: ["Que joias você encontrou sobre o cumprimento infalível das profecias de Deus?"] },
+            { id: 3, secao: "TESOUROS", titulo: "3. Leitura da Bíblia", duracao: "4 min", texto: "Jeremias 50:1-10.", temPerguntas: false, perguntas: [] },
+            { id: 4, secao: "MINISTERIO", titulo: "4. Iniciando conversas", duracao: "3 min", texto: "Demonstração.", temPerguntas: false, perguntas: [] },
+            { id: 5, secao: "MINISTERIO", titulo: "5. Cultivando o interesse", duracao: "4 min", texto: "Revisita.", temPerguntas: false, perguntas: [] },
+            { id: 6, secao: "MINISTERIO", titulo: "6. Fazendo discípulos", duracao: "5 min", texto: "Estudo Bíblico.", temPerguntas: false, perguntas: [] },
+            { id: 7, secao: "VIDACRISTA", titulo: "7. Nunca se Esqueça do Que Jeová Fez por Você", duracao: "15 min", texto: "Consideração prática.", temPerguntas: true, perguntas: ["Como a meditação diária nos livramentos divinos nos protege?"] },
+            { id: 8, secao: "VIDACRISTA", titulo: "8. Estudo bíblico de congregação", duracao: "30 min", texto: "História semanal.", temPerguntas: true, perguntas: ["O que aprendemos com a perseverança deste relato?"] }
           ]
         },
         fimSemana: {
           titulo: "Confie em Jeová e seja protegido",
           tema: "Artigo de Estudo de A Sentinela • Salmo 91:2",
-          duracao: "60 min",
-          chips: ["Comentário Parágrafo 1", "O que é o abrigo do Altíssimo?", "Segurança espiritual", "Quadro de Recapitulação"],
+          chips: ["Comentário Parágrafo 1", "O que é o abrigo do Altíssimo?", "Segurança espiritual"],
           paragrafos: [
-            { num: "1", pergunta: "1. Por que podemos nos sentir completamente seguros sob o abrigo de Jeová?", respostaSugerida: "Porque nenhum dano espiritual permanente pode atingir aqueles que fazem de Jeová sua morada e refúgio seguro." },
-            { num: "2", pergunta: "2. Como o Salmo 91 ilustra a proteção de Deus?", respostaSugerida: "Ilustra como uma ave que abriga seus filhotes sob as asas e como uma fortaleza inexpugnável." },
-            { num: "3", pergunta: "3. Que atitudes mostram que estamos confiando ativamente em Deus hoje?", respostaSugerida: "Buscar a orientação bíblica antes de agir e não permitir que a ansiedade material controle nossas escolhas." }
+            { num: "1", texto: "Nenhum mal espiritual pode atingir quem busca refúgio sob as asas protetoras de Jeová.", pergunta: "1. Por que podemos nos sentir completamente seguros sob o abrigo de Jeová?", respostaSugerida: "Porque Deus é uma fortaleza inabalável para todos os que nele confiam de todo o coração." }
           ]
         }
       }
@@ -269,47 +314,28 @@
 
     let semanaAtiva = 43;
     let modoAtual = "meio_semana";
-    let parteAtivaMeio = 1;
+
+    const coresSecao = {
+      TESOUROS: { border: "border-[#596b7a]", text: "text-[#596b7a]", label: "TESOUROS DA PALAVRA DE DEUS" },
+      MINISTERIO: { border: "border-[#c57e00]", text: "text-[#c57e00]", label: "FAÇA SEU MELHOR NO MINISTÉRIO" },
+      VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
+    };
 
     function selecionarSemana(num) {
       semanaAtiva = parseInt(num);
       document.getElementById('seletor-semana').value = semanaAtiva;
-      
-      const dadosSemana = bancoSemanasJW[semanaAtiva];
-      document.getElementById('badge-status-semana').innerText = `${dadosSemana.status} (Semana ${semanaAtiva})`;
-      
       if (modoAtual === 'meio_semana') {
         renderizarMeioSemana();
       } else {
         renderizarSentinela();
       }
-
-      adicionarMensagemChat("gemini", `Semana alterada para a **Semana ${semanaAtiva} (${dadosSemana.meioSemana.titulo})**. Estou pronto para ajudar na sua preparação antecipada!`);
     }
 
     function mudarSemanaRelativa(delta) {
-      const novaSemana = semanaAtiva + delta;
-      if (bancoSemanasJW[novaSemana]) {
-        selecionarSemana(novaSemana);
-      } else {
-        alert("Não há mais semanas em cache além deste intervalo.");
+      const nova = semanaAtiva + delta;
+      if (bancoSemanasJW[nova]) {
+        selecionarSemana(nova);
       }
-    }
-
-    function toggleSidebarMobile() {
-      document.getElementById('sidebar-container').classList.toggle('-translate-x-full');
-      document.getElementById('drawer-backdrop').classList.toggle('hidden');
-    }
-
-    function toggleChatMobile() {
-      document.getElementById('chat-container').classList.toggle('translate-x-full');
-      document.getElementById('drawer-backdrop').classList.toggle('hidden');
-    }
-
-    function fecharGavetasMobile() {
-      document.getElementById('sidebar-container').classList.add('-translate-x-full');
-      document.getElementById('chat-container').classList.add('translate-x-full');
-      document.getElementById('drawer-backdrop').classList.add('hidden');
     }
 
     function alternarModoReuniao(modo) {
@@ -318,239 +344,216 @@
       const tabSent = document.getElementById('tab-sentinela');
 
       if (modo === 'meio_semana') {
-        tabMeio.className = "px-2.5 py-1 rounded-md text-xs font-bold transition-all bg-[var(--card,#ffffff)] text-indigo-700 shadow-xs";
-        tabSent.className = "px-2.5 py-1 rounded-md text-xs font-bold transition-all text-[var(--muted-foreground)]";
+        tabMeio.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-white text-white transition";
+        tabSent.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition";
         renderizarMeioSemana();
       } else {
-        tabSent.className = "px-2.5 py-1 rounded-md text-xs font-bold transition-all bg-[var(--card,#ffffff)] text-indigo-700 shadow-xs";
-        tabMeio.className = "px-2.5 py-1 rounded-md text-xs font-bold transition-all text-[var(--muted-foreground)]";
+        tabSent.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-white text-white transition";
+        tabMeio.className = "flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-white/70 hover:text-white transition";
         renderizarSentinela();
       }
-      fecharGavetasMobile();
+      fecharPaineisMobile();
     }
 
     function renderizarMeioSemana() {
       const dados = bancoSemanasJW[semanaAtiva].meioSemana;
       
-      const sidebar = document.getElementById('sidebar-container');
-      sidebar.innerHTML = `
-        <div class="flex items-center justify-between mb-3 px-1">
-          <span class="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Partes (${dados.partes.length}) • Sem. ${semanaAtiva}</span>
-          <button onclick="fecharGavetasMobile()" class="lg:hidden text-xs text-[var(--muted-foreground)] p-1">✕</button>
-        </div>
-        <div class="space-y-1">
-          ${dados.partes.map(p => `
-            <button onclick="selecionarParteMeio(${p.id})" id="btn-meio-${p.id}" class="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between hover:bg-[var(--secondary,#f1f5f9)] transition">
-              <span class="truncate font-medium">${p.titulo}</span>
-              <span class="text-[11px] text-[var(--muted-foreground)] shrink-0 ml-1 font-bold">${p.duracao}</span>
-            </button>
-          `).join('')}
-        </div>
-      `;
+      document.getElementById('badge-tipo-pub').innerText = "Apostila da Reunião";
+      document.getElementById('titulo-materia').innerText = dados.titulo;
+      document.getElementById('subtitulo-materia').innerText = dados.tema;
 
-      document.getElementById('badge-principal').innerText = "Vida e Ministério Cristãos";
-      document.getElementById('titulo-principal').innerText = dados.titulo;
-      document.getElementById('subtitulo-principal').innerText = `Tema: ${dados.tema} • Oficial JW.ORG`;
-      document.getElementById('duracao-principal').innerText = dados.duracao;
+      const sidebar = document.getElementById('lista-partes-sidebar');
+      sidebar.innerHTML = dados.partes.map(p => `
+        <a href="#parte-${p.id}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+          <span class="font-bold text-[#4a3b69]">${p.id}.</span> ${p.titulo.split('(')[0].replace(/^\d+\.\s*/, '')}
+          <span class="text-[11px] text-[#6c757d] block font-semibold">${p.duracao}</span>
+        </a>
+      `).join('');
 
-      selecionarParteMeio(1);
-    }
+      const leitor = document.getElementById('conteudo-leitor');
+      let html = '';
+      let ultimaSecao = '';
 
-    function selecionarParteMeio(id) {
-      parteAtivaMeio = id;
-      document.querySelectorAll('#sidebar-container button').forEach(b => b.classList.remove('bg-indigo-50', 'font-bold', 'border', 'border-indigo-200'));
-      const ativo = document.getElementById('btn-meio-' + id);
-      if (ativo) ativo.classList.add('bg-indigo-50', 'font-bold', 'border', 'border-indigo-200');
-
-      const parte = bancoSemanasJW[semanaAtiva].meioSemana.partes.find(p => p.id === id) || bancoSemanasJW[semanaAtiva].meioSemana.partes[0];
-      const corpo = document.getElementById('corpo-conteudo');
-
-      corpo.innerHTML = `
-        <div class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-indigo-600 uppercase">PARTE ${parte.id} • SEMANA ${semanaAtiva}</span>
-            <span class="text-xs font-bold text-[var(--muted-foreground)]">${parte.duracao}</span>
-          </div>
-
-          <h3 class="text-base font-bold text-[var(--foreground)]">${parte.titulo}</h3>
-          
-          <p class="text-xs sm:text-sm leading-relaxed text-[var(--foreground)] bg-[var(--background)] p-3.5 rounded-xl border border-[var(--border)]">
-            ${parte.resumo}
-          </p>
-
-          ${parte.perguntas && parte.perguntas.length > 0 ? `
-            <div class="space-y-3 pt-2">
-              <span class="text-xs font-bold text-[var(--muted-foreground)]">Perguntas Oficiais da Parte:</span>
-              ${parte.perguntas.map((q, qIdx) => `
-                <div class="p-3 bg-[var(--background)] rounded-xl border border-[var(--border)] space-y-2">
-                  <p class="text-xs font-bold text-[var(--foreground)]">❓ ${q}</p>
-                  <button onclick="responderPerguntaGenerica('${q.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition flex items-center gap-1.5 shadow-xs">
-                    ⚡ Responder com Gemini
-                  </button>
-                </div>
-              `).join('')}
+      dados.partes.forEach(p => {
+        if (p.secao !== ultimaSecao) {
+          ultimaSecao = p.secao;
+          const conf = coresSecao[p.secao];
+          html += `
+            <div class="mt-8 mb-4 border-b-2 ${conf.border} pb-1 flex items-center justify-between">
+              <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider ${conf.text}">
+                ${conf.label}
+              </h2>
             </div>
-          ` : `
-            <div class="pt-2">
-              <button onclick="acionarIA('Ajude-me a estruturar e preparar a ' + '${parte.titulo.replace(/'/g, "\\'")}' + ' para a semana ' + '${semanaAtiva}' + ' com ideias e aplicação prática.')" class="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center justify-center gap-1.5">
-                ⚡ Preparar ${parte.titulo.split(' ')[0]} com Gemini
-              </button>
+          `;
+        }
+
+        html += `
+          <div id="parte-${p.id}" class="bg-white rounded-xl border border-[#e9ecef] p-4 sm:p-5 shadow-2xs mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-[#212529]">${p.titulo}</h3>
+              <span class="text-xs font-bold text-[#6c757d] bg-[#f1f3f5] px-2 py-0.5 rounded">${p.duracao}</span>
             </div>
-          `}
+            
+            <p class="text-sm leading-relaxed text-[#495057] mb-3">${p.texto}</p>
 
-          <div>
-            <label class="block text-xs font-bold text-[var(--muted-foreground)] mb-1">Seu comentário / anotações preparadas:</label>
-            <textarea rows="3" placeholder="Digite seu comentário final para esta parte..." class="w-full text-xs p-3 rounded-xl border border-[var(--border)] bg-transparent focus:ring-1 focus:ring-indigo-500"></textarea>
+            ${p.perguntas && p.perguntas.length > 0 ? `
+              <div class="bg-[#f8f9fa] rounded-lg border border-[#e9ecef] p-3.5 space-y-3 mt-3">
+                <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
+                ${p.perguntas.map((q, idx) => `
+                  <div class="border-l-3 border-[#4a3b69] pl-3 py-0.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
+                    <button onclick="responderComIA('${q.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                      <span class="text-amber-300">✦</span> Comentar com IA
+                    </button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : `
+              <div class="pt-2">
+                <button onclick="responderComIA('Como estruturar a ${p.titulo.replace(/'/g, "\\'")} de forma clara e objetiva para a congregação?')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
+                  <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
+                </button>
+              </div>
+            `}
+
+            <div class="mt-3">
+              <textarea rows="2" placeholder="Suas anotações pessoais para esta parte..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      });
 
-      atualizarChips(["Sugerir comentário de 30s", "Como explicar com minhas palavras?", "Aplicação prática para hoje"]);
-      document.getElementById('chat-subtitulo').innerText = `Contexto: Semana ${semanaAtiva} • Parte ${parte.id}`;
-      fecharGavetasMobile();
+      leitor.innerHTML = html;
+      atualizarChips(["Sugerir comentário em 30 segundos", "Como explicar com minhas próprias palavras?", "Aplicação prática para hoje"]);
+      document.getElementById('study-pane-subtitle').innerText = `Semana ${semanaAtiva} • Vida e Ministério`;
     }
 
     function renderizarSentinela() {
       const dados = bancoSemanasJW[semanaAtiva].fimSemana;
       
-      const sidebar = document.getElementById('sidebar-container');
-      sidebar.innerHTML = `
-        <div class="flex items-center justify-between mb-3 px-1">
-          <span class="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Parágrafos (${dados.paragrafos.length}) • Sem. ${semanaAtiva}</span>
-          <button onclick="fecharGavetasMobile()" class="lg:hidden text-xs text-[var(--muted-foreground)] p-1">✕</button>
-        </div>
-        <div class="space-y-1">
-          ${dados.paragrafos.map((p, idx) => `
-            <a href="#paragrafo-${idx}" onclick="fecharGavetasMobile()" class="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between hover:bg-[var(--secondary,#f1f5f9)] transition">
-              <span class="font-semibold text-xs">Parágrafo ${p.num}</span>
-              <span class="text-[11px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">Pergunta</span>
-            </a>
-          `).join('')}
-        </div>
-      `;
+      document.getElementById('badge-tipo-pub').innerText = "A Sentinela • Edição de Estudo";
+      document.getElementById('titulo-materia').innerText = dados.titulo;
+      document.getElementById('subtitulo-materia').innerText = dados.tema;
 
-      document.getElementById('badge-principal').innerText = "Estudo de A Sentinela";
-      document.getElementById('titulo-principal').innerText = dados.titulo;
-      document.getElementById('subtitulo-principal').innerText = `${dados.tema} • Oficial JW.ORG`;
-      document.getElementById('duracao-principal').innerText = dados.duracao;
+      const sidebar = document.getElementById('lista-partes-sidebar');
+      sidebar.innerHTML = dados.paragrafos.map(p => `
+        <a href="#p-${p.num}" onclick="fecharPaineisMobile()" class="block px-3 py-2 rounded-lg text-xs hover:bg-[#f1f3f5] transition">
+          <span class="font-bold text-[#4a3b69]">Parágrafo ${p.num}</span>
+          <span class="text-[11px] text-[#6c757d] block truncate">${p.pergunta.substring(0, 35)}...</span>
+        </a>
+      `).join('');
 
-      const corpo = document.getElementById('corpo-conteudo');
-      corpo.innerHTML = dados.paragrafos.map((p, idx) => `
-        <div id="paragrafo-${idx}" class="bg-[var(--card,#ffffff)] border border-[var(--border,#e2e8f0)] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
-          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">
-            Parágrafo ${p.num} • Semana ${semanaAtiva}
-          </span>
+      const leitor = document.getElementById('conteudo-leitor');
+      leitor.innerHTML = dados.paragrafos.map(p => `
+        <div id="p-${p.num}" class="mb-6 bg-white rounded-xl border border-[#e9ecef] p-5 shadow-2xs">
+          <p class="text-base leading-relaxed text-[#212529]">
+            <strong class="font-bold text-[#4a3b69] mr-1">${p.num}.</strong> ${p.texto}
+          </p>
 
-          <div class="border-l-3 border-indigo-500 pl-3 py-0.5">
-            <p class="text-xs sm:text-sm font-bold text-[var(--foreground)]">${p.pergunta}</p>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2 pt-1">
-            <button onclick="responderPerguntaSentinela('${p.num}', '${p.respostaSugerida.replace(/'/g, "\\'")}')" class="w-full sm:w-auto px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition flex items-center justify-center gap-1.5 shadow-xs">
-              ⚡ Responder com Gemini
-            </button>
-            <button onclick="acionarIA('Como responder ao parágrafo ' + '${p.num}' + ' com uma ilustração bíblica do cotidiano?')" class="px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--secondary)]">
-              💡 Pedir Ilustração
+          <div class="mt-4 p-3.5 rounded-lg bg-[#f8f9fa] border-l-4 border-[#4a3b69] border border-y-[#e9ecef] border-r-[#e9ecef] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p class="text-xs sm:text-sm font-bold text-[#212529]">
+              ${p.pergunta}
+            </p>
+            <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${p.respostaSugerida ? p.respostaSugerida.replace(/'/g, "\\'") : ''}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto shadow-2xs">
+              <span class="text-amber-300">✦</span> Comentar com IA
             </button>
           </div>
 
-          <textarea rows="2" placeholder="Seu comentário preparado para o parágrafo ${p.num}..." class="w-full text-xs p-3 rounded-xl border border-[var(--border)] bg-transparent focus:ring-1 focus:ring-indigo-500"></textarea>
+          <div class="mt-3">
+            <textarea rows="2" placeholder="Seu comentário preparado para o parágrafo ${p.num}..." class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-transparent focus:ring-1 focus:ring-[#4a3b69] focus:outline-none"></textarea>
+          </div>
         </div>
       `).join('');
 
-      atualizarChips(dados.chips);
-      document.getElementById('chat-subtitulo').innerText = `Contexto: A Sentinela • Semana ${semanaAtiva}`;
-      fecharGavetasMobile();
+      atualizarChips(dados.chips || ["Comentário direto (30s)", "Com as próprias palavras", "Aplicação prática"]);
+      document.getElementById('study-pane-subtitle').innerText = `Semana ${semanaAtiva} • A Sentinela`;
     }
 
-    function responderPerguntaGenerica(pergunta) {
-      adicionarMensagemChat("usuario", `Gerar comentário objetivo para: ${pergunta}`);
-      setTimeout(() => {
-        adicionarMensagemChat("gemini", `💡 **Sugestão para responder em 30 segundos (Semana ${semanaAtiva}):**\n\n"Podemos comentar que a fidelidade e a generosidade nas provações agradam profundamente a Jeová. Quando colocamos os interesses do Reino em primeiro lugar, ele nos garante a força necessária para enfrentar qualquer desafio diário."`);
-      }, 400);
-
-      if (window.innerWidth < 1024) {
-        toggleChatMobile();
-      }
+    function toggleStudyPane() {
+      const pane = document.getElementById('study-pane');
+      const backdrop = document.getElementById('drawer-backdrop');
+      pane.classList.toggle('translate-x-full');
+      backdrop.classList.toggle('hidden');
     }
 
-    function responderPerguntaSentinela(paragrafo, resposta) {
-      adicionarMensagemChat("usuario", `Gerar comentário para o Parágrafo ${paragrafo} (Semana ${semanaAtiva})`);
-      setTimeout(() => {
-        adicionarMensagemChat("gemini", `💡 **Sugestão de Comentário (Parágrafo ${paragrafo}):**\n\n"${resposta}"\n\n*Dica de oratória:* Inicie dizendo *"Um ponto consolador neste parágrafo é..."* para soar bem natural.`);
-      }, 400);
+    function toggleMenuMobile() {
+      const menu = document.getElementById('sidebar-partes');
+      const backdrop = document.getElementById('drawer-backdrop');
+      menu.classList.toggle('-translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
 
-      if (window.innerWidth < 1024) {
-        toggleChatMobile();
+    function fecharPaineisMobile() {
+      document.getElementById('study-pane').classList.add('translate-x-full');
+      document.getElementById('sidebar-partes').classList.add('-translate-x-full');
+      document.getElementById('drawer-backdrop').classList.add('hidden');
+    }
+
+    function responderComIA(pergunta, respostaDireta = "") {
+      const pane = document.getElementById('study-pane');
+      if (pane.classList.contains('translate-x-full')) {
+        toggleStudyPane();
       }
+
+      adicionarMensagemEstudo("usuario", `Comentário para: ${pergunta}`);
+
+      setTimeout(() => {
+        const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, mostrando madureza espiritual.";
+        adicionarMensagemEstudo("ia", `💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar natural.</em></span>`);
+      }, 400);
     }
 
     function atualizarChips(chips) {
-      const container = document.getElementById('chips-sugestoes');
+      const container = document.getElementById('chips-estudo');
       container.innerHTML = '';
       chips.forEach(chip => {
         const btn = document.createElement('button');
-        btn.className = "px-2.5 py-1 rounded-full bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500 whitespace-nowrap transition text-xs shrink-0";
+        btn.className = "px-2.5 py-1 rounded-full bg-[#f1f3f5] border border-[#dee2e6] text-[#495057] hover:border-[#4a3b69] hover:text-[#4a3b69] whitespace-nowrap transition text-xs shrink-0 font-medium";
         btn.innerText = chip;
-        btn.onclick = () => acionarIA(chip);
+        btn.onclick = () => {
+          document.getElementById('input-estudo').value = chip;
+          enviarPerguntaEstudo();
+        };
         container.appendChild(btn);
       });
     }
 
-    function adicionarMensagemChat(remetente, texto) {
-      const container = document.getElementById('mensagens-chat');
-      const msg = document.createElement('div');
+    function adicionarMensagemEstudo(tipo, htmlTexto) {
+      const container = document.getElementById('mensagens-estudo');
+      const div = document.createElement('div');
 
-      if (remetente === "usuario") {
-        msg.className = "flex items-start justify-end gap-2";
-        msg.innerHTML = `
-          <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] text-xs leading-relaxed">
-            ${texto}
-          </div>
-          <div class="w-6 h-6 rounded-md bg-indigo-200 text-indigo-900 flex items-center justify-center font-bold text-xs shrink-0">👤</div>
-        `;
+      if (tipo === 'usuario') {
+        div.className = "bg-[#e9ecef] text-[#212529] p-3 rounded-xl ml-4 text-xs font-semibold";
+        div.innerHTML = htmlTexto;
       } else {
-        msg.className = "flex items-start gap-2";
-        msg.innerHTML = `
-          <div class="w-6 h-6 rounded-md bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">✦</div>
-          <div class="bg-[var(--background,#f1f5f9)] p-3 rounded-2xl rounded-tl-none border border-[var(--border,#e2e8f0)] text-[var(--foreground,#0f172a)] text-xs leading-relaxed max-w-[85%]">
-            ${texto.replace(/\n/g, '<br>')}
-          </div>
-        `;
+        div.className = "bg-white text-[#212529] p-3.5 rounded-xl border border-[#dee2e6] shadow-xs text-xs leading-relaxed";
+        div.innerHTML = `<div class="flex items-center gap-1.5 text-[#4a3b69] font-bold mb-1"><span>✦</span> Gemini Copilot</div>${htmlTexto}`;
       }
 
-      container.appendChild(msg);
+      container.appendChild(div);
       container.scrollTop = container.scrollHeight;
     }
 
-    function enviarPrompt() {
-      const input = document.getElementById('input-prompt');
+    function enviarPerguntaEstudo() {
+      const input = document.getElementById('input-estudo');
       const val = input.value.trim();
       if (!val) return;
-      
-      adicionarMensagemChat("usuario", val);
+
+      adicionarMensagemEstudo("usuario", val);
       input.value = "";
 
       setTimeout(() => {
-        adicionarMensagemChat("gemini", `Entendido! Analisando a matéria da **Semana ${semanaAtiva}**:\n\nUm comentário excelente deve conectar o texto bíblico com uma situação prática do dia a dia, destacando a confiança nas promessas divinas.`);
+        adicionarMensagemEstudo("ia", `Analisando com base na matéria de estudo da **Semana ${semanaAtiva}**:<br><br>Um ponto prático para destacar é conectar o ensinamento bíblico com uma atitude do dia a dia da congregação ou família, expressando gratidão pelo cuidado de Jeová.`);
       }, 500);
     }
 
-    function acionarIA(prompt) {
-      document.getElementById('input-prompt').value = prompt;
-      enviarPrompt();
-      if (window.innerWidth < 1024) {
-        toggleChatMobile();
-      }
-    }
-
     function limparChat() {
-      document.getElementById('mensagens-chat').innerHTML = '';
-      adicionarMensagemChat("gemini", `Conversa reiniciada para a **Semana ${semanaAtiva}**. Em que posso ajudar?`);
+      document.getElementById('mensagens-estudo').innerHTML = '';
+      adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
     }
 
     function salvarTudo() {
-      alert(`Anotações da Semana ${semanaAtiva} salvas com sucesso!`);
+      alert("Anotações salvas com sucesso!");
     }
 
     window.onload = () => {
