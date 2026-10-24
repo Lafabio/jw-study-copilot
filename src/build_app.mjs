@@ -75,8 +75,13 @@ const htmlTemplate = `<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Lado Direito: Ações (Painel de Estudo com IA & Salvar & Configurações) -->
+      <!-- Lado Direito: Ações (Perfil & Painel de Estudo com IA & Salvar & Configurações) -->
       <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button onclick="abrirModalPerfil()" title="Meu Perfil de Estudo" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
+          <span>👤</span>
+          <span id="txt-nome-perfil" class="max-w-[75px] sm:max-w-[110px] truncate">Lafabio</span>
+        </button>
+
         <button onclick="toggleStudyPane()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
           <span class="text-amber-300">✦</span>
           <span class="hidden sm:inline">Painel de Estudo (IA)</span>
@@ -239,15 +244,78 @@ const htmlTemplate = `<!DOCTYPE html>
       <span class="text-base">✦</span>
       <span>Estudo IA</span>
     </button>
-    <button onclick="salvarTudo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
-      <span class="text-base">💾</span>
-      <span>Salvar</span>
+    <button onclick="abrirModalPerfil()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+      <span class="text-base">👤</span>
+      <span>Perfil</span>
     </button>
     <button onclick="abrirModalConfig()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">⚙️</span>
       <span>Ajustes</span>
     </button>
   </nav>
+
+  <!-- ================= MODAL DE PERFIL DO USUÁRIO (SEPARAÇÃO DE ANOTAÇÕES) ================= -->
+  <div id="modal-perfil" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-[#dee2e6] overflow-hidden">
+      
+      <div class="bg-[#4a3b69] text-white px-5 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">👤</span>
+          <h3 class="font-bold text-sm">Meu Perfil de Estudo</h3>
+        </div>
+        <button onclick="fecharModalPerfil()" class="text-white/80 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <div class="p-3 bg-purple-50 text-purple-900 rounded-xl border border-purple-100 flex items-start gap-2.5">
+          <span class="text-base">🔒</span>
+          <p class="leading-relaxed">
+            Suas anotações, histórico e respostas geradas ficam salvas <strong>exclusivamente no seu perfil</strong>. Outros usuários no mesmo aparelho ou congregação não verão suas anotações.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Seu Nome / Apelido:</label>
+            <input id="cfg-perfil-nome" type="text" placeholder="Ex: Lafabio, Maria, etc." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-medium focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block font-semibold text-[#495057]">Código Pessoal de Sincronização:</label>
+              <button onclick="gerarNovoIdPerfil()" class="text-[10px] text-[#4a3b69] font-bold hover:underline">Gerar aleatório</button>
+            </div>
+            <input id="cfg-perfil-id" type="text" placeholder="Ex: lafabio-pessoal ou usr_123" class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
+            <p class="text-[10px] text-[#6c757d] mt-1">
+              💡 Use o mesmo código no seu celular e no seu computador/tablet para sincronizar todas as suas anotações entre aparelhos!
+            </p>
+          </div>
+        </div>
+
+        <!-- Perfis Rápidos Salvos neste aparelho -->
+        <div class="pt-2 border-t border-[#dee2e6]">
+          <span class="font-bold text-[#6c757d] uppercase tracking-wider block mb-2">Alternar Perfil neste aparelho:</span>
+          <div id="lista-perfis-salvos" class="space-y-1.5 max-h-32 overflow-y-auto"></div>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-[#dee2e6]">
+          <button onclick="criarNovoPerfil()" class="px-3 py-1.5 rounded-lg bg-[#f1f3f5] hover:bg-[#e9ecef] text-[#4a3b69] font-bold transition">
+            + Novo Perfil
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="fecharModalPerfil()" class="px-3 py-1.5 rounded-lg text-[#6c757d] hover:bg-gray-100 font-semibold transition">
+              Fechar
+            </button>
+            <button onclick="salvarPerfilUsuario()" class="px-4 py-1.5 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold transition">
+              Salvar Perfil
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- ================= MODAL DE CONFIGURAÇÕES (SUPABASE & GEMINI) ================= -->
   <div id="modal-config" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
@@ -363,6 +431,7 @@ const htmlTemplate = `<!DOCTYPE html>
 
     // Inicialização da Página
     window.addEventListener('DOMContentLoaded', async () => {
+      inicializarPerfilUsuario();
       popularSeletorSemanas();
       await sincronizarComSupabase();
       popularSeletorSemanas();
@@ -887,8 +956,130 @@ const htmlTemplate = `<!DOCTYPE html>
       adicionarMensagemEstudo("ia", "Painel de Estudo pronto. Toque em qualquer pergunta para gerar ideias de comentários!");
     }
 
-    // Salva notas no Supabase e no localStorage
+    // ==========================================
+    // SISTEMA DE PERFIS DE USUÁRIO (SEPARAÇÃO TOTAL)
+    // ==========================================
+    function obterPerfilAtivo() {
+      try {
+        const ativo = JSON.parse(localStorage.getItem('jw_perfil_ativo') || 'null');
+        if (ativo && ativo.id && ativo.nome) return ativo;
+      } catch (e) {}
+      const padrao = { id: 'lafabio-padrao', nome: 'Lafabio' };
+      localStorage.setItem('jw_perfil_ativo', JSON.stringify(padrao));
+      salvarNaListaPerfis(padrao);
+      return padrao;
+    }
+
+    function obterListaPerfis() {
+      try {
+        const lista = JSON.parse(localStorage.getItem('jw_lista_perfis') || '[]');
+        if (Array.isArray(lista) && lista.length > 0) return lista;
+      } catch (e) {}
+      const ativo = obterPerfilAtivo();
+      return [ativo];
+    }
+
+    function salvarNaListaPerfis(perfil) {
+      let lista = obterListaPerfis();
+      const idx = lista.findIndex(p => p.id === perfil.id);
+      if (idx >= 0) {
+        lista[idx] = perfil;
+      } else {
+        lista.push(perfil);
+      }
+      localStorage.setItem('jw_lista_perfis', JSON.stringify(lista));
+    }
+
+    function inicializarPerfilUsuario() {
+      const perfil = obterPerfilAtivo();
+      atualizarBadgePerfilUI(perfil);
+    }
+
+    function atualizarBadgePerfilUI(perfil) {
+      const txt = document.getElementById('txt-nome-perfil');
+      if (txt) txt.innerText = perfil.nome || 'Meu Perfil';
+    }
+
+    function abrirModalPerfil() {
+      const perfil = obterPerfilAtivo();
+      document.getElementById('cfg-perfil-nome').value = perfil.nome;
+      document.getElementById('cfg-perfil-id').value = perfil.id;
+      renderizarListaPerfisUI();
+      document.getElementById('modal-perfil').classList.remove('hidden');
+    }
+
+    function fecharModalPerfil() {
+      document.getElementById('modal-perfil').classList.add('hidden');
+    }
+
+    function gerarNovoIdPerfil() {
+      const novoId = 'usr-' + Math.random().toString(36).substring(2, 9);
+      document.getElementById('cfg-perfil-id').value = novoId;
+    }
+
+    function renderizarListaPerfisUI() {
+      const container = document.getElementById('lista-perfis-salvos');
+      const lista = obterListaPerfis();
+      const ativo = obterPerfilAtivo();
+
+      container.innerHTML = lista.map(p => \`
+        <div class="flex items-center justify-between p-2 rounded-lg \${p.id === ativo.id ? 'bg-purple-100 border border-purple-300 font-bold text-[#4a3b69]' : 'bg-[#f8f9fa] border border-[#e9ecef] hover:bg-gray-100 text-[#495057]'} transition">
+          <div class="flex items-center gap-2 cursor-pointer flex-1" onclick="trocarPerfilAtivo('\${p.id}')">
+            <span>\${p.id === ativo.id ? '✅' : '👤'}</span>
+            <div>
+              <p class="text-xs leading-none">\${p.nome}</p>
+              <p class="text-[10px] text-[#6c757d] font-mono mt-0.5">Código: \${p.id}</p>
+            </div>
+          </div>
+          \${p.id === ativo.id ? '<span class="text-[10px] font-bold text-purple-800 bg-purple-200/70 px-2 py-0.5 rounded">Ativo</span>' : \`<button onclick="trocarPerfilAtivo('\${p.id}')" class="px-2.5 py-1 rounded bg-[#4a3b69] text-white text-[10px] font-bold hover:bg-[#3b2e55]">Usar</button>\`}
+        </div>
+      \`).join('');
+    }
+
+    function salvarPerfilUsuario() {
+      const nome = document.getElementById('cfg-perfil-nome').value.trim() || 'Meu Perfil';
+      const id = document.getElementById('cfg-perfil-id').value.trim() || ('usr-' + Math.random().toString(36).substring(2, 9));
+
+      const novoPerfil = { id, nome };
+      localStorage.setItem('jw_perfil_ativo', JSON.stringify(novoPerfil));
+      salvarNaListaPerfis(novoPerfil);
+      atualizarBadgePerfilUI(novoPerfil);
+
+      fecharModalPerfil();
+      // Recarrega as notas do novo perfil
+      carregarNotasSalvas();
+      alert(\`✅ Perfil "\${nome}" ativo! Suas anotações agora são exclusivas e separadas.\`);
+    }
+
+    function trocarPerfilAtivo(id) {
+      const lista = obterListaPerfis();
+      const escolhido = lista.find(p => p.id === id);
+      if (escolhido) {
+        // Salva silenciosamente as notas do perfil que está saindo
+        salvarTudo(true);
+
+        localStorage.setItem('jw_perfil_ativo', JSON.stringify(escolhido));
+        atualizarBadgePerfilUI(escolhido);
+        fecharModalPerfil();
+
+        // Carrega as anotações do perfil selecionado
+        carregarNotasSalvas();
+        limparChat();
+        alert(\`👤 Perfil alternado para "\${escolhido.nome}". Anotações carregadas!\`);
+      }
+    }
+
+    function criarNovoPerfil() {
+      const nomeSugerido = 'Perfil ' + (obterListaPerfis().length + 1);
+      const novoId = 'usr-' + Math.random().toString(36).substring(2, 9);
+      document.getElementById('cfg-perfil-nome').value = nomeSugerido;
+      document.getElementById('cfg-perfil-id').value = novoId;
+      document.getElementById('cfg-perfil-nome').focus();
+    }
+
+    // Salva notas no Supabase e no localStorage com isolamento de perfil
     async function salvarTudo(silencioso = false) {
+      const perfil = obterPerfilAtivo();
       const textareas = document.querySelectorAll('textarea');
       const notas = {};
       textareas.forEach(t => {
@@ -897,10 +1088,10 @@ const htmlTemplate = `<!DOCTYPE html>
         }
       });
 
-      // 1. Salva localmente
-      localStorage.setItem(\`jw_notas_\${semanaAtiva}_\${modoAtual}\`, JSON.stringify(notas));
+      // 1. Salva localmente com chave do perfil
+      localStorage.setItem(\`jw_notas_\${perfil.id}_\${semanaAtiva}_\${modoAtual}\`, JSON.stringify(notas));
 
-      // 2. Salva na nuvem no Supabase
+      // 2. Salva na nuvem no Supabase com user_id do perfil
       try {
         const res = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/user_notes\`, {
           method: 'POST',
@@ -911,7 +1102,7 @@ const htmlTemplate = `<!DOCTYPE html>
             'Prefer': 'resolution=merge-duplicates'
           },
           body: JSON.stringify({
-            user_id: 'lafa-cloud-user',
+            user_id: perfil.id,
             year: 2026,
             week_number: semanaAtiva,
             meeting_type: modoAtual,
@@ -922,19 +1113,21 @@ const htmlTemplate = `<!DOCTYPE html>
         });
 
         if (res.ok) {
-          if (!silencioso) alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no Supabase Nuvem e no seu aparelho!\`);
+          if (!silencioso) alert(\`✅ Anotações do perfil "\${perfil.nome}" salvas no Supabase Nuvem e no seu aparelho!\`);
           return;
         }
       } catch (e) {
         console.warn('Erro ao salvar no Supabase:', e.message);
       }
 
-      if (!silencioso) alert(\`✅ Anotações da Semana \${semanaAtiva} salvas com sucesso no seu dispositivo!\`);
+      if (!silencioso) alert(\`✅ Anotações do perfil "\${perfil.nome}" salvas no seu dispositivo!\`);
     }
 
-    // Recupera notas salvas
+    // Recupera notas salvas do perfil ativo
     async function carregarNotasSalvas() {
-      // Limpa os textareas antes de carregar nova semana
+      const perfil = obterPerfilAtivo();
+
+      // Limpa os textareas antes de carregar nova semana ou novo perfil
       document.querySelectorAll('textarea').forEach(t => {
         t.value = '';
         t.style.height = 'auto';
@@ -942,10 +1135,10 @@ const htmlTemplate = `<!DOCTYPE html>
 
       let carregou = false;
 
-      // Tenta recuperar do Supabase
+      // Tenta recuperar do Supabase para este user_id
       try {
         const res = await fetch(
-          \`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.lafa-cloud-user&year=eq.2026&week_number=eq.\${semanaAtiva}&meeting_type=eq.\${modoAtual}&select=*\`,
+          \`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.\${encodeURIComponent(perfil.id)}&year=eq.2026&week_number=eq.\${semanaAtiva}&meeting_type=eq.\${modoAtual}&select=*\`,
           {
             headers: {
               'apikey': SUPABASE_CONFIG.key,
@@ -971,9 +1164,9 @@ const htmlTemplate = `<!DOCTYPE html>
         }
       } catch (e) {}
 
-      // Fallback: localStorage
+      // Fallback: localStorage isolado por perfil
       if (!carregou) {
-        const local = localStorage.getItem(\`jw_notas_\${semanaAtiva}_\${modoAtual}\`);
+        const local = localStorage.getItem(\`jw_notas_\${perfil.id}_\${semanaAtiva}_\${modoAtual}\`);
         if (local) {
           const notas = JSON.parse(local);
           Object.entries(notas).forEach(([id, texto]) => {
