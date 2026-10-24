@@ -105,21 +105,24 @@
       </button>
     </div>
 
-    <!-- Barra de Navegação de Semanas (Estilo JW Library) -->
-    <div class="bg-[#f1f3f5] text-[#212529] px-4 py-2 flex items-center justify-between text-xs font-semibold border-b border-[#dee2e6]">
-      <button onclick="mudarSemanaRelativa(-1)" class="p-1 px-2.5 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
-        ◀
-      </button>
-
-      <div class="flex items-center gap-2">
-        <span class="text-[#6c757d]">Semana:</span>
-        <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer">
-        </select>
+    <!-- Barra de Navegação de Semanas & Salto Rápido de Conteúdo -->
+    <div class="bg-[#f1f3f5] text-[#212529] px-3 sm:px-6 py-2 flex items-center justify-between text-xs font-semibold border-b border-[#dee2e6] gap-2">
+      <!-- Navegação de Semanas -->
+      <div class="flex items-center gap-1 min-w-0">
+        <button onclick="mudarSemanaRelativa(-1)" title="Semana anterior" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">◀</button>
+        <div class="flex items-center gap-1 min-w-0">
+          <span class="text-[#6c757d] hidden xs:inline">Semana:</span>
+          <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer max-w-[130px] sm:max-w-none truncate"></select>
+        </div>
+        <button onclick="mudarSemanaRelativa(1)" title="Próxima semana" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">▶</button>
       </div>
 
-      <button onclick="mudarSemanaRelativa(1)" class="p-1 px-2.5 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">
-        ▶
-      </button>
+      <!-- Salto Rápido / Índice de Parágrafos ou Partes -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <select id="seletor-salto-rapido" onchange="saltarParaSecao(this.value)" class="bg-white border border-[#dee2e6] rounded-md px-2 py-1 text-xs font-semibold text-[#4a3b69] focus:outline-none focus:ring-1 focus:ring-[#4a3b69] cursor-pointer shadow-2xs">
+          <option value="">📑 Ir para...</option>
+        </select>
+      </div>
     </div>
   </header>
 
@@ -129,7 +132,7 @@
     <div id="drawer-backdrop" onclick="fecharPaineisMobile()" class="hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"></div>
 
     <!-- ÁREA CENTRAL DO LEITOR (ESTILO JW LIBRARY) -->
-    <main class="flex-1 overflow-y-auto px-4 sm:px-10 py-6 max-w-3xl mx-auto w-full jw-article">
+    <main id="leitor-principal" class="flex-1 overflow-y-auto px-4 sm:px-10 py-6 max-w-3xl mx-auto w-full jw-article">
       
       <!-- Cabeçalho da Publicação / Artigo -->
       <div id="cabecalho-materia" class="mb-6 pb-4 border-b border-[#dee2e6]">
@@ -212,11 +215,16 @@
 
     </aside>
 
+    <!-- Botão Flutuante: Voltar ao Topo -->
+    <button id="btn-flutuante-topo" onclick="rolarParaTopo()" title="Voltar ao início" class="opacity-0 pointer-events-none fixed bottom-16 right-4 sm:bottom-6 sm:right-6 z-30 w-11 h-11 rounded-full bg-[#4a3b69] text-white shadow-xl flex items-center justify-center text-base font-bold hover:bg-[#3b2e55] active:scale-95 transition-all duration-300 border border-white/20">
+      ↑
+    </button>
+
   </div>
 
   <!-- ================= BARRA INFERIOR OFICIAL DO JW LIBRARY (MOBILE) ================= -->
   <nav class="lg:hidden bg-white border-t border-[#dee2e6] fixed bottom-0 inset-x-0 z-30 px-3 py-1.5 flex items-center justify-around text-[#6c757d]">
-    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+    <button onclick="rolarParaTopo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">🏠</span>
       <span>Início</span>
     </button>
@@ -1504,6 +1512,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
       inicializarPerfilUsuario();
       verificarDicaAssistente();
+      configurarMonitorScroll();
       popularSeletorSemanas();
       await sincronizarComSupabase();
       popularSeletorSemanas();
@@ -1551,6 +1560,51 @@
       }
     }
 
+    function rolarParaTopo(instant = false) {
+      const leitor = document.getElementById('leitor-principal') || document.querySelector('main');
+      if (leitor) {
+        leitor.scrollTo({ top: 0, behavior: instant ? 'auto' : 'smooth' });
+      }
+    }
+
+    function configurarMonitorScroll() {
+      const leitor = document.getElementById('leitor-principal') || document.querySelector('main');
+      const btnTopo = document.getElementById('btn-flutuante-topo');
+      if (!leitor || !btnTopo) return;
+
+      leitor.addEventListener('scroll', () => {
+        if (leitor.scrollTop > 300) {
+          btnTopo.classList.remove('opacity-0', 'pointer-events-none');
+          btnTopo.classList.add('opacity-100');
+        } else {
+          btnTopo.classList.add('opacity-0', 'pointer-events-none');
+          btnTopo.classList.remove('opacity-100');
+        }
+      });
+    }
+
+    function popularSaltoRapido(itens) {
+      const sel = document.getElementById('seletor-salto-rapido');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">📑 Ir para...</option>';
+      itens.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.innerText = item.label;
+        sel.appendChild(opt);
+      });
+    }
+
+    function saltarParaSecao(id) {
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const sel = document.getElementById('seletor-salto-rapido');
+      if (sel) sel.value = "";
+    }
+
     function selecionarSemana(num) {
       semanaAtiva = parseInt(num);
       document.getElementById('seletor-semana').value = semanaAtiva;
@@ -1560,6 +1614,7 @@
         renderizarSentinela();
       }
       carregarNotasSalvas();
+      rolarParaTopo(true);
     }
 
     function mudarSemanaRelativa(delta) {
@@ -1587,6 +1642,7 @@
       }
       carregarNotasSalvas();
       fecharPaineisMobile();
+      rolarParaTopo(true);
     }
 
     // ==========================================
@@ -1673,7 +1729,7 @@
                   <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-1.5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
-                      <button onclick="responderComIA('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-pergunta-${p.id}-${idx}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                      <button onclick="responderComIA('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
                         <span class="text-amber-300">✦</span> Comentar com IA
                       </button>
                     </div>
@@ -1683,7 +1739,7 @@
               </div>
             ` : `
               <div class="pt-2 flex items-center justify-between">
-                <button onclick="responderComIA('Como estruturar a ${p.titulo.replace(/'/g, "\\'")} de forma clara e objetiva para a congregação?', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-${p.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
+                <button onclick="responderComIA('Como estruturar a ${p.titulo.replace(/'/g, "\\'")} de forma clara e objetiva para a congregação?', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-parte-${p.id}', this)" class="px-3 py-1.5 rounded-lg text-xs font-bold text-[#4a3b69] bg-[#f1f3f5] hover:bg-[#e9ecef] transition flex items-center gap-1.5">
                   <span class="text-[#4a3b69]">✦</span> Preparar com Gemini
                 </button>
               </div>
@@ -1711,6 +1767,15 @@
       `;
 
       leitor.innerHTML = html;
+      const itensSalto = [
+        { label: "🎵 Abertura & Cântico", id: "abertura-reuniao" },
+        ...dados.partes.map(p => ({
+          label: p.id + '. ' + p.titulo.split('(')[0].replace(/^d+.s*/, '').trim(),
+          id: 'parte-' + p.id
+        })),
+        { label: "🎵 Conclusão da Reunião", id: "conclusao-reuniao" }
+      ];
+      popularSaltoRapido(itensSalto);
       atualizarChips(["Resumo da Reunião", "Joias Espirituais", "Dica de Preparação", "Aplicação Ministerial"]);
     }
 
@@ -1780,7 +1845,7 @@
                 <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
                   ${p.pergunta}
                 </p>
-                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-sentinela-${p.num}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                <button onclick="responderComIA('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
                   <span class="text-amber-300">✦</span> Comentar com IA
                 </button>
               </div>
@@ -1794,6 +1859,14 @@
       });
 
       leitor.innerHTML = html;
+      const itensSalto = [
+        { label: "📖 Início do Artigo", id: "cabecalho-materia" },
+        ...dados.paragrafos.map(p => ({
+          label: '§ ' + p.num + ' - Parágrafo ' + p.num,
+          id: 'paragrafo-' + p.num
+        }))
+      ];
+      popularSaltoRapido(itensSalto);
       atualizarChips(["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica", "Ponto Principal"]);
     }
 
@@ -1891,54 +1964,71 @@
       } catch (e) {}
     }
 
-    async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "") {
+    async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "", btnElement = null) {
       dispensarDicaAssistente();
-      const pane = document.getElementById('study-pane');
-      if (pane.classList.contains('translate-x-full')) {
-        toggleStudyPane();
+
+      // Feedback visual no botão que foi clicado
+      let btnOriginalHtml = "";
+      if (btnElement) {
+        btnOriginalHtml = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = '<span class="animate-pulse">⏳</span> Gerando...';
       }
 
-      adicionarMensagemEstudo("usuario", `Comentário para: ${pergunta}`);
-      adicionarMensagemEstudo("ia", `<span class="italic text-gray-400">Consultando Gemini 3.5 Flash...</span>`);
+      // Se houver textarea de destino, atualiza o placeholder imediatamente
+      let area = null;
+      if (targetTextareaId) {
+        area = document.getElementById(targetTextareaId);
+        if (area && !area.value.trim()) {
+          area.placeholder = "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)...";
+        }
+      }
 
       const contexto = textoMateria
         ? `TEXTO DA MATÉRIA / PARÁGRAFO:\n"${textoMateria}"\n\nSEMANA: Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
         : `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`;
 
       const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto });
-
-      removerUltimaMensagemIA();
       const respostaFinal = respostaIA || textoMateria || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
 
-      // Encaminha a resposta automaticamente para o espaço Minhas Anotações
-      let notaMsg = "";
-      if (targetTextareaId) {
-        const area = document.getElementById(targetTextareaId);
-        if (area) {
-          area.value = respostaFinal;
-          // Auto-expande a altura do campo
-          area.style.height = 'auto';
-          area.style.height = Math.max(70, area.scrollHeight + 8) + 'px';
-          
-          // Efeito visual de destaque (brilho verde esmeralda)
-          area.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/30', 'transition', 'duration-300');
-          setTimeout(() => {
-            area.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50/30');
-          }, 3000);
-
-          // Salva silenciosamente no localStorage e no Supabase
-          salvarTudo(true);
-
-          notaMsg = `
-            <div class="mt-3 pt-2.5 border-t border-[#dee2e6] flex items-center justify-between text-[11px] text-emerald-700 font-semibold bg-emerald-50/60 p-2 rounded-lg">
-              <span class="flex items-center gap-1">✅ Encaminhado para <strong>Minhas Anotações</strong></span>
-              <button onclick="irParaAnotacao('${targetTextareaId}')" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition text-[10px] shadow-2xs">Ver no texto</button>
-            </div>
-          `;
-        }
+      // Restaura o botão
+      if (btnElement) {
+        btnElement.disabled = false;
+        btnElement.innerHTML = btnOriginalHtml;
       }
 
-      adicionarMensagemEstudo("ia", `💡 <strong>Sugestão (30 a 45s):</strong><br><br>${respostaFinal.replace(/\n/g, '<br>')}${notaMsg}`);
+      // Preenche diretamente o campo Minhas Anotações sem mudar de ecrã nem abrir gavetas
+      if (area) {
+        area.value = respostaFinal;
+        area.style.height = 'auto';
+        area.style.height = Math.max(70, area.scrollHeight + 8) + 'px';
+        
+        // Efeito visual de destaque (brilho verde esmeralda)
+        area.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/40', 'transition', 'duration-300');
+        setTimeout(() => {
+          area.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50/40');
+        }, 2500);
+
+        // Feedback sutil inline logo abaixo do campo
+        let feedbackEl = document.getElementById('feedback-' + targetTextareaId);
+        if (!feedbackEl) {
+          feedbackEl = document.createElement('div');
+          feedbackEl.id = 'feedback-' + targetTextareaId;
+          feedbackEl.className = "text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1 transition duration-300";
+          area.parentNode.appendChild(feedbackEl);
+        }
+        feedbackEl.innerHTML = '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>';
+        setTimeout(() => {
+          if (feedbackEl) feedbackEl.innerHTML = '';
+        }, 4000);
+
+        // Salva silenciosamente no localStorage e no Supabase
+        salvarTudo(true);
+      }
+
+      // Mantém o histórico no painel lateral atualizado para quando o usuário desejar abri-lo
+      adicionarMensagemEstudo("usuario", `Comentário para: ${pergunta}`);
+      adicionarMensagemEstudo("ia", `💡 <strong>Sugestão formulada:</strong><br><br>${respostaFinal.replace(/\n/g, '<br>')}`);
     }
 
     function irParaAnotacao(id) {
