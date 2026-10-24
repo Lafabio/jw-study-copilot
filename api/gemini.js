@@ -20,13 +20,19 @@ export default async function handler(req, res) {
 
   const { prompt, context, question, tipo } = req.body || {};
   const apiKey = process.env.GEMINI_API_KEY;
-  const isDiscurso = tipo === 'discurso' || (question || prompt || '').toLowerCase().includes('discurso') || (question || prompt || '').toLowerCase().includes('esboço');
+  const textoQuery = (question || prompt || '').toLowerCase();
+  const isDiscurso = tipo === 'discurso' || textoQuery.includes('discurso') || textoQuery.includes('esboço');
+  const isJoias = tipo === 'joias' || textoQuery.includes('joias espirituais') || textoQuery.includes('relação com jeová') || textoQuery.includes('leitura da bíblia desta semana');
 
   if (!apiKey) {
     // Retorno simulado com modo fallback se a chave ainda não estiver configurada no Vercel
-    const respostaSimulada = isDiscurso
-      ? `TEMA: ${question || prompt}\n\nI. INTRODUÇÃO (1 a 2 min)\n• Gancho: Chame a atenção da congregação destacando a importância prática do tema para os nossos dias.\n• Apresentação do tema: Declare claramente o assunto e como ele fortalece nossa fé.\n\nII. CORPO / DESENVOLVIMENTO (6 a 7 min)\n• Ponto 1: Análise do contexto histórico e bíblico da leitura da semana.\n  - [Ler e destacar o texto bíblico principal]\n  - Aplicação: O que este versículo nos ensina sobre as qualidades de Jeová.\n• Ponto 2: Lição prática para a congregação e serviço de campo.\n  - Ilustração curta e calorosa para fixar a ideia.\n  - Como cada publicador pode agir em harmonia com essa verdade.\n\nIII. CONCLUSÃO (1 a 2 min)\n• Resumo dos pontos principais analisados.\n• Apelo caloroso: Incentive a todos a confiar em Jeová e colocar o ponto em prática nesta semana.`
-      : `[Modo Simulação]: Um comentário excelente sobre este ponto é conectar o ensinamento bíblico com uma atitude prática de amor e perseverança no dia a dia.`;
+    let respostaSimulada = `[Modo Simulação]: Um comentário excelente sobre este ponto é conectar o ensinamento bíblico com uma atitude prática de amor e perseverança no dia a dia.`;
+    
+    if (isDiscurso) {
+      respostaSimulada = `TEMA: ${question || prompt}\n\nI. INTRODUÇÃO (1 a 2 min)\n• Gancho: Chame a atenção da congregação destacando a importância prática do tema para os nossos dias.\n• Apresentação do tema: Declare claramente o assunto e como ele fortalece nossa fé.\n\nII. CORPO / DESENVOLVIMENTO (6 a 7 min)\n• Ponto 1: Análise do contexto histórico e bíblico da leitura da semana.\n  - [Ler e destacar o texto bíblico principal]\n  - Aplicação: O que este versículo nos ensina sobre as qualidades de Jeová.\n• Ponto 2: Lição prática para a congregação e serviço de campo.\n  - Ilustração curta e calorosa para fixar a ideia.\n  - Como cada publicador pode agir em harmonia com essa verdade.\n\nIII. CONCLUSÃO (1 a 2 min)\n• Resumo dos pontos principais analisados.\n• Apelo caloroso: Incentive a todos a confiar em Jeová e colocar o ponto em prática nesta semana.`;
+    } else if (isJoias) {
+      respostaSimulada = `💎 Joia Espiritual na Leitura da Semana (${context || 'Leitura bíblica'}):\n\n• O que aprendemos sobre Jeová: Os textos da leitura semanal mostram que Jeová percebe nossos sentimentos mais íntimos, cuida de seus servos em tempos difíceis e nos corrige sempre com amor e equilíbrio.\n• Como melhora minha relação com Jeová: Meditar nisso me achega a Jeová como um Pai compreensivo e leal, dando-me plena confiança para derramar o coração a Ele em oração diante de qualquer ansiedade.\n\n🎤 Comentário Pronto para a Congregação (30 a 45s):\n"Na leitura da Bíblia desta semana, uma joia muito encorajadora é ver como Jeová cuida pessoalmente de cada um de Seus servos. Isso me ensina que Jeová não é indiferente às nossas preocupações e nos dá forças para perseverar. Saber disso fortalece muito a minha amizade com Jeová e me motiva a confiar Nele em qualquer circunstância."`;
+    }
 
     return res.status(200).json({
       resposta: respostaSimulada,
@@ -53,6 +59,18 @@ Diretrizes estritas para o esboço:
 5. Formate em português do Brasil com tópicos limpos, marcadores e tempos sugeridos. NUNCA faça rascunhos em inglês, nunca use prefixos como "*Attempt*" e entregue o esboço pronto para ser usado no púlpito.`;
 
       userInstruction = "Formule o esboço completo do discurso de 10 minutos com Introdução, Corpo (pontos bíblicos com textos) e Conclusão motivadora.";
+    } else if (isJoias) {
+      systemInstruction = `Você é um cristão experiente das Testemunhas de Jeová participando da parte "Encontre Joias Espirituais" na reunião congregacional.
+Seu objetivo é analisar a leitura bíblica semanal designada (${context}) e identificar reflexões e meditações práticas onde podemos tirar proveito para MELHORAR NOSSA RELAÇÃO COM JEOVÁ.
+
+Diretrizes estritas:
+1. Identifique versículos específicos dentro dos capítulos da leitura semanal informada.
+2. Destaque o que o texto revela sobre a personalidade de Jeová (Seu amor, paciência, misericórdia, lealdade, justiça ou proteção).
+3. Mostre claramente como meditar nesse ponto nos ajuda a estreitar nossa amizade pessoal com Jeová, confiar mais Nele e melhorar nossas orações.
+4. Apresente um comentário caloroso, respeitoso e em primeira pessoa ("Podemos meditar em...", "Isso me ensina sobre Jeová que..."), no tempo ideal de 30 a 45 segundos para ser falado no microfone da congregação.
+5. NUNCA faça rascunhos em inglês e nunca use prefixos como "*Attempt*". Responda diretamente em português do Brasil.`;
+
+      userInstruction = "Identifique as joias e meditações da leitura da semana para melhorar nossa relação com Jeová e formule o comentário ideal de 30 a 45 segundos.";
     } else {
       systemInstruction = `Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional (Vida e Ministério ou A Sentinela).
 Seu objetivo é gerar o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos).

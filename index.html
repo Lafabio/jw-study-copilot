@@ -1710,26 +1710,75 @@
             ` : p.perguntas && p.perguntas.length > 0 ? `
               <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-4 space-y-3 mt-3">
                 <span class="text-xs font-bold text-[#6c757d] uppercase tracking-wider block">Perguntas da Consideração:</span>
-                ${p.perguntas.map((q, idx) => `
-                  <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-2">
-                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                      <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
-                      <button onclick="responderComIA('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
-                        <span class="text-amber-300">✦</span> Comentar com IA
-                      </button>
+                ${p.perguntas.map((q, idx) => {
+                  const isJoiasGerais = q.toLowerCase().includes('joias espirituais') && q.toLowerCase().includes('leitura');
+                  if (isJoiasGerais) {
+                    return `
+                      <div class="border-l-3 border-[#c57e00] bg-amber-50/40 p-3.5 rounded-r-xl space-y-2.5 border border-[#e9ecef] shadow-3xs">
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
+                          <div>
+                            <span class="text-[10px] font-bold text-[#c57e00] uppercase tracking-wider flex items-center gap-1">
+                              <span>💎</span> Leitura Bíblica da Semana: ${dados.tema}
+                            </span>
+                            <p class="text-xs sm:text-sm font-bold text-[#212529] mt-0.5">${q}</p>
+                          </div>
+                          <button onclick="prepararJoiasSemana('${dados.tema.replace(/'/g, "\\'")}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#c57e00] hover:bg-[#a06600] text-white transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto shadow-2xs">
+                            <span>💎</span> Joias para Relação com Jeová
+                          </button>
+                        </div>
+
+                        <!-- Opções de Meditação na Leitura Semanal -->
+                        <div class="flex items-center gap-1.5 flex-wrap text-xs">
+                          <span class="text-[10px] font-bold text-[#6c757d] uppercase tracking-wider">Meditar sobre:</span>
+                          <button onclick="prepararSecaoJoias('personalidade', '${dados.tema.replace(/'/g, "\\'")}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#c57e00] text-[#495057] hover:text-[#c57e00] transition text-[11px] font-medium shadow-3xs" title="O que os textos revelam sobre a personalidade e o amor de Jeová">
+                            ❤️ Personalidade de Jeová
+                          </button>
+                          <button onclick="prepararSecaoJoias('confianca', '${dados.tema.replace(/'/g, "\\'")}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#c57e00] text-[#495057] hover:text-[#c57e00] transition text-[11px] font-medium shadow-3xs" title="Como esses capítulos fortalecem nossa confiança e oração">
+                            🛡️ Confiança & Oração
+                          </button>
+                          <button onclick="prepararSecaoJoias('aplicacao', '${dados.tema.replace(/'/g, "\\'")}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#c57e00] text-[#495057] hover:text-[#c57e00] transition text-[11px] font-medium shadow-3xs" title="Como aplicar os versículos para melhorar nossa amizade com Jeová">
+                            🌱 Amizade com Deus
+                          </button>
+                          <button onclick="toggleDuvidaInline('pergunta-${p.id}-${idx}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#c57e00] text-[#495057] hover:text-[#c57e00] transition text-[11px] font-medium shadow-3xs" title="Pesquisar um versículo específico destes capítulos">
+                            💬 Outro versículo da semana
+                          </button>
+                        </div>
+
+                        <div id="box-duvida-pergunta-${p.id}-${idx}" class="hidden pt-1">
+                          <div class="flex items-center gap-2 bg-white rounded-lg border border-[#dee2e6] p-1.5 focus-within:ring-2 focus-within:ring-[#c57e00]">
+                            <input id="input-duvida-pergunta-${p.id}-${idx}" type="text" placeholder="Qual versículo de ${dados.tema} você gostaria de meditar?" onkeydown="if(event.key==='Enter') enviarDuvidaInline('pergunta-${p.id}-${idx}', 'Leitura semanal: ${dados.tema}', 'nota-pergunta-${p.id}-${idx}', this)" class="w-full text-xs px-2 bg-transparent focus:outline-none text-[#212529]">
+                            <button onclick="enviarDuvidaInline('pergunta-${p.id}-${idx}', 'Leitura semanal: ${dados.tema}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-md bg-[#c57e00] text-white text-xs font-bold hover:bg-[#a06600] shrink-0">
+                              ➤
+                            </button>
+                          </div>
+                        </div>
+
+                        <textarea id="nota-pergunta-${p.id}-${idx}" placeholder="Toque em '💎 Joias para Relação com Jeová' para identificar as meditações de ${dados.tema}..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#c57e00] resize-y leading-relaxed" rows="4"></textarea>
+                        <div id="feedback-nota-pergunta-${p.id}-${idx}"></div>
+                      </div>
+                    `;
+                  }
+                  return `
+                    <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-2">
+                      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                        <p class="text-xs sm:text-sm font-semibold text-[#212529]">${q}</p>
+                        <button onclick="responderComIA('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                          <span class="text-amber-300">✦</span> Comentar com IA
+                        </button>
+                      </div>
+                      <div class="flex items-center gap-1.5 flex-wrap text-xs">
+                        <button onclick="aprofundarParagrafo('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'aplicacao', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
+                          🌱 Aplicação
+                        </button>
+                        <button onclick="aprofundarParagrafo('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'simples', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
+                          ⚡ Simples (30s)
+                        </button>
+                      </div>
+                      <textarea id="nota-pergunta-${p.id}-${idx}" placeholder="Meu comentário para esta pergunta..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
+                      <div id="feedback-nota-pergunta-${p.id}-${idx}"></div>
                     </div>
-                    <div class="flex items-center gap-1.5 flex-wrap text-xs">
-                      <button onclick="aprofundarParagrafo('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'aplicacao', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
-                        🌱 Aplicação
-                      </button>
-                      <button onclick="aprofundarParagrafo('${q.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'simples', 'nota-pergunta-${p.id}-${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
-                        ⚡ Simples (30s)
-                      </button>
-                    </div>
-                    <textarea id="nota-pergunta-${p.id}-${idx}" placeholder="Meu comentário para esta pergunta..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
-                    <div id="feedback-nota-pergunta-${p.id}-${idx}"></div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
             ` : `
               <div class="bg-[#f8f9fa] rounded-xl border border-[#dee2e6] p-3.5 sm:p-4 space-y-3 mt-3">
@@ -1999,6 +2048,25 @@
       await responderComIA(promptSecao, textoMateria, targetTextareaId, btnElement, 'discurso');
     }
 
+    async function prepararJoiasSemana(leituraSemanal, targetTextareaId, btnElement) {
+      const prompt = 'Na leitura da Bíblia desta semana (' + leituraSemanal + '), identifique 3 a 4 joias espirituais e meditações práticas focadas especificamente em MELHORAR NOSSA RELAÇÃO COM JEOVÁ (sua personalidade, amor, justiça, misericórdia e como nos achegar a Ele). Para cada ponto, cite o versículo exato de ' + leituraSemanal + ', explique a meditação sobre Jeová e faça uma aplicação pessoal para nossa amizade com Ele.';
+      await responderComIA(prompt, 'Leitura da Bíblia da semana: ' + leituraSemanal, targetTextareaId, btnElement, 'joias');
+    }
+
+    async function prepararSecaoJoias(foco, leituraSemanal, targetTextareaId, btnElement) {
+      let promptSecao = '';
+      if (foco === 'personalidade') {
+        promptSecao = 'Na leitura de ' + leituraSemanal + ', que facetas da personalidade de Jeová (seus sentimentos, compaixão, paciência ou soberania) são reveladas? Destaque 2 pontos com versículos e como isso nos atrai mais a Ele.';
+      } else if (foco === 'confianca') {
+        promptSecao = 'Na leitura de ' + leituraSemanal + ', que lições encontramos sobre confiar em Jeová em tempos difíceis e recorrer a Ele em oração sincera? Cite versículos de ' + leituraSemanal + ' e aplicação prática.';
+      } else if (foco === 'amizade') {
+        promptSecao = 'Com base em ' + leituraSemanal + ', como podemos cultivar uma amizade pessoal mais profunda com Jeová no nosso dia a dia? Forneça 2 reflexões com versículos práticos.';
+      } else if (foco === 'outro') {
+        promptSecao = 'Identifique outro versículo marcante na leitura de ' + leituraSemanal + ' que toque o coração e mostre como Jeová cuida dos que o amam.';
+      }
+      await responderComIA(promptSecao, 'Leitura da Bíblia da semana: ' + leituraSemanal, targetTextareaId, btnElement, 'joias');
+    }
+
     function copiarTexto(id) {
       const el = document.getElementById(id);
       if (!el || !el.value) return;
@@ -2021,13 +2089,15 @@
     // CHAMADA HÍBRIDA AO GOOGLE GEMINI (Vercel API -> Direct Client -> Fallback)
     async function chamarGeminiIA({ question, prompt, context, tipo = "comentario" }) {
       const isDiscurso = tipo === 'discurso' || (question || prompt || '').toLowerCase().includes('discurso') || (question || prompt || '').toLowerCase().includes('esboço');
+      const isJoias = tipo === 'joias' || (question || prompt || '').toLowerCase().includes('joias espirituais') || (question || prompt || '').toLowerCase().includes('relação com jeová');
+      const tipoEnvio = isDiscurso ? 'discurso' : (isJoias ? 'joias' : 'comentario');
 
       // 1. Tenta API do Vercel (/api/gemini)
       try {
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question, prompt, context, tipo: isDiscurso ? 'discurso' : 'comentario' })
+          body: JSON.stringify({ question, prompt, context, tipo: tipoEnvio })
         });
         if (res.ok) {
           const data = await res.json();
@@ -2044,6 +2114,9 @@
         if (isDiscurso) {
           systemPrompt = "Você é um orador e instrutor experiente das Testemunhas de Jeová preparando um esboço completo de discurso de 10 minutos (Tesouros da Palavra de Deus). Seu objetivo é gerar um ESBOÇO COMPLETO E BEM ESTRUTURADO com Começo (Introdução 1-2 min), Meio (Corpo 6-7 min com pontos bíblicos e textos lidos) e Fim (Conclusão motivadora 1-2 min) em português do Brasil com tópicos limpos.";
           instr = "Formule o esboço completo do discurso de 10 minutos com Introdução, Desenvolvimento (com textos bíblicos) e Conclusão motivadora.";
+        } else if (isJoias) {
+          systemPrompt = "Você é um pesquisador e publicador dedicado das Testemunhas de Jeová participando na parte 'Encontre Joias Espirituais' da reunião de meio de semana. O usuário quer extrair meditações profundas da leitura bíblica da semana para MELHORAR SUA RELAÇÃO PESSOAL COM JEOVÁ. Diretrizes estritas: Identifique versículos específicos da leitura da semana indicada, explique o que revelam sobre as qualidades de Jeová (amor, misericórdia, lealdade, soberania, justiça) e forneça meditações práticas e calorosas para fortalecer a intimidade, oração e amizade com Deus. Formate em pontos claros, prontos para anotação pessoal ou para comentar na congregação.";
+          instr = "Identifique as joias da leitura bíblica indicadas e mostre como fortalecem nossa relação com Jeová.";
         } else {
           systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional. Seu objetivo é formular o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos). Diretrizes estritas: Responda DIRETAMENTE com o comentário em português do Brasil, caloroso, respeitoso e natural. Comece direto no assunto. NUNCA faça rascunhos, nunca pense em voz alta e nunca use prefixos como '*Attempt*'.";
           instr = "Formule o comentário final objetivo e natural de 30 a 45 segundos em português.";
@@ -2055,7 +2128,7 @@
             parts: [{ text: `CONTEXTO DA MATÉRIA:\n${context || ''}\n\nPERGUNTA OU PONTO:\n${question || prompt}\n\nINSTRUÇÃO: ${instr}` }]
           }],
           systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: { temperature: 0.5, maxOutputTokens: isDiscurso ? 2000 : 1000 }
+          generationConfig: { temperature: 0.5, maxOutputTokens: (isDiscurso || isJoias) ? 2000 : 1000 }
         };
 
         const modelos = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
@@ -2108,6 +2181,8 @@
     async function responderComIA(pergunta, textoMateria = "", targetTextareaId = "", btnElement = null, tipo = "comentario") {
       dispensarDicaAssistente();
       const isDiscurso = tipo === 'discurso' || (pergunta || '').toLowerCase().includes('discurso') || (pergunta || '').toLowerCase().includes('esboço');
+      const isJoias = tipo === 'joias' || (pergunta || '').toLowerCase().includes('joias espirituais') || (pergunta || '').toLowerCase().includes('relação com jeová');
+      const tipoChamada = isDiscurso ? 'discurso' : (isJoias ? 'joias' : 'comentario');
 
       // Feedback visual no botão que foi clicado
       let btnOriginalHtml = "";
@@ -2124,7 +2199,9 @@
         if (area && !area.value.trim()) {
           area.placeholder = isDiscurso
             ? "✦ O Gemini está estruturando o esboço completo do discurso de 10 min (Introdução, Desenvolvimento e Conclusão)..."
-            : "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)...";
+            : (isJoias
+                ? "✦ O Gemini está pesquisando a leitura bíblica da semana e extraindo joias para fortalecer sua relação com Jeová..."
+                : "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)...");
         }
       }
 
@@ -2132,8 +2209,13 @@
         ? `TEXTO DA MATÉRIA / PARÁGRAFO:\n"${textoMateria}"\n\nSEMANA: Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`
         : `Semana ${semanaAtiva} (${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})`;
 
-      const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto, tipo: isDiscurso ? 'discurso' : 'comentario' });
-      const respostaFinal = respostaIA || textoMateria || (isDiscurso ? "Esboço do discurso preparado com base no tema e nos textos indicados." : "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação.");
+      const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto, tipo: tipoChamada });
+      const fallbackMsg = isDiscurso 
+        ? "Esboço do discurso preparado com base no tema e nos textos indicados."
+        : (isJoias 
+            ? "Na leitura desta semana, aprendemos como Jeová nos acolhe e perdoa com ternura quando o buscamos de todo o coração. Meditar em sua misericórdia e lealdade aprofunda nossa confiança e nos motiva a manter uma oração constante e sincera."
+            : "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação.");
+      const respostaFinal = respostaIA || textoMateria || fallbackMsg;
 
       // Restaura o botão
       if (btnElement) {
@@ -2145,13 +2227,15 @@
       if (area) {
         area.value = respostaFinal;
         area.style.height = 'auto';
-        const minH = isDiscurso ? 240 : 70;
+        const minH = isDiscurso ? 240 : (isJoias ? 180 : 70);
         area.style.height = Math.max(minH, area.scrollHeight + 12) + 'px';
         
-        // Efeito visual de destaque (brilho verde esmeralda)
-        area.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/40', 'transition', 'duration-300');
+        // Efeito visual de destaque (brilho verde esmeralda ou âmbar para joias)
+        const ringCor = isJoias ? 'ring-amber-500' : 'ring-emerald-500';
+        const bgCor = isJoias ? 'bg-amber-50/40' : 'bg-emerald-50/40';
+        area.classList.add('ring-2', ringCor, bgCor, 'transition', 'duration-300');
         setTimeout(() => {
-          area.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50/40');
+          area.classList.remove('ring-2', ringCor, bgCor);
         }, 2500);
 
         // Feedback sutil inline logo abaixo do campo
@@ -2164,7 +2248,9 @@
         }
         feedbackEl.innerHTML = isDiscurso
           ? '<span>✅ Esboço completo do discurso estruturado e salvo nas suas anotações!</span>'
-          : '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>';
+          : (isJoias
+              ? '<span>💎 Joias espirituais identificadas e salvas nas suas anotações!</span>'
+              : '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>');
         setTimeout(() => {
           if (feedbackEl) feedbackEl.innerHTML = '';
         }, 4000);
