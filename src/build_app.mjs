@@ -559,7 +559,7 @@ const htmlTemplate = `<!DOCTYPE html>
                   <div class="border-l-3 border-[#4a3b69] pl-3 py-1 space-y-1.5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <p class="text-xs sm:text-sm font-semibold text-[#212529]">\${q}</p>
-                      <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
+                      <button onclick="responderComIA('\${q.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-2xs">
                         <span class="text-amber-300">✦</span> Comentar com IA
                       </button>
                     </div>
@@ -674,7 +674,7 @@ const htmlTemplate = `<!DOCTYPE html>
                 <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
                   \${p.pergunta}
                 </p>
-                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").substring(0, 150)}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
+                <button onclick="responderComIA('\${p.pergunta.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}')" class="px-2.5 py-1 rounded-md text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1 shrink-0 shadow-2xs">
                   <span class="text-amber-300">✦</span> Comentar com IA
                 </button>
               </div>
@@ -730,14 +730,14 @@ const htmlTemplate = `<!DOCTYPE html>
       // 2. Chamada Direta à API do Gemini (GitHub Pages ou PWA)
       const apiKey = localStorage.getItem('gemini_api_key') || GEMINI_DEFAULT_KEY;
       if (apiKey) {
-        const systemPrompt = "Você é um assistente pessoal de estudo bíblico para as reuniões congregacionais das Testemunhas de Jeová (Vida e Ministério e A Sentinela). Ajude o usuário a formular comentários concisos (30 a 45 segundos), claros, respeitosos e com as próprias palavras. Destaque um ponto prático ou texto bíblico aplicado.";
+        const systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional. Seu objetivo é formular o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos). Diretrizes estritas: Responda DIRETAMENTE com o comentário em português do Brasil, caloroso, respeitoso e natural. Comece direto no assunto (ex: 'Todos nós temos a responsabilidade de...', 'Podemos comentar que...'). NUNCA faça rascunhos, nunca pense em voz alta, nunca escreva em inglês e NUNCA use prefixos como '*Attempt*' ou 'Aqui está uma sugestão'. Foque na essência com base na matéria fornecida.";
         const requestBody = {
           contents: [{
             role: "user",
-            parts: [{ text: \`CONTEXTO DA MATÉRIA:\\n\${context || ''}\\n\\nPERGUNTA OU PONTO:\\n\${question || prompt}\\n\\nINSTRUÇÃO: Formule uma sugestão de comentário objetivo e natural de 30 a 45 segundos com as próprias palavras.\` }]
+            parts: [{ text: \`CONTEXTO DA MATÉRIA:\\n\${context || ''}\\n\\nPERGUNTA OU PONTO:\\n\${question || prompt}\\n\\nINSTRUÇÃO: Formule o comentário final objetivo e natural de 30 a 45 segundos em português.\` }]
           }],
           systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+          generationConfig: { temperature: 0.5, maxOutputTokens: 1000 }
         };
 
         const modelos = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
@@ -750,8 +750,14 @@ const htmlTemplate = `<!DOCTYPE html>
             });
             if (res.ok) {
               const data = await res.json();
-              const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (text) return text;
+              let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) {
+                text = text
+                  .replace(/\\*+Attempt\\s*[0-9]+[\\s\\S]*?(?=(\\n\\n|\\"|[A-ZÀ-Ú]))/gi, '')
+                  .replace(/^(Aqui está uma sugestão|Comentário sugerido|Sugestão de resposta):?\\s*/i, '')
+                  .trim();
+                return text;
+              }
             }
           } catch (e) {}
         }
@@ -760,7 +766,7 @@ const htmlTemplate = `<!DOCTYPE html>
       return null;
     }
 
-    async function responderComIA(pergunta, respostaDireta = "") {
+    async function responderComIA(pergunta, textoMateria = "") {
       const pane = document.getElementById('study-pane');
       if (pane.classList.contains('translate-x-full')) {
         toggleStudyPane();
@@ -769,14 +775,17 @@ const htmlTemplate = `<!DOCTYPE html>
       adicionarMensagemEstudo("usuario", \`Comentário para: \${pergunta}\`);
       adicionarMensagemEstudo("ia", \`<span class="italic text-gray-400">Consultando Gemini 3.5 Flash...</span>\`);
 
-      const contexto = \`Semana \${semanaAtiva} (\${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})\`;
+      const contexto = textoMateria
+        ? \`TEXTO DA MATÉRIA / PARÁGRAFO:\\n"\${textoMateria}"\\n\\nSEMANA: Semana \${semanaAtiva} (\${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})\`
+        : \`Semana \${semanaAtiva} (\${modoAtual === 'meio_semana' ? 'Vida e Ministério' : 'A Sentinela'})\`;
+
       const respostaIA = await chamarGeminiIA({ question: pergunta, context: contexto });
 
       removerUltimaMensagemIA();
       if (respostaIA) {
         adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão (30 a 45s):</strong><br><br>\${respostaIA.replace(/\\n/g, '<br>')}\`);
       } else {
-        const texto = respostaDireta || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
+        const texto = textoMateria || "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação e agrada a Jeová, demonstrando madureza espiritual.";
         adicionarMensagemEstudo("ia", \`💡 <strong>Sugestão para responder em 30 a 45 segundos:</strong><br><br>"\${texto}"<br><br><span class="text-[#6c757d]"><em>Dica: Inicie dizendo "O que mais me chamou atenção neste ponto foi..." para soar bem natural.</em></span>\`);
       }
     }

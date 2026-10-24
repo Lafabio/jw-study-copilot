@@ -31,14 +31,14 @@ export default async function handler(req, res) {
 
   try {
     const systemInstruction = `
-Você é um assistente pessoal de estudo bíblico para as reuniões congregacionais (Vida e Ministério e A Sentinela).
-Seu objetivo é ajudar o usuário a formular comentários e discursos claros, objetivos e com as próprias palavras.
+Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional (Vida e Ministério ou A Sentinela).
+Seu objetivo é gerar o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos).
 
-Regras fundamentais:
-1. Respostas para comentários na congregação devem ser concisas (ideal para 30 a 45 segundos de fala).
-2. Use linguagem natural e respeitosa, evitando termos difíceis.
-3. Não leia o texto literalmente; reformule a essência do raciocínio bíblico.
-4. Conecte com o texto bíblico aplicado e ofereça uma aplicação prática quando cabível.
+Diretrizes estritas:
+1. Responda DIRETAMENTE com o comentário em português do Brasil, caloroso, respeitoso e natural.
+2. Comece direto no assunto (ex: "Todos nós temos a responsabilidade de...", "O ponto central aqui é...", "Podemos comentar que...").
+3. NUNCA faça rascunhos, nunca pense em voz alta, nunca escreva em inglês e NUNCA use prefixos como "*Attempt*" ou "Aqui está uma sugestão".
+4. Foque na essência: responda à pergunta com base no texto da matéria fornecido e mencione uma aplicação prática ou lição bíblica correlata.
 `;
 
     const requestBody = {
@@ -47,7 +47,7 @@ Regras fundamentais:
           role: "user",
           parts: [
             {
-              text: `CONTEXTO DA MATÉRIA:\n${context || 'Estudo bíblico congregacional'}\n\nPERGUNTA OU PONTO:\n${question || prompt}\n\nINSTRUÇÃO: Formule um comentário objetivo de 30 a 45 segundos com as próprias palavras.`
+              text: `CONTEXTO DA MATÉRIA:\n${context || 'Estudo bíblico congregacional'}\n\nPERGUNTA OU PONTO:\n${question || prompt}\n\nINSTRUÇÃO: Formule o comentário final objetivo e natural de 30 a 45 segundos em português.`
             }
           ]
         }
@@ -56,8 +56,8 @@ Regras fundamentais:
         parts: [{ text: systemInstruction }]
       },
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 500
+        temperature: 0.5,
+        maxOutputTokens: 1000
       }
     };
 
@@ -83,7 +83,13 @@ Regras fundamentais:
     }
 
     const data = await apiRes.json();
-    const textoResposta = data.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar a resposta.";
+    let textoResposta = data.candidates?.[0]?.content?.parts?.[0]?.text || "Não foi possível gerar a resposta.";
+
+    // Sanitiza qualquer texto metalinguístico ou rascunho acidental
+    textoResposta = textoResposta
+      .replace(/\*+Attempt\s*[0-9]+[\s\S]*?(?=(\n\n|\"|[A-ZÀ-Ú]))/gi, '')
+      .replace(/^(Aqui está uma sugestão|Comentário sugerido|Sugestão de resposta):?\s*/i, '')
+      .trim();
 
     return res.status(200).json({
       resposta: textoResposta,
