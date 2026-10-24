@@ -12,8 +12,8 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = (process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+  const supabaseKey = (process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
   if (!supabaseUrl || !supabaseKey) {
     return res.status(200).json({

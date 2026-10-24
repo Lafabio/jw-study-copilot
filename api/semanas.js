@@ -19,8 +19,8 @@ export default async function handler(req, res) {
   const anoInt = parseInt(ano);
   const semanaInt = parseInt(semana);
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = (process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+  const supabaseKey = (process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
   // 1. Tenta buscar no Supabase se configurado
   if (supabaseUrl && supabaseKey) {
@@ -43,6 +43,9 @@ export default async function handler(req, res) {
             dados: rows[0].content_json
           });
         }
+      } else {
+        const errTxt = await supaRes.text();
+        console.warn('Supabase erro HTTP:', supaRes.status, errTxt);
       }
     } catch (e) {
       console.warn('Falha na consulta ao Supabase, caindo para cache local:', e.message);
