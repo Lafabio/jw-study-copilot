@@ -26,12 +26,15 @@ export default async function handler(req, res) {
   const isJoias = tipo === 'joias' || textoQuery.includes('joias espirituais') || textoQuery.includes('relação com jeová') || textoQuery.includes('leitura da bíblia desta semana');
   const isLivro = tipo === 'livro' || textoQuery.includes('estudo bíblico de congregação') || textoQuery.includes('livro coragem') || textoQuery.includes('livro de estudo') || (context || '').toLowerCase().includes('livro:');
   const isRevisao = tipo === 'revisao' || textoQuery.includes('revisão') || textoQuery.includes('recapitulação') || textoQuery.includes('como responderia') || textoQuery.includes('o que você aprendeu com');
+  const isLibras = tipo === 'libras' || textoQuery.includes('libras') || textoQuery.includes('sinais') || textoQuery.includes('glosa');
 
   if (!apiKey) {
     // Retorno simulado com modo fallback se a chave ainda não estiver configurada no Vercel
     let respostaSimulada = `[Modo Simulação]: Um comentário excelente sobre este ponto é conectar o ensinamento bíblico com uma atitude prática de amor e perseverança no dia a dia.`;
     
-    if (isCrianca) {
+    if (isLibras) {
+      respostaSimulada = `🤟 ROTEIRO EM LIBRAS (GLOSA):\nJEOVÁ AMOR GRANDE MOSTRAR NÓS. COMO? ELE CUIDAR, AJUDAR SEMPRE.\nNÓS PRECISAR: OBEDECER, AMIGOS AJUDAR, CORAÇÃO FELIZ!\n\n😊 EXPRESSÕES FACIAIS & CORPO:\n• No início: Expressão afirmativa e calorosa.\n• Ao sinalizar "AJUDAR": Direcionar o sinal para frente com sorriso suave.\n• Final: Balançar a cabeça afirmativamente mostrando firmeza e alegria.\n\n📝 EQUIVALENTE EM PORTUGUÊS:\n"Podemos comentar que Jeová demonstra grande amor por nós ao cuidar de cada um. Quando somos obedientes e ajudamos os irmãos, deixamos Jeová muito alegre."`;
+    } else if (isCrianca) {
       respostaSimulada = `Aprendi que Jeová é muito bondoso e sempre nos ajuda. Quando somos obedientes e amorosos, deixamos Jeová muito alegre!`;
     } else if (isDiscurso) {
       respostaSimulada = `TEMA: ${question || prompt}\n\nI. INTRODUÇÃO (1 a 2 min)\n• Gancho: Chame a atenção da congregação destacando a importância prática do tema para os nossos dias.\n• Apresentação do tema: Declare claramente o assunto e como ele fortalece nossa fé.\n\nII. CORPO / DESENVOLVIMENTO (6 a 7 min)\n• Ponto 1: Análise do contexto histórico e bíblico da leitura da semana.\n  - [Ler e destacar o texto bíblico principal]\n  - Aplicação: O que este versículo nos ensina sobre as qualidades de Jeová.\n• Ponto 2: Lição prática para a congregação e serviço de campo.\n  - Ilustração curta e calorosa para fixar a ideia.\n  - Como cada publicador pode agir em harmonia com essa verdade.\n\nIII. CONCLUSÃO (1 a 2 min)\n• Resumo dos pontos principais analisados.\n• Apelo caloroso: Incentive a todos a confiar em Jeová e colocar o ponto em prática nesta semana.`;
@@ -115,6 +118,24 @@ Diretrizes estritas:
 4. NUNCA faça rascunhos em inglês e nunca use prefixos como "*Attempt*" ou "Aqui está uma sugestão". Responda diretamente em português do Brasil.`;
 
       userInstruction = "Formule uma resposta de recapitulação direta, bíblica e memorável de 30 a 60 segundos para a pergunta final de A Sentinela.";
+    } else if (isLibras) {
+      systemInstruction = `Você é um instrutor e intérprete fluente em LIBRAS (Língua Brasileira de Sinais) das Testemunhas de Jeová.
+Seu objetivo é ORIENTAR E ESTRUTURAR RESPOSTAS E COMENTÁRIOS EM LIBRAS para as reuniões congregacionais, auxiliando surdos, intérpretes e estudantes.
+
+Diretrizes estritas para orientação em Libras:
+1. ESTRUTURA EM GLOSAS (LETRAS MAIÚSCULAS):
+   - Apresente o comentário na sintaxe visual-espacial de Libras (ordem Tópico-Comentário / Objeto-Sujeito-Verbo ou Sujeito-Objeto-Verbo).
+   - Use palavras em MAIÚSCULAS para representar cada sinal (ex: JEOVÁ, BÍBLIA, NÓS, APRENDER, EXPLICAR).
+   - Não use artigos ou preposições orais.
+2. EXPRESSÕES FACIAIS & CORPORAIS (MNM):
+   - Descreva as expressões faciais obrigatórias (interrogativa com sobrancelhas levantadas/franzidas, afirmativa, intensidade, olhar direcionado).
+3. ESPAÇO & CLASSIFICADORES (CL):
+   - Forneça 1 ou 2 orientações de posicionamento no espaço e uso de classificadores para tornar a mensagem bem visual.
+4. TRADUÇÃO EQUIVALENTE EM PORTUGUÊS:
+   - Apresente a tradução simples em português para conferência.
+5. Formate a resposta de forma limpa, didática e pronta para estudo pessoal e sinalização no Salão do Reino.`;
+
+      userInstruction = "Estruture a resposta para este ponto em Libras com Roteiro em Glosas, Expressões Faciais/Corporais e Tradução Equivalente.";
     } else {
       systemInstruction = `Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional (Vida e Ministério ou A Sentinela).
 Seu objetivo é gerar o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos).
