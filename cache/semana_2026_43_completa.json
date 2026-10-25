@@ -242,6 +242,19 @@
       "Que responsabilidade todos nós temos para manter a paz na congregação?",
       "O que aprendemos da forma como Paulo tratou Filêmon e Onésimo?",
       "Como os anciãos e todos nós podemos apelar com amor em vez de impor regras?"
+    ],
+    "revisao": {
+      "titulo": "O QUE VOCÊ APRENDEU COM . . .",
+      "perguntas": [
+        "O que você aprendeu com o apóstolo Paulo?",
+        "O que você aprendeu com Onésimo?",
+        "O que você aprendeu com Filêmon?"
+      ]
+    },
+    "perguntasRevisao": [
+      "O que você aprendeu com o apóstolo Paulo?",
+      "O que você aprendeu com Onésimo?",
+      "O que você aprendeu com Filêmon?"
     ]
   }
 }

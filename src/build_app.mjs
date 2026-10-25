@@ -1062,13 +1062,105 @@ const htmlTemplate = `<!DOCTYPE html>
         \`;
       });
 
+      // Bloco de Perguntas de Recapitulação (Final do Estudo de A Sentinela)
+      const revisaoObj = dados.revisao || (dados.perguntasRevisao ? { titulo: "Como você responderia?", perguntas: dados.perguntasRevisao } : null);
+      if (revisaoObj && revisaoObj.perguntas && revisaoObj.perguntas.length > 0) {
+        const titBox = revisaoObj.titulo || "Como você responderia?";
+        html += \`
+          <div id="revisao-sentinela" class="mt-8 mb-6 rounded-2xl border-2 border-purple-200 bg-linear-to-b from-purple-50/70 via-purple-50/30 to-white p-5 sm:p-6 shadow-sm">
+            <div class="flex items-center gap-3 mb-4 border-b border-purple-100 pb-3">
+              <span class="w-9 h-9 rounded-xl bg-[#4a3b69] text-white flex items-center justify-center font-bold text-base shadow-2xs">
+                📋
+              </span>
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-[#4a3b69] bg-purple-100/90 px-2 py-0.5 rounded-md">
+                  Recapitulação Final
+                </span>
+                <h3 class="text-sm sm:text-base font-bold text-[#212529] mt-0.5">
+                  \${titBox}
+                </h3>
+              </div>
+            </div>
+
+            <p class="text-xs text-[#6c757d] mb-5 leading-relaxed">
+              Responda às 3 perguntas finais para fixar os pontos principais do artigo e prepare seus comentários com o apoio da inteligência artificial.
+            </p>
+
+            <div class="space-y-4">
+        \`;
+
+        revisaoObj.perguntas.forEach((q, qIdx) => {
+          const qNum = qIdx + 1;
+          const targetId = \`nota-sentinela-revisao-\${qNum}\`;
+          const qEscaped = q.replace(/'/g, "\\\\'");
+          const contextoArtigo = \`Artigo de Estudo de A Sentinela: "\${dados.titulo}" | Tema: "\${dados.tema}". Objetivo: \${dados.objetivo || ''}\`.replace(/'/g, "\\\\'").replace(/"/g, '&quot;');
+
+          html += \`
+            <div class="bg-white rounded-xl border border-purple-100 p-4 shadow-2xs space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5">
+                <div class="flex items-start gap-2.5">
+                  <span class="w-6 h-6 rounded-full bg-[#4a3b69] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                    \${qNum}
+                  </span>
+                  <p class="text-xs sm:text-sm font-bold text-[#212529] leading-snug">
+                    \${q}
+                  </p>
+                </div>
+                <button onclick="responderComIA('\${qEscaped}', '\${contextoArtigo}', '\${targetId}', this, 'revisao')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#4a3b69] text-white hover:bg-[#3b2e55] transition flex items-center gap-1.5 shrink-0 shadow-2xs self-start sm:self-auto">
+                  <span class="text-amber-300">✦</span> Comentar com IA
+                </button>
+              </div>
+
+              <!-- Ferramentas Rápidas -->
+              <div class="flex items-center gap-1.5 flex-wrap pt-0.5 text-xs">
+                <span class="text-[10px] font-bold text-[#6c757d] uppercase tracking-wider">Apoio:</span>
+                <button onclick="aprofundarParagrafo('\${qEscaped}', '\${contextoArtigo}', 'aplicacao', '\${targetId}', this)" class="px-2.5 py-1 rounded-full bg-[#f8f9fa] border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Aplicação prática para a vida diária">
+                  🌱 Aplicação
+                </button>
+                <button onclick="aprofundarParagrafo('\${qEscaped}', '\${contextoArtigo}', 'simples', '\${targetId}', this)" class="px-2.5 py-1 rounded-full bg-[#f8f9fa] border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Resposta direta em até 30 segundos">
+                  ⚡ Simples (30s)
+                </button>
+                <button onclick="toggleDuvidaInline('sentinela-revisao-\${qNum}')" class="px-2.5 py-1 rounded-full bg-[#f8f9fa] border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Fazer uma pergunta personalizada sobre esta questão">
+                  💬 Perguntar
+                </button>
+              </div>
+
+              <!-- Caixa de Pergunta Personalizada -->
+              <div id="box-duvida-sentinela-revisao-\${qNum}" class="hidden pt-1">
+                <div class="flex items-center gap-2 bg-[#f8f9fa] rounded-lg border border-[#dee2e6] p-1.5 focus-within:ring-2 focus-within:ring-[#4a3b69]">
+                  <input id="input-duvida-sentinela-revisao-\${qNum}" type="text" placeholder="Escreva sua dúvida sobre esta pergunta de revisão..." onkeydown="if(event.key==='Enter') enviarDuvidaInline('sentinela-revisao-\${qNum}', '\${contextoArtigo}', '\${targetId}', this)" class="w-full text-xs px-2 bg-transparent focus:outline-none text-[#212529]">
+                  <button onclick="enviarDuvidaInline('sentinela-revisao-\${qNum}', '\${contextoArtigo}', '\${targetId}', this)" class="px-2.5 py-1 rounded-md bg-[#4a3b69] text-white text-xs font-bold hover:bg-[#3b2e55] shrink-0">
+                    ➤
+                  </button>
+                </div>
+              </div>
+
+              <!-- Minhas Anotações & Resposta de Recapitulação -->
+              <div class="pt-2 border-t border-[#f1f3f5]">
+                <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                  <span class="font-bold">📝 Minhas Anotações & Resposta de Recapitulação:</span>
+                </div>
+                <textarea id="\${targetId}" placeholder="Toque em '✦ Comentar com IA' ou anote aqui sua resposta de recapitulação..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fdfdfd] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y leading-relaxed" rows="2"></textarea>
+                <div id="feedback-\${targetId}"></div>
+              </div>
+            </div>
+          \`;
+        });
+
+        html += \`
+            </div>
+          </div>
+        \`;
+      }
+
       leitor.innerHTML = html;
       const itensSalto = [
         { label: "📖 Início do Artigo", id: "cabecalho-materia" },
         ...dados.paragrafos.map(p => ({
           label: '§ ' + p.num + ' - Parágrafo ' + p.num,
           id: 'paragrafo-' + p.num
-        }))
+        })),
+        ...(revisaoObj && revisaoObj.perguntas ? [{ label: "📋 Perguntas de Recapitulação", id: "revisao-sentinela" }] : [])
       ];
       popularSaltoRapido(itensSalto);
       atualizarChips(["Comentário Parágrafo 1", "Comentário Parágrafo 2", "Aplicação Bíblica", "Ponto Principal"]);
@@ -1209,7 +1301,8 @@ const htmlTemplate = `<!DOCTYPE html>
       const isDiscurso = tipo === 'discurso' || (question || prompt || '').toLowerCase().includes('discurso') || (question || prompt || '').toLowerCase().includes('esboço');
       const isJoias = tipo === 'joias' || (question || prompt || '').toLowerCase().includes('joias espirituais') || (question || prompt || '').toLowerCase().includes('relação com jeová');
       const isLivro = tipo === 'livro' || (question || prompt || '').toLowerCase().includes('estudo bíblico') || (context || '').toLowerCase().includes('livro:');
-      const tipoEnvio = isDiscurso ? 'discurso' : (isJoias ? 'joias' : (isLivro ? 'livro' : 'comentario'));
+      const isRevisao = tipo === 'revisao' || (question || prompt || '').toLowerCase().includes('recapitulação') || (question || prompt || '').toLowerCase().includes('revisão') || (question || prompt || '').toLowerCase().includes('como responderia') || (question || prompt || '').toLowerCase().includes('o que você aprendeu com');
+      const tipoEnvio = isDiscurso ? 'discurso' : (isJoias ? 'joias' : (isLivro ? 'livro' : (isRevisao ? 'revisao' : 'comentario')));
 
       // 1. Tenta API do Vercel (/api/gemini)
       try {
@@ -1239,6 +1332,9 @@ const htmlTemplate = `<!DOCTYPE html>
         } else if (isLivro) {
           systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a parte 'Estudo Bíblico de Congregação' (livro 'Coragem'). Formule uma resposta objetiva, calorosa e bíblica de 30 a 45 segundos respondendo à pergunta com lições práticas de fé e obediência.";
           instr = "Formule o comentário ideal de 30 a 45 segundos para a pergunta do estudo de livro.";
+        } else if (isRevisao) {
+          systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para as perguntas de recapitulação / revisão final do Estudo de A Sentinela. Seu objetivo é sintetizar os ensinamentos bíblicos centrais do artigo de estudo para responder à pergunta de recapitulação de forma clara, calorosa e memorável (cerca de 30 a 60 segundos). Diretrizes estritas: Responda diretamente à pergunta recapitulando o estudo, com lições práticas e tom caloroso e natural. Nunca use rascunhos em inglês nem prefixos como '*Attempt*'.";
+          instr = "Formule uma resposta de recapitulação direta, bíblica e memorável de 30 a 60 segundos para a pergunta final de A Sentinela.";
         } else {
           systemPrompt = "Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional. Seu objetivo é formular o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos). Diretrizes estritas: Responda DIRETAMENTE com o comentário em português do Brasil, caloroso, respeitoso e natural. Comece direto no assunto. NUNCA faça rascunhos, nunca pense em voz alta e nunca use prefixos como '*Attempt*'.";
           instr = "Formule o comentário final objetivo e natural de 30 a 45 segundos em português.";
@@ -1250,7 +1346,7 @@ const htmlTemplate = `<!DOCTYPE html>
             parts: [{ text: \`CONTEXTO DA MATÉRIA:\\n\${context || ''}\\n\\nPERGUNTA OU PONTO:\\n\${question || prompt}\\n\\nINSTRUÇÃO: \${instr}\` }]
           }],
           systemInstruction: { parts: [{ text: systemPrompt }] },
-          generationConfig: { temperature: 0.5, maxOutputTokens: (isDiscurso || isJoias || isLivro) ? 2000 : 1000 }
+          generationConfig: { temperature: 0.5, maxOutputTokens: (isDiscurso || isJoias || isLivro || isRevisao) ? 2000 : 1000 }
         };
 
         const modelos = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
@@ -1305,7 +1401,8 @@ const htmlTemplate = `<!DOCTYPE html>
       const isDiscurso = tipo === 'discurso' || (pergunta || '').toLowerCase().includes('discurso') || (pergunta || '').toLowerCase().includes('esboço');
       const isJoias = tipo === 'joias' || (pergunta || '').toLowerCase().includes('joias espirituais') || (pergunta || '').toLowerCase().includes('relação com jeová');
       const isLivro = tipo === 'livro' || (pergunta || '').toLowerCase().includes('estudo bíblico') || (textoMateria || '').toLowerCase().includes('livro:');
-      const tipoChamada = isDiscurso ? 'discurso' : (isJoias ? 'joias' : (isLivro ? 'livro' : 'comentario'));
+      const isRevisao = tipo === 'revisao' || (pergunta || '').toLowerCase().includes('recapitulação') || (pergunta || '').toLowerCase().includes('revisão') || (pergunta || '').toLowerCase().includes('como responderia') || (pergunta || '').toLowerCase().includes('o que você aprendeu com');
+      const tipoChamada = isDiscurso ? 'discurso' : (isJoias ? 'joias' : (isLivro ? 'livro' : (isRevisao ? 'revisao' : 'comentario')));
 
       // Feedback visual no botão que foi clicado
       let btnOriginalHtml = "";
@@ -1326,7 +1423,9 @@ const htmlTemplate = `<!DOCTYPE html>
                 ? "✦ O Gemini está pesquisando a leitura bíblica da semana e extraindo joias para fortalecer sua relação com Jeová..."
                 : (isLivro
                     ? "✦ O Gemini está analisando o relato do livro Coragem e formulando seu comentário..."
-                    : "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)..."));
+                    : (isRevisao
+                        ? "✦ O Gemini está sintetizando os pontos principais do artigo para esta resposta de recapitulação..."
+                        : "✦ O Gemini está formulando uma resposta objetiva (30 a 45s)...")));
         }
       }
 
@@ -1341,7 +1440,9 @@ const htmlTemplate = `<!DOCTYPE html>
             ? "Na leitura desta semana, aprendemos como Jeová nos acolhe e perdoa com ternura quando o buscamos de todo o coração. Meditar em sua misericórdia e lealdade aprofunda nossa confiança e nos motiva a manter uma oração constante e sincera."
             : (isLivro
                 ? "Podemos comentar que o exemplo destacado neste relato nos ensina a confiar plenamente nas orientações de Jeová, mesmo em situações desafiadoras. Quando mostramos verdadeira coragem e obedecemos de coração, Jeová sempre nos sustenta."
-                : "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação."));
+                : (isRevisao
+                    ? "Podemos responder recapitulando que a principal lição deste estudo é confiar plenamente em Jeová e colocar em prática os princípios bíblicos com amor e humildade no dia a dia."
+                    : "Podemos comentar que agir com base no amor e no perdão cristão mantém a união da congregação.")));
       const respostaFinal = respostaIA || textoMateria || fallbackMsg;
 
       // Restaura o botão
@@ -1357,9 +1458,9 @@ const htmlTemplate = `<!DOCTYPE html>
         const minH = isDiscurso ? 240 : (isJoias ? 180 : 70);
         area.style.height = Math.max(minH, area.scrollHeight + 12) + 'px';
         
-        // Efeito visual de destaque (brilho verde esmeralda, âmbar ou bordô para estudo de livro)
-        const ringCor = isJoias ? 'ring-amber-500' : (isLivro ? 'ring-[#9e2a2b]' : 'ring-emerald-500');
-        const bgCor = isJoias ? 'bg-amber-50/40' : (isLivro ? 'bg-rose-50/40' : 'bg-emerald-50/40');
+        // Efeito visual de destaque (brilho verde esmeralda, âmbar, bordô ou roxo para revisão)
+        const ringCor = isJoias ? 'ring-amber-500' : (isLivro ? 'ring-[#9e2a2b]' : (isRevisao ? 'ring-purple-600' : 'ring-emerald-500'));
+        const bgCor = isJoias ? 'bg-amber-50/40' : (isLivro ? 'bg-rose-50/40' : (isRevisao ? 'bg-purple-50/40' : 'bg-emerald-50/40'));
         area.classList.add('ring-2', ringCor, bgCor, 'transition', 'duration-300');
         setTimeout(() => {
           area.classList.remove('ring-2', ringCor, bgCor);
@@ -1379,7 +1480,9 @@ const htmlTemplate = `<!DOCTYPE html>
               ? '<span>💎 Joias espirituais identificadas e salvas nas suas anotações!</span>'
               : (isLivro
                   ? '<span>📖 Comentário do Estudo de Livro formulado com Gemini e salvo!</span>'
-                  : '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>'));
+                  : (isRevisao
+                      ? '<span>📋 Resposta de recapitulação formulada com Gemini e salva!</span>'
+                      : '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>')));
         setTimeout(() => {
           if (feedbackEl) feedbackEl.innerHTML = '';
         }, 4000);

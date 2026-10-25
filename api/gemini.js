@@ -24,6 +24,7 @@ export default async function handler(req, res) {
   const isDiscurso = tipo === 'discurso' || textoQuery.includes('discurso') || textoQuery.includes('esboço');
   const isJoias = tipo === 'joias' || textoQuery.includes('joias espirituais') || textoQuery.includes('relação com jeová') || textoQuery.includes('leitura da bíblia desta semana');
   const isLivro = tipo === 'livro' || textoQuery.includes('estudo bíblico de congregação') || textoQuery.includes('livro coragem') || textoQuery.includes('livro de estudo') || (context || '').toLowerCase().includes('livro:');
+  const isRevisao = tipo === 'revisao' || textoQuery.includes('revisão') || textoQuery.includes('recapitulação') || textoQuery.includes('como responderia') || textoQuery.includes('o que você aprendeu com');
 
   if (!apiKey) {
     // Retorno simulado com modo fallback se a chave ainda não estiver configurada no Vercel
@@ -35,6 +36,8 @@ export default async function handler(req, res) {
       respostaSimulada = `💎 Joia Espiritual na Leitura da Semana (${context || 'Leitura bíblica'}):\n\n• O que aprendemos sobre Jeová: Os textos da leitura semanal mostram que Jeová percebe nossos sentimentos mais íntimos, cuida de seus servos em tempos difíceis e nos corrige sempre com amor e equilíbrio.\n• Como melhora minha relação com Jeová: Meditar nisso me achega a Jeová como um Pai compreensivo e leal, dando-me plena confiança para derramar o coração a Ele em oração diante de qualquer ansiedade.\n\n🎤 Comentário Pronto para a Congregação (30 a 45s):\n"Na leitura da Bíblia desta semana, uma joia muito encorajadora é ver como Jeová cuida pessoalmente de cada um de Seus servos. Isso me ensina que Jeová não é indiferente às nossas preocupações e nos dá forças para perseverar. Saber disso fortalece muito a minha amizade com Jeová e me motiva a confiar Nele em qualquer circunstância."`;
     } else if (isLivro) {
       respostaSimulada = `Podemos comentar que o exemplo destacado neste relato nos ensina a confiar plenamente nas orientações de Jeová, mesmo quando as circunstâncias parecem humanamente difíceis. Quando demonstramos verdadeira coragem e obedecemos de coração, Jeová sempre abençoa os nossos esforços e fortalece a nossa fé.`;
+    } else if (isRevisao) {
+      respostaSimulada = `Podemos responder recapitulando que a principal lição deste estudo é confiar plenamente em Jeová e colocar em prática os princípios bíblicos com amor e humildade. Quando aplicamos o que aprendemos no nosso dia a dia, fortalecemos a união da congregação e a nossa amizade pessoal com Deus.`;
     }
 
     return res.status(200).json({
@@ -86,6 +89,17 @@ Diretrizes estritas:
 5. NUNCA faça rascunhos em inglês e nunca use prefixos como "*Attempt*". Responda diretamente em português do Brasil.`;
 
       userInstruction = "Formule o comentário ideal de 30 a 45 segundos para a pergunta do estudo de livro com aplicação prática.";
+    } else if (isRevisao) {
+      systemInstruction = `Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para as perguntas de recapitulação / revisão final do Estudo de A Sentinela.
+Seu objetivo é sintetizar os ensinamentos bíblicos centrais do artigo de estudo para responder à pergunta de recapitulação de forma clara, calorosa e memorável (cerca de 30 a 60 segundos).
+
+Diretrizes estritas:
+1. Responda DIRETAMENTE à pergunta de recapitulação, resumindo os principais pontos que foram analisados ao longo do estudo de A Sentinela.
+2. Destaque lições práticas para o dia a dia e como esse aprendizado fortalece nossa relação com Jeová e a união com os irmãos.
+3. Responda em primeira pessoa ("Podemos recapitular que...", "Aprendemos neste estudo que...", "Ao analisar este artigo, vemos que..."), com tom natural e pronto para ser falado no microfone da congregação.
+4. NUNCA faça rascunhos em inglês e nunca use prefixos como "*Attempt*" ou "Aqui está uma sugestão". Responda diretamente em português do Brasil.`;
+
+      userInstruction = "Formule uma resposta de recapitulação direta, bíblica e memorável de 30 a 60 segundos para a pergunta final de A Sentinela.";
     } else {
       systemInstruction = `Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional (Vida e Ministério ou A Sentinela).
 Seu objetivo é gerar o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos).
