@@ -23,6 +23,7 @@ export default async function handler(req, res) {
   const textoQuery = (question || prompt || '').toLowerCase();
   const isDiscurso = tipo === 'discurso' || textoQuery.includes('discurso') || textoQuery.includes('esboço');
   const isJoias = tipo === 'joias' || textoQuery.includes('joias espirituais') || textoQuery.includes('relação com jeová') || textoQuery.includes('leitura da bíblia desta semana');
+  const isLivro = tipo === 'livro' || textoQuery.includes('estudo bíblico de congregação') || textoQuery.includes('livro coragem') || textoQuery.includes('livro de estudo') || (context || '').toLowerCase().includes('livro:');
 
   if (!apiKey) {
     // Retorno simulado com modo fallback se a chave ainda não estiver configurada no Vercel
@@ -32,6 +33,8 @@ export default async function handler(req, res) {
       respostaSimulada = `TEMA: ${question || prompt}\n\nI. INTRODUÇÃO (1 a 2 min)\n• Gancho: Chame a atenção da congregação destacando a importância prática do tema para os nossos dias.\n• Apresentação do tema: Declare claramente o assunto e como ele fortalece nossa fé.\n\nII. CORPO / DESENVOLVIMENTO (6 a 7 min)\n• Ponto 1: Análise do contexto histórico e bíblico da leitura da semana.\n  - [Ler e destacar o texto bíblico principal]\n  - Aplicação: O que este versículo nos ensina sobre as qualidades de Jeová.\n• Ponto 2: Lição prática para a congregação e serviço de campo.\n  - Ilustração curta e calorosa para fixar a ideia.\n  - Como cada publicador pode agir em harmonia com essa verdade.\n\nIII. CONCLUSÃO (1 a 2 min)\n• Resumo dos pontos principais analisados.\n• Apelo caloroso: Incentive a todos a confiar em Jeová e colocar o ponto em prática nesta semana.`;
     } else if (isJoias) {
       respostaSimulada = `💎 Joia Espiritual na Leitura da Semana (${context || 'Leitura bíblica'}):\n\n• O que aprendemos sobre Jeová: Os textos da leitura semanal mostram que Jeová percebe nossos sentimentos mais íntimos, cuida de seus servos em tempos difíceis e nos corrige sempre com amor e equilíbrio.\n• Como melhora minha relação com Jeová: Meditar nisso me achega a Jeová como um Pai compreensivo e leal, dando-me plena confiança para derramar o coração a Ele em oração diante de qualquer ansiedade.\n\n🎤 Comentário Pronto para a Congregação (30 a 45s):\n"Na leitura da Bíblia desta semana, uma joia muito encorajadora é ver como Jeová cuida pessoalmente de cada um de Seus servos. Isso me ensina que Jeová não é indiferente às nossas preocupações e nos dá forças para perseverar. Saber disso fortalece muito a minha amizade com Jeová e me motiva a confiar Nele em qualquer circunstância."`;
+    } else if (isLivro) {
+      respostaSimulada = `Podemos comentar que o exemplo destacado neste relato nos ensina a confiar plenamente nas orientações de Jeová, mesmo quando as circunstâncias parecem humanamente difíceis. Quando demonstramos verdadeira coragem e obedecemos de coração, Jeová sempre abençoa os nossos esforços e fortalece a nossa fé.`;
     }
 
     return res.status(200).json({
@@ -71,6 +74,18 @@ Diretrizes estritas:
 5. NUNCA faça rascunhos em inglês e nunca use prefixos como "*Attempt*". Responda diretamente em português do Brasil.`;
 
       userInstruction = "Identifique as joias e meditações da leitura da semana para melhorar nossa relação com Jeová e formule o comentário ideal de 30 a 45 segundos.";
+    } else if (isLivro) {
+      systemInstruction = `Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a parte "Estudo Bíblico de Congregação" (livro "Coragem").
+Seu objetivo é formular um comentário claro, caloroso, bíblico e prático de 30 a 45 segundos para responder à pergunta da consideração do livro.
+
+Diretrizes estritas:
+1. Responda DIRETAMENTE à pergunta indicada com base no relato bíblico e nos parágrafos do livro fornecidos no contexto.
+2. Destaque lições práticas de coragem, fé, confiança e obediência a Jeová para o nosso dia a dia ou pregação.
+3. Se houver textos bíblicos ou publicações de referência citados na pergunta, mencione os pontos principais de forma natural.
+4. Responda em primeira pessoa ("Podemos aprender com este relato que...", "Isso me mostra que..."), pronto para ser falado no microfone da congregação.
+5. NUNCA faça rascunhos em inglês e nunca use prefixos como "*Attempt*". Responda diretamente em português do Brasil.`;
+
+      userInstruction = "Formule o comentário ideal de 30 a 45 segundos para a pergunta do estudo de livro com aplicação prática.";
     } else {
       systemInstruction = `Você é um publicador experiente das Testemunhas de Jeová preparando um comentário para a reunião congregacional (Vida e Ministério ou A Sentinela).
 Seu objetivo é gerar o comentário FINAL pronto para ser falado no microfone (cerca de 30 a 45 segundos).
