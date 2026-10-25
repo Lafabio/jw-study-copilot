@@ -78,9 +78,9 @@ const htmlTemplate = `<!DOCTYPE html>
 
       <!-- Lado Direito: Ações (Perfil & Salvar Nuvem & Configurações) -->
       <div class="flex items-center space-x-1.5 sm:space-x-2">
-        <button onclick="abrirModalPerfil()" title="Meu Perfil de Estudo" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
-          <span>👤</span>
-          <span id="txt-nome-perfil" class="max-w-[75px] sm:max-w-[110px] truncate">Lafabio</span>
+        <button onclick="abrirModalAuthOuPerfil()" id="btn-auth-header" title="Minha Conta & Anotações" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition text-xs font-semibold text-white shadow-xs">
+          <span id="icon-auth-status">👤</span>
+          <span id="txt-nome-perfil" class="max-w-[75px] sm:max-w-[110px] truncate">Entrar</span>
         </button>
 
         <button onclick="salvarTudo()" title="Salvar Anotações na Nuvem" class="p-2 rounded-lg hover:bg-white/10 transition text-white">
@@ -178,9 +178,9 @@ const htmlTemplate = `<!DOCTYPE html>
       <span class="text-base">🏠</span>
       <span>Início</span>
     </button>
-    <button onclick="abrirModalPerfil()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
+    <button onclick="abrirModalAuthOuPerfil()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">👤</span>
-      <span>Perfil</span>
+      <span id="txt-bottom-auth">Conta</span>
     </button>
     <button onclick="salvarTudo()" class="flex flex-col items-center text-[10px] hover:text-[#4a3b69]">
       <span class="text-base">💾</span>
@@ -192,63 +192,129 @@ const htmlTemplate = `<!DOCTYPE html>
     </button>
   </nav>
 
-  <!-- ================= MODAL DE PERFIL DO USUÁRIO (SEPARAÇÃO DE ANOTAÇÕES) ================= -->
+  <!-- ================= MODAL DE LOGIN / CADASTRO (SUPABASE AUTH) ================= -->
+  <div id="modal-auth" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-[#dee2e6] overflow-hidden">
+      
+      <!-- Cabeçalho -->
+      <div class="bg-[#4a3b69] text-white px-5 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl">🔐</span>
+          <div>
+            <h3 id="auth-modal-title" class="font-bold text-sm leading-tight">Acesso do Usuário</h3>
+            <p class="text-[10px] text-purple-200">Sincronize suas anotações no celular e PC</p>
+          </div>
+        </div>
+        <button onclick="fecharModalAuth()" class="text-white/80 hover:text-white text-lg">✕</button>
+      </div>
+
+      <!-- Abas de Alternância: Entrar vs Criar Conta -->
+      <div class="flex border-b border-[#dee2e6] bg-[#f8f9fa]">
+        <button onclick="alternarAbaAuth('login')" id="tab-auth-login" class="flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-[#4a3b69] text-[#4a3b69] transition">
+          Entrar na Conta
+        </button>
+        <button onclick="alternarAbaAuth('signup')" id="tab-auth-signup" class="flex-1 py-2.5 text-xs font-bold text-center border-b-2 border-transparent text-[#6c757d] hover:text-[#4a3b69] transition">
+          Criar Nova Conta
+        </button>
+      </div>
+
+      <!-- Formulários -->
+      <div class="p-5 text-xs space-y-4">
+        
+        <div id="auth-feedback-msg" class="hidden p-2.5 rounded-lg text-xs font-medium"></div>
+
+        <!-- FORMULÁRIO 1: LOGIN -->
+        <form id="form-auth-login" onsubmit="fazerLogin(event)" class="space-y-3">
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Usuário ou E-mail:</label>
+            <input id="auth-login-email" type="text" placeholder="Ex: lafabio ou seu@email.com" autocomplete="username" required class="w-full p-2.5 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-medium focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Sua Senha:</label>
+            <input id="auth-login-password" type="password" placeholder="Sua senha secreta" autocomplete="current-password" required class="w-full p-2.5 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <button id="btn-auth-submit" type="submit" class="w-full py-2.5 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold text-xs transition shadow-2xs">
+            Entrar na Minha Conta
+          </button>
+        </form>
+
+        <!-- FORMULÁRIO 2: CADASTRO -->
+        <form id="form-auth-signup" onsubmit="fazerCadastro(event)" class="hidden space-y-3">
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Seu Nome / Apelido:</label>
+            <input id="auth-signup-nome" type="text" placeholder="Ex: Lafabio" class="w-full p-2.5 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-medium focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Escolha um Usuário ou E-mail:</label>
+            <input id="auth-signup-email" type="text" placeholder="Ex: lafabio ou seu@email.com" autocomplete="username" class="w-full p-2.5 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-medium focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-[#495057] mb-1">Criar Senha (mínimo 6 dígitos):</label>
+            <input id="auth-signup-password" type="password" placeholder="Crie uma senha de acesso" minlength="6" autocomplete="new-password" class="w-full p-2.5 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs focus:outline-none focus:border-[#4a3b69]">
+          </div>
+
+          <button id="btn-signup-submit" type="submit" class="w-full py-2.5 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold text-xs transition shadow-2xs">
+            Criar Minha Conta Grátis
+          </button>
+        </form>
+
+        <div class="pt-2 border-t border-[#dee2e6] text-center">
+          <button type="button" onclick="fecharModalAuth()" class="text-[#6c757d] hover:text-[#212529] font-medium text-[11px]">
+            Continuar sem login (modo visitante local)
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DE CONTA / PERFIL CONECTADO ================= -->
   <div id="modal-perfil" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-[#dee2e6] overflow-hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-[#dee2e6] overflow-hidden">
       
       <div class="bg-[#4a3b69] text-white px-5 py-3.5 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="text-lg">👤</span>
-          <h3 class="font-bold text-sm">Meu Perfil de Estudo</h3>
+          <h3 class="font-bold text-sm">Minha Conta</h3>
         </div>
         <button onclick="fecharModalPerfil()" class="text-white/80 hover:text-white text-lg">✕</button>
       </div>
 
       <div class="p-5 space-y-4 text-xs">
-        <div class="p-3 bg-purple-50 text-purple-900 rounded-xl border border-purple-100 flex items-start gap-2.5">
-          <span class="text-base">🔒</span>
-          <p class="leading-relaxed">
-            Suas anotações, histórico e respostas geradas ficam salvas <strong>exclusivamente no seu perfil</strong>. Outros usuários no mesmo aparelho ou congregação não verão suas anotações.
+        <div class="flex items-center gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
+          <div class="w-10 h-10 rounded-full bg-[#4a3b69] text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+            <span id="txt-perfil-iniciais">LA</span>
+          </div>
+          <div class="min-w-0">
+            <p id="txt-perfil-display-nome" class="font-bold text-[#212529] truncate">Lafabio</p>
+            <p id="txt-perfil-email" class="text-[11px] text-[#6c757d] truncate font-mono">lafabio@jwstudy.local</p>
+            <span class="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-semibold mt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Conectado na Nuvem
+            </span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-[#f8f9fa] rounded-xl border border-[#dee2e6] space-y-1.5">
+          <p class="font-semibold text-[#495057] flex items-center gap-1.5">
+            <span>☁️</span> Sincronização Automática
+          </p>
+          <p class="text-[11px] text-[#6c757d] leading-relaxed">
+            Todas as suas anotações, esboços e respostas do Gemini ficam protegidos e salvos na nuvem exclusivamente para a sua conta.
           </p>
         </div>
 
-        <div class="space-y-3">
-          <div>
-            <label class="block font-semibold text-[#495057] mb-1">Seu Nome / Apelido:</label>
-            <input id="cfg-perfil-nome" type="text" placeholder="Ex: Lafabio, Maria, etc." class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-medium focus:outline-none focus:border-[#4a3b69]">
-          </div>
-
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="block font-semibold text-[#495057]">Código Pessoal de Sincronização:</label>
-              <button onclick="gerarNovoIdPerfil()" class="text-[10px] text-[#4a3b69] font-bold hover:underline">Gerar aleatório</button>
-            </div>
-            <input id="cfg-perfil-id" type="text" placeholder="Ex: lafabio-pessoal ou usr_123" class="w-full p-2 bg-[#f8f9fa] border border-[#dee2e6] rounded-lg text-xs font-mono focus:outline-none focus:border-[#4a3b69]">
-            <p class="text-[10px] text-[#6c757d] mt-1">
-              💡 Use o mesmo código no seu celular e no seu computador/tablet para sincronizar todas as suas anotações entre aparelhos!
-            </p>
-          </div>
-        </div>
-
-        <!-- Perfis Rápidos Salvos neste aparelho -->
-        <div class="pt-2 border-t border-[#dee2e6]">
-          <span class="font-bold text-[#6c757d] uppercase tracking-wider block mb-2">Alternar Perfil neste aparelho:</span>
-          <div id="lista-perfis-salvos" class="space-y-1.5 max-h-32 overflow-y-auto"></div>
-        </div>
-
-        <div class="flex items-center justify-between pt-3 border-t border-[#dee2e6]">
-          <button onclick="criarNovoPerfil()" class="px-3 py-1.5 rounded-lg bg-[#f1f3f5] hover:bg-[#e9ecef] text-[#4a3b69] font-bold transition">
-            + Novo Perfil
+        <div class="flex items-center justify-between pt-2 border-t border-[#dee2e6] gap-2">
+          <button onclick="fazerLogout()" class="px-3 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition flex items-center gap-1.5 border border-rose-200">
+            <span>🚪</span> Sair da Conta
           </button>
           
-          <div class="flex items-center gap-2">
-            <button onclick="fecharModalPerfil()" class="px-3 py-1.5 rounded-lg text-[#6c757d] hover:bg-gray-100 font-semibold transition">
-              Fechar
-            </button>
-            <button onclick="salvarPerfilUsuario()" class="px-4 py-1.5 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold transition">
-              Salvar Perfil
-            </button>
-          </div>
+          <button onclick="fecharModalPerfil()" class="px-4 py-2 rounded-lg bg-[#4a3b69] hover:bg-[#3b2e55] text-white font-bold transition">
+            Fechar
+          </button>
         </div>
 
       </div>
@@ -1335,124 +1401,299 @@ const htmlTemplate = `<!DOCTYPE html>
     function atualizarChips() {}
 
     // ==========================================
-    // SISTEMA DE PERFIS DE USUÁRIO (SEPARAÇÃO TOTAL)
+    // SISTEMA DE AUTENTICAÇÃO E PERFIS DO USUÁRIO (SUPABASE AUTH)
     // ==========================================
+    function obterUsuarioLogado() {
+      try {
+        const raw = localStorage.getItem('jw_auth_user');
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return null;
+    }
+
     function obterPerfilAtivo() {
-      try {
-        const ativo = JSON.parse(localStorage.getItem('jw_perfil_ativo') || 'null');
-        if (ativo && ativo.id && ativo.nome) return ativo;
-      } catch (e) {}
-      const padrao = { id: 'lafabio-padrao', nome: 'Lafabio' };
-      localStorage.setItem('jw_perfil_ativo', JSON.stringify(padrao));
-      salvarNaListaPerfis(padrao);
-      return padrao;
-    }
-
-    function obterListaPerfis() {
-      try {
-        const lista = JSON.parse(localStorage.getItem('jw_lista_perfis') || '[]');
-        if (Array.isArray(lista) && lista.length > 0) return lista;
-      } catch (e) {}
-      const ativo = obterPerfilAtivo();
-      return [ativo];
-    }
-
-    function salvarNaListaPerfis(perfil) {
-      let lista = obterListaPerfis();
-      const idx = lista.findIndex(p => p.id === perfil.id);
-      if (idx >= 0) {
-        lista[idx] = perfil;
-      } else {
-        lista.push(perfil);
+      const user = obterUsuarioLogado();
+      if (user && user.id) {
+        return {
+          id: user.id,
+          nome: user.displayName || user.email.split('@')[0],
+          email: user.email,
+          isLoggedIn: true,
+          token: user.token
+        };
       }
-      localStorage.setItem('jw_lista_perfis', JSON.stringify(lista));
+      return {
+        id: 'convidado-local',
+        nome: 'Convidado',
+        email: null,
+        isLoggedIn: false,
+        token: null
+      };
     }
 
     function inicializarPerfilUsuario() {
-      const perfil = obterPerfilAtivo();
-      atualizarBadgePerfilUI(perfil);
+      atualizarUIAuth();
     }
 
-    function atualizarBadgePerfilUI(perfil) {
-      const txt = document.getElementById('txt-nome-perfil');
-      if (txt) txt.innerText = perfil.nome || 'Meu Perfil';
+    function atualizarUIAuth() {
+      const perfil = obterPerfilAtivo();
+      const txtNome = document.getElementById('txt-nome-perfil');
+      const txtBottom = document.getElementById('txt-bottom-auth');
+      const iconStatus = document.getElementById('icon-auth-status');
+      const btnHeader = document.getElementById('btn-auth-header');
+
+      if (perfil.isLoggedIn) {
+        if (txtNome) txtNome.innerText = perfil.nome;
+        if (txtBottom) txtBottom.innerText = perfil.nome;
+        if (iconStatus) iconStatus.innerText = '👤';
+        if (btnHeader) {
+          btnHeader.classList.remove('bg-amber-400', 'text-[#4a3b69]');
+          btnHeader.classList.add('bg-white/15', 'text-white');
+        }
+      } else {
+        if (txtNome) txtNome.innerText = 'Entrar';
+        if (txtBottom) txtBottom.innerText = 'Entrar';
+        if (iconStatus) iconStatus.innerText = '🔐';
+        if (btnHeader) {
+          btnHeader.classList.remove('bg-white/15', 'text-white');
+          btnHeader.classList.add('bg-amber-400', 'text-[#4a3b69]');
+        }
+      }
+    }
+
+    function abrirModalAuthOuPerfil() {
+      const perfil = obterPerfilAtivo();
+      if (perfil.isLoggedIn) {
+        abrirModalPerfil();
+      } else {
+        abrirModalAuth('login');
+      }
+    }
+
+    function abrirModalAuth(modo = 'login') {
+      alternarAbaAuth(modo);
+      document.getElementById('modal-auth').classList.remove('hidden');
+    }
+
+    function fecharModalAuth() {
+      document.getElementById('modal-auth').classList.add('hidden');
+      limparFeedbackAuth();
+    }
+
+    function alternarAbaAuth(modo) {
+      limparFeedbackAuth();
+      const formLogin = document.getElementById('form-auth-login');
+      const formSignup = document.getElementById('form-auth-signup');
+      const tabLogin = document.getElementById('tab-auth-login');
+      const tabSignup = document.getElementById('tab-auth-signup');
+
+      if (modo === 'login') {
+        formLogin.classList.remove('hidden');
+        formSignup.classList.add('hidden');
+        tabLogin.classList.add('border-[#4a3b69]', 'text-[#4a3b69]');
+        tabLogin.classList.remove('border-transparent', 'text-[#6c757d]');
+        tabSignup.classList.remove('border-[#4a3b69]', 'text-[#4a3b69]');
+        tabSignup.classList.add('border-transparent', 'text-[#6c757d]');
+        setTimeout(() => {
+          const inp = document.getElementById('auth-login-email');
+          if (inp) inp.focus();
+        }, 80);
+      } else {
+        formSignup.classList.remove('hidden');
+        formLogin.classList.add('hidden');
+        tabSignup.classList.add('border-[#4a3b69]', 'text-[#4a3b69]');
+        tabSignup.classList.remove('border-transparent', 'text-[#6c757d]');
+        tabLogin.classList.remove('border-[#4a3b69]', 'text-[#4a3b69]');
+        tabLogin.classList.add('border-transparent', 'text-[#6c757d]');
+        setTimeout(() => {
+          const inp = document.getElementById('auth-signup-nome');
+          if (inp) inp.focus();
+        }, 80);
+      }
+    }
+
+    function exibirFeedbackAuth(msg, tipo = 'erro') {
+      const fb = document.getElementById('auth-feedback-msg');
+      if (!fb) return;
+      fb.innerText = msg;
+      fb.classList.remove('hidden', 'bg-rose-50', 'text-rose-700', 'border-rose-200', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+      if (tipo === 'erro') {
+        fb.classList.add('bg-rose-50', 'text-rose-700', 'border', 'border-rose-200');
+      } else {
+        fb.classList.add('bg-emerald-50', 'text-emerald-700', 'border', 'border-emerald-200');
+      }
+    }
+
+    function limparFeedbackAuth() {
+      const fb = document.getElementById('auth-feedback-msg');
+      if (fb) {
+        fb.innerText = '';
+        fb.classList.add('hidden');
+      }
+    }
+
+    async function fazerLogin(event) {
+      if (event) event.preventDefault();
+      const emailOrUser = document.getElementById('auth-login-email').value.trim();
+      const password = document.getElementById('auth-login-password').value;
+      const btn = document.getElementById('btn-auth-submit');
+
+      if (!emailOrUser || !password) {
+        exibirFeedbackAuth('Por favor, informe seu usuário/e-mail e senha.', 'erro');
+        return;
+      }
+
+      const email = emailOrUser.includes('@') ? emailOrUser : (emailOrUser.toLowerCase() + '@jwstudy.local');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-pulse">⏳</span> Entrando...';
+
+      try {
+        const res = await fetch(\`\${SUPABASE_CONFIG.url}/auth/v1/token?grant_type=password\`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          const errMsg = data.error_description || data.msg || data.message || 'Usuário ou senha incorretos.';
+          exibirFeedbackAuth(errMsg, 'erro');
+          btn.disabled = false;
+          btn.innerHTML = 'Entrar na Minha Conta';
+          return;
+        }
+
+        const displayName = data.user?.user_metadata?.display_name || emailOrUser.split('@')[0];
+        const sessionData = {
+          id: data.user.id,
+          email: data.user.email,
+          displayName,
+          token: data.access_token,
+          refreshToken: data.refresh_token
+        };
+
+        localStorage.setItem('jw_auth_user', JSON.stringify(sessionData));
+        atualizarUIAuth();
+        fecharModalAuth();
+
+        // Carrega anotações exclusivas do usuário logado
+        await carregarNotasSalvas();
+        alert(\`🎉 Bem-vindo, \${displayName}! Suas anotações pessoais foram carregadas.\`);
+      } catch (err) {
+        exibirFeedbackAuth('Erro de conexão ao tentar fazer login.', 'erro');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Entrar na Minha Conta';
+      }
+    }
+
+    async function fazerCadastro(event) {
+      if (event) event.preventDefault();
+      const nome = document.getElementById('auth-signup-nome').value.trim();
+      const emailOrUser = document.getElementById('auth-signup-email').value.trim();
+      const password = document.getElementById('auth-signup-password').value;
+      const btn = document.getElementById('btn-signup-submit');
+
+      if (!nome || !emailOrUser || !password) {
+        exibirFeedbackAuth('Preencha todos os campos para criar sua conta.', 'erro');
+        return;
+      }
+
+      if (password.length < 6) {
+        exibirFeedbackAuth('A senha deve ter pelo menos 6 dígitos.', 'erro');
+        return;
+      }
+
+      const email = emailOrUser.includes('@') ? emailOrUser : (emailOrUser.toLowerCase() + '@jwstudy.local');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-pulse">⏳</span> Criando conta...';
+
+      try {
+        const res = await fetch(\`\${SUPABASE_CONFIG.url}/auth/v1/signup\`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            data: { display_name: nome }
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          const errMsg = data.msg || data.message || data.error_description || 'Falha ao criar conta.';
+          exibirFeedbackAuth(errMsg, 'erro');
+          btn.disabled = false;
+          btn.innerHTML = 'Criar Minha Conta Grátis';
+          return;
+        }
+
+        const sessionData = {
+          id: data.user?.id || data.id,
+          email: data.user?.email || email,
+          displayName: nome,
+          token: data.access_token,
+          refreshToken: data.refresh_token
+        };
+
+        localStorage.setItem('jw_auth_user', JSON.stringify(sessionData));
+        atualizarUIAuth();
+        fecharModalAuth();
+
+        // Salva as notas atuais para esse novo usuário
+        await salvarTudo(true);
+        alert(\`🎉 Conta criada com sucesso! Bem-vindo, \${nome}. Suas anotações agora estão salvas na sua conta.\`);
+      } catch (err) {
+        exibirFeedbackAuth('Erro de conexão ao criar conta.', 'erro');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Criar Minha Conta Grátis';
+      }
+    }
+
+    function fazerLogout() {
+      if (!confirm('Deseja realmente sair da sua conta? Suas anotações salvas na nuvem estão seguras.')) return;
+      localStorage.removeItem('jw_auth_user');
+      atualizarUIAuth();
+      fecharModalPerfil();
+
+      // Limpa os campos da tela para privacidade
+      document.querySelectorAll('textarea').forEach(t => {
+        t.value = '';
+        t.style.height = 'auto';
+      });
+
+      alert('Você saiu da sua conta. Agora você está no modo visitante.');
     }
 
     function abrirModalPerfil() {
       const perfil = obterPerfilAtivo();
-      document.getElementById('cfg-perfil-nome').value = perfil.nome;
-      document.getElementById('cfg-perfil-id').value = perfil.id;
-      renderizarListaPerfisUI();
+      const txtNome = document.getElementById('txt-perfil-display-nome');
+      const txtEmail = document.getElementById('txt-perfil-email');
+      const txtIniciais = document.getElementById('txt-perfil-iniciais');
+
+      if (txtNome) txtNome.innerText = perfil.nome;
+      if (txtEmail) txtEmail.innerText = perfil.email || 'Perfil Local';
+      if (txtIniciais) {
+        const partes = (perfil.nome || 'U').split(' ');
+        const inits = (partes[0]?.[0] || 'U') + (partes[1]?.[0] || '');
+        txtIniciais.innerText = inits.toUpperCase();
+      }
       document.getElementById('modal-perfil').classList.remove('hidden');
     }
 
     function fecharModalPerfil() {
       document.getElementById('modal-perfil').classList.add('hidden');
-    }
-
-    function gerarNovoIdPerfil() {
-      const novoId = 'usr-' + Math.random().toString(36).substring(2, 9);
-      document.getElementById('cfg-perfil-id').value = novoId;
-    }
-
-    function renderizarListaPerfisUI() {
-      const container = document.getElementById('lista-perfis-salvos');
-      const lista = obterListaPerfis();
-      const ativo = obterPerfilAtivo();
-
-      container.innerHTML = lista.map(p => \`
-        <div class="flex items-center justify-between p-2 rounded-lg \${p.id === ativo.id ? 'bg-purple-100 border border-purple-300 font-bold text-[#4a3b69]' : 'bg-[#f8f9fa] border border-[#e9ecef] hover:bg-gray-100 text-[#495057]'} transition">
-          <div class="flex items-center gap-2 cursor-pointer flex-1" onclick="trocarPerfilAtivo('\${p.id}')">
-            <span>\${p.id === ativo.id ? '✅' : '👤'}</span>
-            <div>
-              <p class="text-xs leading-none">\${p.nome}</p>
-              <p class="text-[10px] text-[#6c757d] font-mono mt-0.5">Código: \${p.id}</p>
-            </div>
-          </div>
-          \${p.id === ativo.id ? '<span class="text-[10px] font-bold text-purple-800 bg-purple-200/70 px-2 py-0.5 rounded">Ativo</span>' : \`<button onclick="trocarPerfilAtivo('\${p.id}')" class="px-2.5 py-1 rounded bg-[#4a3b69] text-white text-[10px] font-bold hover:bg-[#3b2e55]">Usar</button>\`}
-        </div>
-      \`).join('');
-    }
-
-    function salvarPerfilUsuario() {
-      const nome = document.getElementById('cfg-perfil-nome').value.trim() || 'Meu Perfil';
-      const id = document.getElementById('cfg-perfil-id').value.trim() || ('usr-' + Math.random().toString(36).substring(2, 9));
-
-      const novoPerfil = { id, nome };
-      localStorage.setItem('jw_perfil_ativo', JSON.stringify(novoPerfil));
-      salvarNaListaPerfis(novoPerfil);
-      atualizarBadgePerfilUI(novoPerfil);
-
-      fecharModalPerfil();
-      // Recarrega as notas do novo perfil
-      carregarNotasSalvas();
-      alert(\`✅ Perfil "\${nome}" ativo! Suas anotações agora são exclusivas e separadas.\`);
-    }
-
-    function trocarPerfilAtivo(id) {
-      const lista = obterListaPerfis();
-      const escolhido = lista.find(p => p.id === id);
-      if (escolhido) {
-        // Salva silenciosamente as notas do perfil que está saindo
-        salvarTudo(true);
-
-        localStorage.setItem('jw_perfil_ativo', JSON.stringify(escolhido));
-        atualizarBadgePerfilUI(escolhido);
-        fecharModalPerfil();
-
-        // Carrega as anotações do perfil selecionado
-        carregarNotasSalvas();
-        limparChat();
-        alert(\`👤 Perfil alternado para "\${escolhido.nome}". Anotações carregadas!\`);
-      }
-    }
-
-    function criarNovoPerfil() {
-      const nomeSugerido = 'Perfil ' + (obterListaPerfis().length + 1);
-      const novoId = 'usr-' + Math.random().toString(36).substring(2, 9);
-      document.getElementById('cfg-perfil-nome').value = nomeSugerido;
-      document.getElementById('cfg-perfil-id').value = novoId;
-      document.getElementById('cfg-perfil-nome').focus();
     }
 
     // Salva notas no Supabase e no localStorage com isolamento de perfil
@@ -1469,36 +1710,79 @@ const htmlTemplate = `<!DOCTYPE html>
       // 1. Salva localmente com chave do perfil
       localStorage.setItem(\`jw_notas_\${perfil.id}_\${semanaAtiva}_\${modoAtual}\`, JSON.stringify(notas));
 
-      // 2. Salva na nuvem no Supabase com user_id do perfil
+      // 2. Se for visitante não logado, orienta amigavelmente se não for silencioso
+      if (!perfil.isLoggedIn) {
+        if (!silencioso) {
+          if (confirm('Anotações salvas localmente neste aparelho!\\n\\nDeseja ENTRAR ou CRIAR UMA CONTA gratuita para sincronizar automaticamente entre o celular e o computador?')) {
+            abrirModalAuth('signup');
+          }
+        }
+        return;
+      }
+
+      // 3. Salva na nuvem no Supabase com user_id do perfil
       try {
-        const res = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/user_notes\`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_CONFIG.key,
-            'Authorization': \`Bearer \${SUPABASE_CONFIG.key}\`,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
-          },
-          body: JSON.stringify({
-            user_id: perfil.id,
-            year: 2026,
-            week_number: semanaAtiva,
-            meeting_type: modoAtual,
-            item_key: 'todas',
-            note_text: JSON.stringify(notas),
-            updated_at: new Date().toISOString()
-          })
-        });
+        const authToken = perfil.token ? ('Bearer ' + perfil.token) : ('Bearer ' + SUPABASE_CONFIG.key);
+
+        // Verifica se já existe registro para atualizar (PATCH) ou criar (POST)
+        const checkRes = await fetch(
+          \`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.\${encodeURIComponent(perfil.id)}&year=eq.2026&week_number=eq.\${semanaAtiva}&meeting_type=eq.\${modoAtual}&item_key=eq.todas&select=id\`,
+          {
+            headers: {
+              'apikey': SUPABASE_CONFIG.key,
+              'Authorization': authToken
+            }
+          }
+        );
+
+        let rowId = null;
+        if (checkRes.ok) {
+          const rows = await checkRes.json();
+          if (rows && rows.length > 0) rowId = rows[0].id;
+        }
+
+        const payload = {
+          user_id: perfil.id,
+          year: 2026,
+          week_number: semanaAtiva,
+          meeting_type: modoAtual,
+          item_key: 'todas',
+          note_text: JSON.stringify(notas),
+          updated_at: new Date().toISOString()
+        };
+
+        let res;
+        if (rowId) {
+          res = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?id=eq.\${rowId}\`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_CONFIG.key,
+              'Authorization': authToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          res = await fetch(\`\${SUPABASE_CONFIG.url}/rest/v1/user_notes\`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_CONFIG.key,
+              'Authorization': authToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+        }
 
         if (res.ok) {
-          if (!silencioso) alert(\`✅ Anotações do perfil "\${perfil.nome}" salvas no Supabase Nuvem e no seu aparelho!\`);
+          if (!silencioso) alert(\`✅ Anotações sincronizadas com sucesso na conta "\${perfil.nome}"!\`);
           return;
         }
       } catch (e) {
         console.warn('Erro ao salvar no Supabase:', e.message);
       }
 
-      if (!silencioso) alert(\`✅ Anotações do perfil "\${perfil.nome}" salvas no seu dispositivo!\`);
+      if (!silencioso) alert(\`✅ Anotações salvas no seu dispositivo!\`);
     }
 
     // Recupera notas salvas do perfil ativo
@@ -1513,34 +1797,37 @@ const htmlTemplate = `<!DOCTYPE html>
 
       let carregou = false;
 
-      // Tenta recuperar do Supabase para este user_id
-      try {
-        const res = await fetch(
-          \`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.\${encodeURIComponent(perfil.id)}&year=eq.2026&week_number=eq.\${semanaAtiva}&meeting_type=eq.\${modoAtual}&select=*\`,
-          {
-            headers: {
-              'apikey': SUPABASE_CONFIG.key,
-              'Authorization': \`Bearer \${SUPABASE_CONFIG.key}\`
+      // Se estiver logado, tenta recuperar do Supabase
+      if (perfil.isLoggedIn) {
+        try {
+          const authToken = perfil.token ? ('Bearer ' + perfil.token) : ('Bearer ' + SUPABASE_CONFIG.key);
+          const res = await fetch(
+            \`\${SUPABASE_CONFIG.url}/rest/v1/user_notes?user_id=eq.\${encodeURIComponent(perfil.id)}&year=eq.2026&week_number=eq.\${semanaAtiva}&meeting_type=eq.\${modoAtual}&select=*&order=updated_at.desc\`,
+            {
+              headers: {
+                'apikey': SUPABASE_CONFIG.key,
+                'Authorization': authToken
+              }
+            }
+          );
+
+          if (res.ok) {
+            const rows = await res.json();
+            if (rows && rows.length > 0 && rows[0].note_text) {
+              const notas = JSON.parse(rows[0].note_text);
+              Object.entries(notas).forEach(([id, texto]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                  el.value = texto;
+                  el.style.height = 'auto';
+                  el.style.height = Math.max(60, el.scrollHeight + 8) + 'px';
+                }
+              });
+              carregou = true;
             }
           }
-        );
-
-        if (res.ok) {
-          const rows = await res.json();
-          if (rows && rows.length > 0 && rows[0].note_text) {
-            const notas = JSON.parse(rows[0].note_text);
-            Object.entries(notas).forEach(([id, texto]) => {
-              const el = document.getElementById(id);
-              if (el) {
-                el.value = texto;
-                el.style.height = 'auto';
-                el.style.height = Math.max(60, el.scrollHeight + 8) + 'px';
-              }
-            });
-            carregou = true;
-          }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
       // Fallback: localStorage isolado por perfil
       if (!carregou) {
