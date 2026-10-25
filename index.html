@@ -1848,6 +1848,12 @@
           });
           console.log(`✅ Sincronizado com Supabase Nuvem: ${rows.length} semanas disponíveis.`);
           document.getElementById('badge-cloud-status').classList.remove('hidden');
+          // Re-renderiza a tela para garantir que novos campos (como livroEstudo) apareçam imediatamente
+          if (modoAtual === 'meio_semana') {
+            renderizarMeioSemana();
+          } else {
+            renderizarSentinela();
+          }
         }
       } catch (e) {
         console.warn('Operando com base de dados local offline.');
@@ -2120,7 +2126,8 @@
                   ${p.livroEstudo.perguntas.map((qObj, qIdx) => {
                     const qTexto = typeof qObj === 'string' ? qObj : qObj.pergunta;
                     const qSecao = typeof qObj === 'string' ? 'Consideração' : (qObj.secao || 'Consideração');
-                    const contextoMateria = 'LIVRO: ' + p.livroEstudo.publicacao + ' - Cap. ' + p.livroEstudo.capitulo + ' (' + p.livroEstudo.personagem + ': ' + p.livroEstudo.titulo + ') | Pergunta: ' + qTexto;
+                    const textoHistoria = (p.livroEstudo.paragrafos || []).slice(0, 6).join(' ').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+                    const contextoMateria = 'LIVRO: ' + p.livroEstudo.publicacao + ' - Cap. ' + p.livroEstudo.capitulo + ' (' + p.livroEstudo.personagem + ': ' + p.livroEstudo.titulo + ') | HISTÓRIA: ' + textoHistoria;
 
                     return `
                       <div class="border-l-3 border-[#9e2a2b] bg-white p-3.5 rounded-r-xl space-y-2 border border-[#e9ecef] shadow-3xs">
