@@ -18,7 +18,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método não permitido. Use POST.' });
   }
 
-  const { prompt, context, question, tipo } = req.body || {};
+  const { prompt, context, question, tipo, perfilModo } = req.body || {};
+  const isCrianca = perfilModo === 'crianca' || tipo === 'crianca';
   const apiKey = process.env.GEMINI_API_KEY;
   const textoQuery = (question || prompt || '').toLowerCase();
   const isDiscurso = tipo === 'discurso' || textoQuery.includes('discurso') || textoQuery.includes('esboço');
@@ -30,7 +31,9 @@ export default async function handler(req, res) {
     // Retorno simulado com modo fallback se a chave ainda não estiver configurada no Vercel
     let respostaSimulada = `[Modo Simulação]: Um comentário excelente sobre este ponto é conectar o ensinamento bíblico com uma atitude prática de amor e perseverança no dia a dia.`;
     
-    if (isDiscurso) {
+    if (isCrianca) {
+      respostaSimulada = `Aprendi que Jeová é muito bondoso e sempre nos ajuda. Quando somos obedientes e amorosos, deixamos Jeová muito alegre!`;
+    } else if (isDiscurso) {
       respostaSimulada = `TEMA: ${question || prompt}\n\nI. INTRODUÇÃO (1 a 2 min)\n• Gancho: Chame a atenção da congregação destacando a importância prática do tema para os nossos dias.\n• Apresentação do tema: Declare claramente o assunto e como ele fortalece nossa fé.\n\nII. CORPO / DESENVOLVIMENTO (6 a 7 min)\n• Ponto 1: Análise do contexto histórico e bíblico da leitura da semana.\n  - [Ler e destacar o texto bíblico principal]\n  - Aplicação: O que este versículo nos ensina sobre as qualidades de Jeová.\n• Ponto 2: Lição prática para a congregação e serviço de campo.\n  - Ilustração curta e calorosa para fixar a ideia.\n  - Como cada publicador pode agir em harmonia com essa verdade.\n\nIII. CONCLUSÃO (1 a 2 min)\n• Resumo dos pontos principais analisados.\n• Apelo caloroso: Incentive a todos a confiar em Jeová e colocar o ponto em prática nesta semana.`;
     } else if (isJoias) {
       respostaSimulada = `💎 Joia Espiritual na Leitura da Semana (${context || 'Leitura bíblica'}):\n\n• O que aprendemos sobre Jeová: Os textos da leitura semanal mostram que Jeová percebe nossos sentimentos mais íntimos, cuida de seus servos em tempos difíceis e nos corrige sempre com amor e equilíbrio.\n• Como melhora minha relação com Jeová: Meditar nisso me achega a Jeová como um Pai compreensivo e leal, dando-me plena confiança para derramar o coração a Ele em oração diante de qualquer ansiedade.\n\n🎤 Comentário Pronto para a Congregação (30 a 45s):\n"Na leitura da Bíblia desta semana, uma joia muito encorajadora é ver como Jeová cuida pessoalmente de cada um de Seus servos. Isso me ensina que Jeová não é indiferente às nossas preocupações e nos dá forças para perseverar. Saber disso fortalece muito a minha amizade com Jeová e me motiva a confiar Nele em qualquer circunstância."`;
@@ -50,7 +53,19 @@ export default async function handler(req, res) {
     let systemInstruction = "";
     let userInstruction = "";
 
-    if (isDiscurso) {
+    if (isCrianca) {
+      systemInstruction = `Você é um assistente amoroso que ajuda uma CRIANÇA das Testemunhas de Jeová (entre 6 e 11 anos) a preparar seu comentário para a reunião congregacional.
+Seu objetivo é formular uma resposta SUPER SIMPLES, CURTA e FÁCIL (apenas 1 ou 2 frases curtas, no máximo 15 a 20 segundos) em português do Brasil, para a criança ler ou falar no microfone.
+
+Diretrizes estritas para crianças:
+1. TAMANHO: Máximo de 1 a 2 frases curtas (cerca de 15 a 30 palavras no total). NUNCA faça parágrafos longos nem textos difíceis.
+2. LINGUAGEM: Use vocabulário simples, claro e meigo (ex: "Jeová é nosso amigo", "Jeová cuida da gente", "Devemos obedecer aos nossos pais", "Podemos ser bondosos com os coleguinhas", "Jeová fica muito feliz quando...").
+3. NUNCA use termos difíceis ou conceitos complicados (como 'soberania', 'concomitante', 'procedência', etc.).
+4. INÍCIO NATURAL: Comece de forma direta e espontânea como uma criança fala (ex: "Eu aprendi que...", "O texto nos mostra que...", "Nós devemos...", "Jeová quer que a gente...").
+5. NUNCA faça rascunhos em inglês, nunca coloque prefixos como "*Attempt*" ou "Aqui está uma resposta". Entregue apenas a frase pronta para a criança falar.`;
+
+      userInstruction = "Formule um comentário infantil super simples e curto de 1 a 2 frases para a criança responder no microfone.";
+    } else if (isDiscurso) {
       systemInstruction = `Você é um orador e instrutor experiente das Testemunhas de Jeová preparando um esboço completo de discurso de 10 minutos para a Reunião Vida e Ministério Cristãos (parte "Tesouros da Palavra de Deus").
 Seu objetivo é gerar um ESBOÇO COMPLETO, PRÁTICO E BEM ESTRUTURADO (Começo, Meio e Fim) baseado estritamente no tema, nos textos bíblicos e na matéria fornecida da apostila.
 
@@ -128,8 +143,8 @@ Diretrizes estritas:
         parts: [{ text: systemInstruction }]
       },
       generationConfig: {
-        temperature: 0.5,
-        maxOutputTokens: isDiscurso ? 2000 : 1000
+        temperature: isCrianca ? 0.3 : 0.5,
+        maxOutputTokens: isCrianca ? 300 : (isDiscurso ? 2000 : 1000)
       }
     };
 
