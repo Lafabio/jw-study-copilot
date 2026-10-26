@@ -1969,16 +1969,22 @@
       VIDACRISTA: { border: "border-[#9e2a2b]", text: "text-[#9e2a2b]", bgBadge: "bg-[#9e2a2b]", label: "NOSSA VIDA CRISTÃ" }
     };
 
-    // Inicialização da Página
-    window.addEventListener('DOMContentLoaded', async () => {
-      inicializarPerfilUsuario();
-      verificarDicaAssistente();
-      configurarMonitorScroll();
-      popularSeletorSemanas();
-      await sincronizarComSupabase();
-      popularSeletorSemanas();
-      selecionarSemana(43);
-      registrarServiceWorker();
+    // Inicialização da Página (Carregamento instantâneo)
+    window.addEventListener('DOMContentLoaded', () => {
+      try { inicializarPerfilUsuario(); } catch (e) { console.warn(e); }
+      try { verificarDicaAssistente(); } catch (e) { console.warn(e); }
+      try { configurarMonitorScroll(); } catch (e) { console.warn(e); }
+      try { popularSeletorSemanas(); } catch (e) { console.warn(e); }
+
+      // 1. Renderiza IMEDIATAMENTE com os dados locais para nunca travar na tela de carregamento
+      try { selecionarSemana(43); } catch (e) { console.error('Erro ao renderizar semana:', e); }
+
+      // 2. Sincroniza em segundo plano com a nuvem sem bloquear a renderização inicial
+      sincronizarComSupabase().then(() => {
+        try { popularSeletorSemanas(); } catch (e) {}
+      }).catch(err => console.warn('Sync offline:', err));
+
+      try { registrarServiceWorker(); } catch (e) {}
     });
 
     function popularSeletorSemanas() {
@@ -2569,7 +2575,7 @@
                 <button onclick="aprofundarParagrafo('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'simples', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Resposta direta em até 30 segundos">
                   ⚡ Simples (30s)
                 </button>
-                <button onclick="aprofundarParagrafo('${p.pergunta.replace(/'/g, &quot;\\'&quot;)}', '${(p.texto || '').replace(/'/g, &quot;\\'&quot;).replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'libras', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[11px] font-medium shadow-3xs" title="Orientar resposta na gramática de Libras (Glosas)">
+                <button onclick="aprofundarParagrafo('${p.pergunta.replace(/'/g, "\\'")}', '${(p.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ')}', 'libras', 'nota-sentinela-${p.num}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[11px] font-medium shadow-3xs" title="Orientar resposta na gramática de Libras (Glosas)">
                   🤟 Libras
                 </button>
                 <button onclick="toggleDuvidaInline('sentinela-${p.num}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Fazer uma pergunta personalizada ao Gemini sobre este parágrafo">

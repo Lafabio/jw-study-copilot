@@ -1,6 +1,6 @@
 // Service Worker: sw.js
 // Versão com Network-First para garantir que celulares sempre carreguem a versão mais recente
-const CACHE_NAME = 'jw-study-v3.4-login-usuario';
+const CACHE_NAME = 'jw-study-v3.5-instant-load-fix';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
