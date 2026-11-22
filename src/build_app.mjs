@@ -770,7 +770,7 @@ const htmlTemplate = `<!DOCTYPE html>
                 <div class="pt-2 border-t border-[#dee2e6]">
                   <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
                     <span class="font-bold">🎤 Esboço do Discurso (Começo, Meio e Fim):</span>
-                    <button onclick="copiarTexto('nota-parte-1')" class="text-xs text-[#4a3b69] hover:underline font-semibold flex items-center gap-1">📋 Copiar Esboço</button>
+                    <button type="button" onclick="copiarTexto('nota-parte-1', this)" class="px-2 py-0.5 rounded bg-purple-50/70 hover:bg-purple-100 text-[#4a3b69] border border-purple-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">📋 Copiar Esboço</button>
                   </div>
                   <textarea id="nota-parte-1" placeholder="Toque em '🎤 Gerar Esboço do Discurso (10 min)' para preparar um esboço completo com Começo, Meio e Fim baseado na matéria e nos textos indicados..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y font-mono leading-relaxed" rows="8"></textarea>
                   <div id="feedback-nota-parte-1"></div>
@@ -872,6 +872,12 @@ const htmlTemplate = `<!DOCTYPE html>
                         </div>
 
                         <!-- Campo Minhas Anotações -->
+                        <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                          <span class="font-bold">📝 Meu Comentário:</span>
+                          <button type="button" onclick="copiarTexto('nota-livro-\${p.id}-\${qIdx}', this)" class="px-2 py-0.5 rounded bg-rose-50/70 hover:bg-rose-100 text-[#9e2a2b] border border-rose-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer" title="Selecionar e copiar resposta">
+                            📋 Copiar
+                          </button>
+                        </div>
                         <textarea id="nota-livro-\${p.id}-\${qIdx}" placeholder="Meu comentário para este ponto do livro Coragem..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#9e2a2b] resize-y" rows="2"></textarea>
                         <div id="feedback-nota-livro-\${p.id}-\${qIdx}"></div>
                       </div>
@@ -925,6 +931,12 @@ const htmlTemplate = `<!DOCTYPE html>
                           </div>
                         </div>
 
+                        <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                          <span class="font-bold">💎 Joia para Relação com Jeová:</span>
+                          <button type="button" onclick="copiarTexto('nota-pergunta-\${p.id}-\${idx}', this)" class="px-2 py-0.5 rounded bg-amber-50/70 hover:bg-amber-100 text-[#c57e00] border border-amber-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer" title="Selecionar e copiar resposta">
+                            📋 Copiar
+                          </button>
+                        </div>
                         <textarea id="nota-pergunta-\${p.id}-\${idx}" placeholder="Toque em '💎 Joias para Relação com Jeová' para identificar as meditações de \${dados.tema}..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#c57e00] resize-y leading-relaxed" rows="4"></textarea>
                         <div id="feedback-nota-pergunta-\${p.id}-\${idx}"></div>
                       </div>
@@ -944,6 +956,12 @@ const htmlTemplate = `<!DOCTYPE html>
                         </button>
                         <button onclick="aprofundarParagrafo('\${q.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'simples', 'nota-pergunta-\${p.id}-\${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
                           ⚡ Simples (30s)
+                        </button>
+                      </div>
+                      <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+                        <span class="font-bold">📝 Meu Comentário:</span>
+                        <button type="button" onclick="copiarTexto('nota-pergunta-\${p.id}-\${idx}', this)" class="px-2 py-0.5 rounded bg-purple-50/70 hover:bg-purple-100 text-[#4a3b69] border border-purple-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer" title="Selecionar e copiar resposta">
+                          📋 Copiar
                         </button>
                       </div>
                       <textarea id="nota-pergunta-\${p.id}-\${idx}" placeholder="Meu comentário para esta pergunta..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="1"></textarea>
@@ -978,6 +996,9 @@ const htmlTemplate = `<!DOCTYPE html>
                 <div class="pt-2 border-t border-[#dee2e6]">
                   <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
                     <span class="font-bold">📝 Minhas Anotações & Esboço:</span>
+                    <button type="button" onclick="copiarTexto('nota-parte-\${p.id}', this)" class="px-2 py-0.5 rounded bg-purple-50/70 hover:bg-purple-100 text-[#4a3b69] border border-purple-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer" title="Selecionar e copiar resposta">
+                      📋 Copiar
+                    </button>
                   </div>
                   <textarea id="nota-parte-\${p.id}" placeholder="Minhas anotações para esta parte..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y" rows="2"></textarea>
                   <div id="feedback-nota-parte-\${p.id}"></div>
@@ -1120,6 +1141,9 @@ const htmlTemplate = `<!DOCTYPE html>
               <div class="pt-2 border-t border-[#dee2e6]">
                 <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
                   <span class="font-bold">📝 Minhas Anotações & Resposta:</span>
+                  <button type="button" onclick="copiarTexto('nota-sentinela-\${p.num}', this)" class="px-2 py-0.5 rounded bg-purple-50/70 hover:bg-purple-100 text-[#4a3b69] border border-purple-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer" title="Selecionar e copiar resposta">
+                    📋 Copiar
+                  </button>
                 </div>
                 <textarea id="nota-sentinela-\${p.num}" placeholder="Toque em '✦ Comentar com IA' ou anote aqui seu comentário..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y leading-relaxed" rows="2"></textarea>
                 <div id="feedback-nota-sentinela-\${p.num}"></div>
@@ -1209,6 +1233,9 @@ const htmlTemplate = `<!DOCTYPE html>
               <div class="pt-2 border-t border-[#f1f3f5]">
                 <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
                   <span class="font-bold">📝 Minhas Anotações & Resposta de Recapitulação:</span>
+                  <button type="button" onclick="copiarTexto('\${targetId}', this)" class="px-2 py-0.5 rounded bg-purple-50/70 hover:bg-purple-100 text-[#4a3b69] border border-purple-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer" title="Selecionar e copiar resposta">
+                    📋 Copiar
+                  </button>
                 </div>
                 <textarea id="\${targetId}" placeholder="Toque em '✦ Comentar com IA' ou anote aqui sua resposta de recapitulação..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-2.5 rounded-lg border border-[#dee2e6] bg-[#fdfdfd] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#4a3b69] resize-y leading-relaxed" rows="2"></textarea>
                 <div id="feedback-\${targetId}"></div>
@@ -1366,16 +1393,64 @@ const htmlTemplate = `<!DOCTYPE html>
       await responderComIA(promptSecao, 'Leitura da Bíblia da semana: ' + leituraSemanal, targetTextareaId, btnElement, 'joias');
     }
 
-    function copiarTexto(id) {
+    async function copiarTexto(id, btnElement = null) {
       const el = document.getElementById(id);
-      if (!el || !el.value) return;
-      navigator.clipboard.writeText(el.value).then(() => {
+      if (!el || !el.value || !el.value.trim()) {
         const feedback = document.getElementById('feedback-' + id);
         if (feedback) {
-          feedback.innerHTML = '<span class="text-emerald-700 font-semibold text-xs">📋 Esboço copiado para a área de transferência!</span>';
+          feedback.innerHTML = '<span class="text-amber-700 font-semibold text-xs flex items-center gap-1">⚠️ Nenhuma resposta no campo para copiar. Gere ou escreva seu comentário primeiro!</span>';
           setTimeout(() => { if (feedback) feedback.innerHTML = ''; }, 3000);
+        } else {
+          alert('Nenhuma resposta no campo para copiar. Gere ou escreva seu comentário primeiro!');
         }
-      });
+        return;
+      }
+
+      const texto = el.value.trim();
+
+      // 1. Foca e seleciona todo o texto visualmente
+      try {
+        el.focus();
+        el.select();
+        if (typeof el.setSelectionRange === 'function') {
+          el.setSelectionRange(0, 99999);
+        }
+      } catch (e) {}
+
+      // 2. Copia para a área de transferência usando API moderna com fallback
+      let copiado = false;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(texto);
+          copiado = true;
+        } else {
+          copiado = document.execCommand('copy');
+        }
+      } catch (err) {
+        try {
+          copiado = document.execCommand('copy');
+        } catch (e) {
+          copiado = false;
+        }
+      }
+
+      // 3. Feedback visual no próprio botão clicado
+      if (btnElement) {
+        const originalHtml = btnElement.innerHTML;
+        btnElement.innerHTML = '✅ Copiado!';
+        btnElement.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+        setTimeout(() => {
+          btnElement.innerHTML = originalHtml;
+          btnElement.classList.remove('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+        }, 2000);
+      }
+
+      // 4. Feedback no elemento de feedback abaixo do campo
+      const feedback = document.getElementById('feedback-' + id);
+      if (feedback) {
+        feedback.innerHTML = '<span class="text-emerald-700 font-semibold text-xs flex items-center gap-1 mt-1"><span>📋</span> Resposta selecionada e copiada com sucesso!</span>';
+        setTimeout(() => { if (feedback) feedback.innerHTML = ''; }, 3500);
+      }
     }
 
     function toggleStudyPane() {}
@@ -1577,19 +1652,20 @@ const htmlTemplate = `<!DOCTYPE html>
           feedbackEl.className = "text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1 transition duration-300";
           area.parentNode.appendChild(feedbackEl);
         }
-        feedbackEl.innerHTML = isLibras
-          ? '<span>🤟 Roteiro em Libras estruturado e salvo nas suas anotações!</span>'
+        const btnCopiarRapido = '<button type="button" onclick="copiarTexto(\\'' + targetTextareaId + '\\', this)" class="ml-auto inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[11px] font-bold border border-emerald-300 shadow-3xs cursor-pointer transition">📋 Copiar Resposta</button>';
+        feedbackEl.innerHTML = (isLibras
+          ? '<span>🤟 Roteiro em Libras estruturado e salvo!</span>'
           : (isCrianca
-              ? '<span>🧒 Resposta simples para criança preparada e salva!</span>'
+              ? '<span>🧒 Resposta simples para criança preparada!</span>'
               : (isDiscurso
-                  ? '<span>✅ Esboço completo do discurso estruturado e salvo nas suas anotações!</span>'
+                  ? '<span>✅ Esboço completo do discurso pronto!</span>'
                   : (isJoias
-                      ? '<span>💎 Joias espirituais identificadas e salvas nas suas anotações!</span>'
+                      ? '<span>💎 Joias espirituais identificadas!</span>'
                       : (isLivro
-                          ? '<span>📖 Comentário do Estudo de Livro formulado com Gemini e salvo!</span>'
+                          ? '<span>📖 Comentário do Livro pronto!</span>'
                           : (isRevisao
-                              ? '<span>📋 Resposta de recapitulação formulada com Gemini e salva!</span>'
-                              : '<span>✅ Comentário formulado com Gemini e salvo nas anotações!</span>')))));
+                              ? '<span>📋 Resposta de recapitulação pronta!</span>'
+                              : '<span>✅ Comentário formulado com Gemini!</span>')))))) + btnCopiarRapido;
         setTimeout(() => {
           if (feedbackEl) feedbackEl.innerHTML = '';
         }, 4000);
@@ -2179,7 +2255,7 @@ const htmlTemplate = `<!DOCTYPE html>
               <span class="font-bold flex items-center gap-1.5 text-emerald-800">
                 <span>📝</span> Roteiro em Libras (Salvo Automaticamente):
               </span>
-              <button onclick="copiarTexto('nota-libras-geral')" class="hover:text-emerald-700 font-semibold text-[10px] flex items-center gap-1 transition">
+              <button type="button" onclick="copiarTexto('nota-libras-geral', this)" class="px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
                 📋 Copiar Roteiro
               </button>
             </div>
@@ -2224,6 +2300,12 @@ const htmlTemplate = `<!DOCTYPE html>
                 </button>
               </div>
             </div>
+            <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+              <span class="font-bold">📝 Roteiro em Libras:</span>
+              <button type="button" onclick="copiarTexto('nota-libras-sentinela', this)" class="px-2 py-0.5 rounded bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
+                📋 Copiar
+              </button>
+            </div>
             <textarea id="nota-libras-sentinela" placeholder="Anotações e roteiro do comentário de A Sentinela em Libras..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-xl border border-[#dee2e6] bg-[#f8f9fa] focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-y leading-relaxed font-mono" rows="3"></textarea>
             <div id="feedback-nota-libras-sentinela"></div>
           </div>
@@ -2250,6 +2332,12 @@ const htmlTemplate = `<!DOCTYPE html>
                 </button>
               </div>
             </div>
+            <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+              <span class="font-bold">📝 Roteiro em Libras:</span>
+              <button type="button" onclick="copiarTexto('nota-libras-joias', this)" class="px-2 py-0.5 rounded bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
+                📋 Copiar
+              </button>
+            </div>
             <textarea id="nota-libras-joias" placeholder="Roteiro em Libras sobre as Joias Espirituais da semana..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-xl border border-[#dee2e6] bg-[#f8f9fa] focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-y leading-relaxed font-mono" rows="3"></textarea>
             <div id="feedback-nota-libras-joias"></div>
           </div>
@@ -2275,6 +2363,12 @@ const htmlTemplate = `<!DOCTYPE html>
                   <span class="text-amber-300">✦</span> Orientar em Libras
                 </button>
               </div>
+            </div>
+            <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+              <span class="font-bold">📝 Roteiro em Libras:</span>
+              <button type="button" onclick="copiarTexto('nota-libras-livro', this)" class="px-2 py-0.5 rounded bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
+                📋 Copiar
+              </button>
             </div>
             <textarea id="nota-libras-livro" placeholder="Roteiro em Libras para o Estudo de Livro de Congregação..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-xl border border-[#dee2e6] bg-[#f8f9fa] focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-y leading-relaxed font-mono" rows="3"></textarea>
             <div id="feedback-nota-libras-livro"></div>

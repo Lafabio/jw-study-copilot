@@ -103,7 +103,7 @@
               <span class="font-bold flex items-center gap-1.5 text-emerald-800">
                 <span>📝</span> Roteiro em Libras (Salvo Automaticamente):
               </span>
-              <button onclick="copiarTexto('nota-libras-geral')" class="hover:text-emerald-700 font-semibold text-[10px] flex items-center gap-1 transition">
+              <button type="button" onclick="copiarTexto('nota-libras-geral', this)" class="px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
                 📋 Copiar Roteiro
               </button>
             </div>
@@ -148,6 +148,12 @@
                 </button>
               </div>
             </div>
+            <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+              <span class="font-bold">📝 Roteiro em Libras:</span>
+              <button type="button" onclick="copiarTexto('nota-libras-sentinela', this)" class="px-2 py-0.5 rounded bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
+                📋 Copiar
+              </button>
+            </div>
             <textarea id="nota-libras-sentinela" placeholder="Anotações e roteiro do comentário de A Sentinela em Libras..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-xl border border-[#dee2e6] bg-[#f8f9fa] focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-y leading-relaxed font-mono" rows="3"></textarea>
             <div id="feedback-nota-libras-sentinela"></div>
           </div>
@@ -174,6 +180,12 @@
                 </button>
               </div>
             </div>
+            <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+              <span class="font-bold">📝 Roteiro em Libras:</span>
+              <button type="button" onclick="copiarTexto('nota-libras-joias', this)" class="px-2 py-0.5 rounded bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
+                📋 Copiar
+              </button>
+            </div>
             <textarea id="nota-libras-joias" placeholder="Roteiro em Libras sobre as Joias Espirituais da semana..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-xl border border-[#dee2e6] bg-[#f8f9fa] focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-y leading-relaxed font-mono" rows="3"></textarea>
             <div id="feedback-nota-libras-joias"></div>
           </div>
@@ -199,6 +211,12 @@
                   <span class="text-amber-300">✦</span> Orientar em Libras
                 </button>
               </div>
+            </div>
+            <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
+              <span class="font-bold">📝 Roteiro em Libras:</span>
+              <button type="button" onclick="copiarTexto('nota-libras-livro', this)" class="px-2 py-0.5 rounded bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-semibold transition flex items-center gap-1 shadow-3xs cursor-pointer">
+                📋 Copiar
+              </button>
             </div>
             <textarea id="nota-libras-livro" placeholder="Roteiro em Libras para o Estudo de Livro de Congregação..." oninput="autoSalvarNotaLocal(this.id)" class="w-full text-xs p-3 rounded-xl border border-[#dee2e6] bg-[#f8f9fa] focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-y leading-relaxed font-mono" rows="3"></textarea>
             <div id="feedback-nota-libras-livro"></div>
