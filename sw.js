@@ -1,12 +1,13 @@
 // Service Worker: sw.js
 // Versão com Network-First para garantir que celulares sempre carreguem a versão mais recente
-const CACHE_NAME = 'jw-study-v3.6-botao-copiar';
+const CACHE_NAME = 'jw-study-v3.8-auto-week-libras-total';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
   './cache/todas_semanas.json',
+  './cache/todas_semanas_full.json',
   './cache/livro_coragem_caps.json',
   './cache/semana_2026_43.json',
   './cache/semana_2026_44.json',

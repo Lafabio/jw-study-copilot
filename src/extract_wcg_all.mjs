@@ -5,7 +5,12 @@ const urls = {
   14: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025914',
   15: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025915',
   16: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025916',
-  17: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025917'
+  17: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025917',
+  18: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025918',
+  19: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025919',
+  20: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025920',
+  21: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025921',
+  22: 'https://wol.jw.org/pt/wol/d/r5/lp-t/1102025922'
 };
 
 function parseWcgChapter(html, capNum) {
@@ -120,7 +125,12 @@ async function main() {
     44: 14,
     45: 15,
     46: 16,
-    47: 17
+    47: 17,
+    48: 18,
+    49: 19,
+    50: 20,
+    51: 21,
+    52: 22
   };
 
   const todasFull = JSON.parse(fs.readFileSync('cache/todas_semanas_full.json', 'utf8'));

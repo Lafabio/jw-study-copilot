@@ -139,7 +139,7 @@ const htmlTemplate = `<!DOCTYPE html>
         <button onclick="mudarSemanaRelativa(-1)" title="Semana anterior" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">◀</button>
         <div class="flex items-center gap-1 min-w-0">
           <span class="text-[#6c757d] hidden xs:inline">Semana:</span>
-          <select id="seletor-semana" onchange="selecionarSemana(this.value)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer max-w-[130px] sm:max-w-none truncate"></select>
+          <select id="seletor-semana" onchange="selecionarSemana(this.value, true)" class="bg-transparent font-bold text-[#4a3b69] focus:outline-none cursor-pointer max-w-[130px] sm:max-w-none truncate"></select>
         </div>
         <button onclick="mudarSemanaRelativa(1)" title="Próxima semana" class="p-1 px-2 rounded hover:bg-black/5 text-[#4a3b69] font-bold text-sm">▶</button>
       </div>
@@ -483,7 +483,35 @@ const htmlTemplate = `<!DOCTYPE html>
     // BANCO DE DADOS COMPLETO E OFICIAL (EXTRAÍDO DO JW.ORG)
     const bancoSemanasJW = ${JSON.stringify(todasSemanas, null, 2)};
 
-    let semanaAtiva = 43;
+    // Calcula automaticamente o número da semana ISO (1 a 53) e o ano com base na data do dispositivo
+    function obterSemanaISO(d = new Date()) {
+      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+      return { ano: date.getUTCFullYear(), semana: weekNo };
+    }
+
+    function obterSemanaAtualCalculada() {
+      return obterSemanaISO().semana;
+    }
+
+    function resolverSemanaPadrao() {
+      const semanaReal = obterSemanaAtualCalculada();
+      if (bancoSemanasJW[semanaReal]) {
+        return semanaReal;
+      }
+      const semanas = Object.keys(bancoSemanasJW).map(Number).sort((a,b) => a - b);
+      if (semanas.length > 0) {
+        const anteriores = semanas.filter(s => s <= semanaReal);
+        if (anteriores.length > 0) return anteriores[anteriores.length - 1];
+        return semanas[semanas.length - 1];
+      }
+      return 47;
+    }
+
+    let semanaAtiva = resolverSemanaPadrao();
     let modoAtual = "meio_semana";
 
     const coresSecao = {
@@ -753,6 +781,9 @@ const htmlTemplate = `<!DOCTYPE html>
                   <button onclick="prepararSecaoDiscurso('conclusao', '\${p.titulo.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'nota-parte-1', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs" title="Conclusão motivadora com apelo">
                     🏁 Conclusão motivadora
                   </button>
+                  <button onclick="aprofundarParagrafo('Como explicar a ideia principal de \\\${p.titulo.replace(/'/g, \\\"\\\\\\\\'\\\")} em Libras com Glosas?', '\\\${(p.texto || '').replace(/'/g, \\\"\\\\\\\\'\\\").replace(/\\\"/g, '&quot;').replace(/\\\\n/g, ' ')}', 'libras', 'nota-parte-1', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[11px] font-medium shadow-3xs" title="Orientar ideias em Libras com Glosas">
+                    🤟 Libras (Glosas)
+                  </button>
                   <button onclick="toggleDuvidaInline('parte-1')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs">
                     💬 Perguntar ao Gemini
                   </button>
@@ -857,6 +888,9 @@ const htmlTemplate = `<!DOCTYPE html>
                           <button onclick="aprofundarParagrafo('\${qTexto.replace(/'/g, "\\\\'")}', '\${contextoMateria.replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'simples', 'nota-livro-\${p.id}-\${qIdx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#9e2a2b] text-[#495057] hover:text-[#9e2a2b] transition text-[10px] font-medium shadow-3xs" title="Resposta direta em 30 segundos">
                             ⚡ Resposta simples (30s)
                           </button>
+                          <button onclick="aprofundarParagrafo('\\\${qTexto.replace(/'/g, \\\"\\\\\\\\'\\\")}', '\\\${contextoMateria.replace(/'/g, \\\"\\\\\\\\'\\\").replace(/\\\"/g, '&quot;').replace(/\\\\n/g, ' ')}', 'libras', 'nota-livro-\\\${p.id}-\\\${qIdx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[10px] font-medium shadow-3xs" title="Orientar resposta em Libras com Glosas">
+                            🤟 Libras (Glosas)
+                          </button>
                           <button onclick="toggleDuvidaInline('livro-\${p.id}-\${qIdx}')" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#9e2a2b] text-[#495057] hover:text-[#9e2a2b] transition text-[10px] font-medium shadow-3xs" title="Fazer uma pergunta específica ao Gemini sobre este ponto">
                             💬 Perguntar ao Gemini
                           </button>
@@ -917,6 +951,9 @@ const htmlTemplate = `<!DOCTYPE html>
                           <button onclick="prepararSecaoJoias('aplicacao', '\${dados.tema.replace(/'/g, "\\\\'")}', 'nota-pergunta-\${p.id}-\${idx}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#c57e00] text-[#495057] hover:text-[#c57e00] transition text-[11px] font-medium shadow-3xs" title="Como aplicar os versículos para melhorar nossa amizade com Jeová">
                             🌱 Amizade com Deus
                           </button>
+                          <button onclick="gerarOrientacaoLibras(this, 'Identifique uma joia espiritual da leitura bíblica desta semana (\\\${dados.tema}) para fortalecer a amizade com Jeová e formule em Libras com Glosas e expressão facial.', 'nota-pergunta-\\\${p.id}-\\\${idx}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[11px] font-medium shadow-3xs" title="Joia em Libras com Glosas">
+                            🤟 Libras (Glosas)
+                          </button>
                           <button onclick="toggleDuvidaInline('pergunta-\${p.id}-\${idx}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#c57e00] text-[#495057] hover:text-[#c57e00] transition text-[11px] font-medium shadow-3xs" title="Pesquisar um versículo específico destes capítulos">
                             💬 Outro versículo da semana
                           </button>
@@ -957,6 +994,9 @@ const htmlTemplate = `<!DOCTYPE html>
                         <button onclick="aprofundarParagrafo('\${q.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'simples', 'nota-pergunta-\${p.id}-\${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[10px] font-medium shadow-3xs">
                           ⚡ Simples (30s)
                         </button>
+                        <button onclick="aprofundarParagrafo('\\\${q.replace(/'/g, \\\"\\\\\\\\'\\\")}', '\\\${(p.texto || '').replace(/'/g, \\\"\\\\\\\\'\\\").replace(/\\\"/g, '&quot;').replace(/\\\\n/g, ' ')}', 'libras', 'nota-pergunta-\\\${p.id}-\\\${idx}', this)" class="px-2 py-0.5 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[10px] font-medium shadow-3xs" title="Orientar resposta em Libras com Glosas">
+                          🤟 Libras (Glosas)
+                        </button>
                       </div>
                       <div class="flex items-center justify-between mb-1 text-[11px] text-[#6c757d]">
                         <span class="font-bold">📝 Meu Comentário:</span>
@@ -978,6 +1018,9 @@ const htmlTemplate = `<!DOCTYPE html>
                   </button>
                   <button onclick="aprofundarParagrafo('Ideias práticas para \${p.titulo.replace(/'/g, "\\\\'")}', '\${(p.texto || '').replace(/'/g, "\\\\'").replace(/"/g, '&quot;').replace(/\\n/g, ' ')}', 'aplicacao', 'nota-parte-\${p.id}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs">
                     🌱 Dicas práticas
+                  </button>
+                  <button onclick="aprofundarParagrafo('Como apresentar os pontos principais de \\\${p.titulo.replace(/'/g, \\\"\\\\\\\\'\\\")} em Libras com Glosas?', '\\\${(p.texto || '').replace(/'/g, \\\"\\\\\\\\'\\\").replace(/\\\"/g, '&quot;').replace(/\\\\n/g, ' ')}', 'libras', 'nota-parte-\\\${p.id}', this)" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-emerald-600 text-[#495057] hover:text-emerald-700 transition text-[11px] font-medium shadow-3xs" title="Orientar em Libras com Glosas">
+                    🤟 Libras (Glosas)
                   </button>
                   <button onclick="toggleDuvidaInline('parte-\${p.id}')" class="px-2.5 py-1 rounded-full bg-white border border-[#dee2e6] hover:border-[#4a3b69] text-[#495057] hover:text-[#4a3b69] transition text-[11px] font-medium shadow-3xs">
                     💬 Perguntar ao Gemini
